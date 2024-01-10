@@ -59,21 +59,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    ChoreoTrajectory traj = Choreo.getTrajectory("Trajectory"); 
-    Command test = Choreo.choreoSwerveCommand(
-      traj, // 
-      this::getPose // 
-      new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // 
-      new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // 
-      new PIDController(Constants.AutoConstants.kPThetaController, 0.0, 0.0), // 
-      (ChassisSpeeds speeds) -> 
-          this.drive(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), ...),
-      () -> {
-          Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-              mirror = alliance.isPresent() && alliance.get() == Alliance.Red;
-      }, // 
-      this, // 
-  );
-    return test;
+   return null;
   }
 }
