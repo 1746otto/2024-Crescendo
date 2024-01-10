@@ -11,6 +11,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import com.choreo.lib.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,6 +59,21 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    ChoreoTrajectory traj = Choreo.getTrajectory("Trajectory"); 
+    Command test = Choreo.choreoSwerveCommand(
+      traj, // 
+      this::getPose // 
+      new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // 
+      new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // 
+      new PIDController(Constants.AutoConstants.kPThetaController, 0.0, 0.0), // 
+      (ChassisSpeeds speeds) -> 
+          this.drive(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), ...),
+      () -> {
+          Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+              mirror = alliance.isPresent() && alliance.get() == Alliance.Red;
+      }, // 
+      this, // 
+  );
+    return test;
   }
 }
