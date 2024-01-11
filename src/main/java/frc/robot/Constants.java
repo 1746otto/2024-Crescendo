@@ -18,5 +18,8 @@ public final class Constants {
   }
   public static class AutoConstants {
 
+    public static final double kPXController = 0;
+    public static final double kPThetaController = 0;
+
   }
 }
