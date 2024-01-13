@@ -91,8 +91,7 @@ public class RobotContainer {
     var thetaController = new PIDController(AutoConstants.kPThetaController, 0, 0);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-
-    Command swerveCommand = Choreo.choreoSwerveCommand(
+  Command swerveCommand = Choreo.choreoSwerveCommand(
         traj, // Choreo trajectory from above
         drivetrain.getState().Pose, // A function that returns the current field-relative pose of the robot: your
                                // wheel or vision odometry
@@ -102,7 +101,6 @@ public class RobotContainer {
         new PIDController(Constants.AutoConstants.kPYController, 0.0, 0.0), // PIDController for field-relative Y
                                                                                    // translation (input: Y error in meters,
                                                                                    // output: m/s).
-        thetaController, // PID constants to correct for rotation
                          // error
         (ChassisSpeeds speeds) -> {drivetrain.applyRequest(() -> drive.withVelocityX(MaxSpeed) // Drive forward with
           // negative Y (forward)
@@ -112,6 +110,8 @@ public class RobotContainer {
         true, // Whether or not to mirror the path based on alliance (this assumes the path is created for the blue alliance)
         subsystem// The subsystem(s) to require, typically your drive subsystem only
     );
+
+   
 
     return Commands.sequence(
       
