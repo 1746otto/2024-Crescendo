@@ -101,6 +101,7 @@ public class RobotContainer {
         new PIDController(Constants.AutoConstants.kPYController, 0.0, 0.0), // PIDController for field-relative Y
                                                                                    // translation (input: Y error in meters,
                                                                                    // output: m/s).
+        thetaController, // PID constants to correct for rotation
                          // error
         (ChassisSpeeds speeds) -> {drivetrain.applyRequest(() -> drive.withVelocityX(MaxSpeed) // Drive forward with
           // negative Y (forward)
