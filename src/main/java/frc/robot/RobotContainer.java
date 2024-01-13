@@ -85,7 +85,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     //Choreo stuff 
-    traj = Choreo.getTrajectory("Trajectory");
+    traj = Choreo.getTrajectory("NewPath");
 
     m_field.getObject("traj").setPoses(
       traj.getInitialPose(), traj.getFinalPose()
@@ -102,7 +102,7 @@ public class RobotContainer {
 
   Command swerveCommand = Choreo.choreoSwerveCommand(
         traj, // Choreo trajectory from above
-        drivetrain.getPose(), // A function that returns the current field-relative pose of the robot: your
+        () -> (drivetrain.getState().Pose), // A function that returns the current field-relative pose of the robot: your
                                // wheel or vision odometry
         new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // PIDController for field-relative X
                                                                                    // translation (input: X error in meters,
@@ -122,15 +122,7 @@ public class RobotContainer {
     );
 
 
-    return Commands.sequence(
-      
-        drivetrain.applyRequest(() -> drive.withVelocityX(0) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(0) // Drive left with negative X (left)
-            .withRotationalRate(0) // Drive counterclockwise with negative X (left)
-        )
-        
-    );
+    return Commands.sequence(swerveCommand);
   }
 
   public void periodic() {
