@@ -41,7 +41,8 @@ public final class Autos {
   SwerveDrivetrain swerve;
   Telemetry telemetry;
   SwerveDriveState state;
-  Subsystem[] subsystem;
+  Subsystem subsystem;
+  DriverStation driverStation;
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -58,9 +59,10 @@ public final class Autos {
     this.swerve = swerve;
     this.telemetry = telemetry;
     this.state = state;
+
     
   }
-  public Command TestTrajectory(){
+  /*public Command TestTrajectory(){
    ChoreoTrajectory traj = Choreo.getTrajectory("test");
    return Choreo.choreoSwerveCommand(
       traj, // 
@@ -74,16 +76,15 @@ public final class Autos {
             .withRotationalRate(MaxAngularRate) // Drive counterclockwise with negative X (left)
         );}
           ,
-          () -> {
-              Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-                  boolean mirror = alliance.isPresent() && alliance.get() == Alliance.Red;
-          }, subsystem// 
+          true,
+          
+       subsystem// 
         // 
       );
 
     
 
-    }
+    }*/
   }
 
 

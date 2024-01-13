@@ -53,4 +53,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+    public void resetOdometry(){
+        
+    }
 }
