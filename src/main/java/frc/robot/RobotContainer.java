@@ -8,19 +8,26 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
-
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.kinematics.Odometry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import com.choreo.lib.*;
+
+import java.util.function.Supplier;
+
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Autos;
@@ -46,10 +53,12 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
   
+  
 //Choreo stuff
   Field2d m_field = new Field2d();
   ChoreoTrajectory traj;
   ExampleSubsystem subsystem = new ExampleSubsystem();
+  Alliance alliance;
 
 
   private void configureBindings() {
@@ -93,7 +102,7 @@ public class RobotContainer {
 
   Command swerveCommand = Choreo.choreoSwerveCommand(
         traj, // Choreo trajectory from above
-        drivetrain.getState().Pose, // A function that returns the current field-relative pose of the robot: your
+        drivetrain.getPose(), // A function that returns the current field-relative pose of the robot: your
                                // wheel or vision odometry
         new PIDController(Constants.AutoConstants.kPXController, 0.0, 0.0), // PIDController for field-relative X
                                                                                    // translation (input: X error in meters,
@@ -107,12 +116,11 @@ public class RobotContainer {
           // negative Y (forward)
         .withVelocityY(MaxSpeed) // Drive left with negative X (left)
         .withRotationalRate(MaxAngularRate) // Drive counterclockwise with negative X (left)
-        );},
-        true, // Whether or not to mirror the path based on alliance (this assumes the path is created for the blue alliance)
-        subsystem// The subsystem(s) to require, typically your drive subsystem only
+        );}, () -> (DriverStation.getAlliance().equals(Alliance.Blue)) ? true : false,
+        drivetrain
+  
     );
 
-   
 
     return Commands.sequence(
       
