@@ -53,8 +53,9 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  private final SwerveRequest.ApplyChassisSpeeds chassisSpeeds = new SwerveRequest.ApplyChassisSpeeds();
-  
+  private final ChassisSpeeds chassisSpeeds = new ChassisSpeeds(5,6, 2);
+
+  private final SwerveRequest.ApplyChassisSpeeds auton = new SwerveRequest.ApplyChassisSpeeds().withSpeeds(chassisSpeeds);
 //Choreo stuff
   Field2d m_field = new Field2d();
   ChoreoTrajectory traj;
@@ -113,7 +114,7 @@ public class RobotContainer {
                                                                                    // output: m/s).
         thetaController, // PID constants to correct for rotation
                          // error
-        (ChassisSpeeds speeds) -> drivetrain.setControl(drive),//chassisSpeeds.apply(drivetrain.setControl(drive),new SwerveModule[]{new SwerveModule(TunerConstants.FrontLeft, TunerConstants.kCANbusName)}),
+        (ChassisSpeeds speeds) -> drivetrain.setControl(auton),//chassisSpeeds.apply(drivetrain.setControl(drive),new SwerveModule[]{new SwerveModule(TunerConstants.FrontLeft, TunerConstants.kCANbusName)}),
         () -> (DriverStation.getAlliance().equals(Alliance.Blue)) ? true : false,
         drivetrain
   
