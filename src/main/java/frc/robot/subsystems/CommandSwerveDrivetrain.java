@@ -62,10 +62,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
-    public Supplier<Pose2d> getPose(){
-        SwerveDriveOdometry m_DriveOdometry = new SwerveDriveOdometry(TunerConstants.kDriveKinematics,m_gyro,m_modulePositions);
-   
-        return (Supplier<Pose2d>) m_DriveOdometry.getPoseMeters();
+    public void configureChoreo(){
         
+
     }
 }

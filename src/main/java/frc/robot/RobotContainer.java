@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
@@ -52,7 +53,7 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  
+  private final SwerveRequest.ApplyChassisSpeeds chassisSpeeds = new SwerveRequest.ApplyChassisSpeeds();
   
 //Choreo stuff
   Field2d m_field = new Field2d();
@@ -112,11 +113,8 @@ public class RobotContainer {
                                                                                    // output: m/s).
         thetaController, // PID constants to correct for rotation
                          // error
-        (ChassisSpeeds speeds) -> {drivetrain.applyRequest(() -> drive.withVelocityX(MaxSpeed) // Drive forward with
-          // negative Y (forward)
-        .withVelocityY(MaxSpeed) // Drive left with negative X (left)
-        .withRotationalRate(MaxAngularRate) // Drive counterclockwise with negative X (left)
-        );}, () -> (DriverStation.getAlliance().equals(Alliance.Blue)) ? true : false,
+        (ChassisSpeeds speeds) -> drivetrain.setControl(drive),//chassisSpeeds.apply(drivetrain.setControl(drive),new SwerveModule[]{new SwerveModule(TunerConstants.FrontLeft, TunerConstants.kCANbusName)}),
+        () -> (DriverStation.getAlliance().equals(Alliance.Blue)) ? true : false,
         drivetrain
   
     );
