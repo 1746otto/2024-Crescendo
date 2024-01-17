@@ -87,7 +87,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     //Choreo stuff 
-    traj = Choreo.getTrajectory("NewPath");
+    traj = Choreo.getTrajectory("BetterTest");
 
     m_field.getObject("traj").setPoses(
       traj.getInitialPose(), traj.getFinalPose()
