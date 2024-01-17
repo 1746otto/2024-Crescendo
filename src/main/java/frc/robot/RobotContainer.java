@@ -53,7 +53,7 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  private final ChassisSpeeds chassisSpeeds = new ChassisSpeeds(5,6, 2);
+  private final ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.01,0.01, 2);
 
   private final SwerveRequest.ApplyChassisSpeeds auton = new SwerveRequest.ApplyChassisSpeeds().withSpeeds(chassisSpeeds);
 //Choreo stuff
