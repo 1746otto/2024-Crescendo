@@ -21,7 +21,15 @@ public class ExampleSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          /* one-time action goes here */
+          System.out.println("GAY");
+        });
+  }
+  public Command exampleMethodCommand2() {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return runOnce(
+        () -> {
+          System.out.println("GAY2");
         });
   }
 
