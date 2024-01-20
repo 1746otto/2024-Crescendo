@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 1.937565851983556,
+      "y": 6.704377510606872
     },
     "rotation": 0
   },
@@ -15,6 +15,12 @@
           "type": "path",
           "data": {
             "pathName": "Test2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCommand"
           }
         }
       ]
