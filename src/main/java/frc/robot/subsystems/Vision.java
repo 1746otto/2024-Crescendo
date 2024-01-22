@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose3d;
 
@@ -22,7 +23,9 @@ public class Vision {
         visionThread = new Thread(() -> {
             while (true) {
                 getResult();
-
+                for (PhotonTrackedTarget target : lastResult.targets) {
+                    
+                }
             }
         });
     }
