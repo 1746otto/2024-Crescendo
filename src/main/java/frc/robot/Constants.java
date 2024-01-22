@@ -16,4 +16,15 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class IntakeConstants {
+    public static final int kSparkBaseID = 2;
+    public static final int kIntakeTurnID = 0;
+    public static final int kIntakeID = 1;
+    public static final double kIntakeSpeed = 0.1;
+    public static final double kP = 0.1;
+
+    // Positions
+    public static final double originPosition = 0.0;
+    public static final double outPosition = 20.0;
+  }
 }
