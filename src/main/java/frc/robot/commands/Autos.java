@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 
 public final class Autos {
-  private double MaxSpeed = 6;
+  private double MaxSpeed = 3;
   private double MaxAngularRate = 1.5 * Math.PI;
   SwerveDrivetrain swerve;
   Telemetry telemetry;
@@ -62,8 +62,8 @@ public final class Autos {
 
     
   }
-  /*public Command TestTrajectory(){
-   ChoreoTrajectory traj = Choreo.getTrajectory("test");
+  public Command TestTrajectory(){
+   ChoreoTrajectory traj = Choreo.getTrajectory("Test1");
    return Choreo.choreoSwerveCommand(
       traj, // 
       () -> swerve.getState().Pose,
@@ -76,7 +76,7 @@ public final class Autos {
             .withRotationalRate(MaxAngularRate) // Drive counterclockwise with negative X (left)
         );}
           ,
-          true,
+          () -> DriverStation.getAlliance().get() == Alliance.Blue,
           
        subsystem// 
         // 
@@ -84,7 +84,7 @@ public final class Autos {
 
     
 
-    }*/
+    }
   }
 
 
