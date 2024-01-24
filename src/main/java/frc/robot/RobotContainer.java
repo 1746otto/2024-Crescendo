@@ -66,7 +66,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> drive.withVelocityX(MaxSpeed).withVelocityY(3).withRotationalRate(0)));
+    NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
   }
 
   public Command getAutonomousCommand() {
