@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.3271939754486084,
-      "y": 6.249107837677002
+      "x": 2.7683558464050293,
+      "y": 6.531341552734375
     },
-    "rotation": -2.1515953003185452e-32
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test1"
+            "pathName": "RotateTest"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drivetrainCommand"
           }
         }
       ]

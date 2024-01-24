@@ -40,7 +40,7 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   //pathplanner testing
-  public Command auton1 =  drivetrain.getAutoPath("PathPlanTest");
+  public Command auton1 =  drivetrain.getAutoPath("ChoreoTest");
   
 
   private void configureBindings() {
@@ -66,8 +66,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    NamedCommands.registerCommand("intakeCommand",new RepeatCommand((new InstantCommand(() -> led
-    .setLedtoCone()))));
+    NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> drive.withVelocityX(MaxSpeed).withVelocityY(3).withRotationalRate(0)));
   }
 
   public Command getAutonomousCommand() {
