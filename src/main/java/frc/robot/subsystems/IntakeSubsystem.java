@@ -28,8 +28,8 @@ public class IntakeSubsystem extends SubsystemBase{
         reqPosition = IntakeConstants.kOriginPosition;
     }
 
-    public void intake(){
-        intakeMotor.set(IntakeConstants.kIntakeSpeed);
+    public void intake(double speed){
+        intakeMotor.set(speed);
     }
     public void outtake(){
         intakeMotor.set(-IntakeConstants.kIntakeSpeed);
@@ -50,14 +50,22 @@ public class IntakeSubsystem extends SubsystemBase{
         }
         return false;
     }
+    public boolean objectOnHand(){
+        if (intakeMotor.getOutputCurrent() >= IntakeConstants.kIntakeCurrentLimit){
+            return true;
+        }
+        return false;
+    }
 
     //COMMANDS
-    public InstantCommand IntakeCommand(){
-        return new InstantCommand(() -> intake());
+    public Command IntakeCommand(){
+        return run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand())
+        .andThen(() -> intake(IntakeConstants.kItakeStowSpeed));
     }
     public InstantCommand OuttakeCommand(){
         return new InstantCommand(() -> outtake());
     }
+
 
     @Override
     public void periodic() {

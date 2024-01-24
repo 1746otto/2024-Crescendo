@@ -20,7 +20,11 @@ public final class Constants {
     public static final int kSparkBaseID = 2;
     public static final int kIntakeTurnID = 0;
     public static final int kIntakeID = 1;
-    public static final double kIntakeSpeed = 0.1;
+    public static final double kIntakeSpeed = 0.2;
+    public static final double kItakeStowSpeed = 0.1;
+    public static final double kIntakeCurrentLimit = 30;
+
+    // PID constants
     public static final double kP = 0.1;
 
     // Positions
