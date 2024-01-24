@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase{
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
-        reqPosition = IntakeConstants.originPosition;
+        reqPosition = IntakeConstants.kOriginPosition;
     }
 
     public void intake(){
@@ -43,14 +43,9 @@ public class IntakeSubsystem extends SubsystemBase{
     public double getPosition(){
         return turningMotor.getEncoder().getPosition();
     }
-    public boolean isAtOrigin(){
-        if (getPosition() == IntakeConstants.originPosition){
-            return true;
-        }
-        return false;
-    }
-    public boolean isAtOutPos(){
-        if (getPosition() == IntakeConstants.outPosition){
+    public boolean isAtReqPosition(double reqPos){
+        if ((getPosition() >= (reqPos - IntakeConstants.kTolerance))
+         && (getPosition() <= (reqPos + IntakeConstants.kTolerance))){
             return true;
         }
         return false;

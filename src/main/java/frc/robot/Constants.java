@@ -24,7 +24,10 @@ public final class Constants {
     public static final double kP = 0.1;
 
     // Positions
-    public static final double originPosition = 0.0;
-    public static final double outPosition = 20.0;
+    public static final double kOriginPosition = 0.0;
+    public static final double kOutPosition = 20.0;
+
+    // tolerance
+    public static final double kTolerance = 5;
   }
 }
