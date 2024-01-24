@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkBase;
@@ -32,18 +34,40 @@ public class IntakeSubsystem extends SubsystemBase{
     public void outtake(){
         intakeMotor.set(-IntakeConstants.kIntakeSpeed);
     }
-    public void angleIn(){
-        pidController.setReference(IntakeConstants.originPosition, ControlType.kPosition);
+    public void intakeToReq(double req){
+        pidController.setReference(req, ControlType.kPosition);
     }
-    public void angleOut(){
-        pidController.setReference(IntakeConstants.outPosition, ControlType.kPosition);
+    public void setRequest(double req){
+        reqPosition = req;
     }
-    
+    public double getPosition(){
+        return turningMotor.getEncoder().getPosition();
+    }
+    public boolean isAtOrigin(){
+        if (getPosition() == IntakeConstants.originPosition){
+            return true;
+        }
+        return false;
+    }
+    public boolean isAtOutPos(){
+        if (getPosition() == IntakeConstants.outPosition){
+            return true;
+        }
+        return false;
+    }
 
+    //COMMANDS
+    public InstantCommand IntakeCommand(){
+        return new InstantCommand(() -> intake());
+    }
+    public InstantCommand OuttakeCommand(){
+        return new InstantCommand(() -> outtake());
+    }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
 
+        intakeToReq(reqPosition);
     }
 }
