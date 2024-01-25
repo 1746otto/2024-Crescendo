@@ -45,8 +45,15 @@ public class Vision {
                         tempPose = field.getTagPose(target.getFiducialId()).get()
                             .transformBy(target.getBestCameraToTarget().inverse())
                             .transformBy(VisionConstants.camera1Transform.inverse());
+                        if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin && tempPose.getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
+                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResult.getTimestampSeconds());
+                            continue;
+                        }
+                        tempPose = field.getTagPose(target.getFiducialId()).get()
+                            .transformBy(target.getAlternateCameraToTarget().inverse())
+                            .transformBy(VisionConstants.camera1Transform.inverse());
                         if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin) {
-                            
+                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResult.getTimestampSeconds());
                         }
       
                     }
