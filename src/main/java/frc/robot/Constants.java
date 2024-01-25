@@ -17,7 +17,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class IntakeConstants {
-    public static final int kSparkBaseID = 2;
     public static final int kIntakeTurnID = 0;
     public static final int kIntakeID = 1;
     public static final double kIntakeSpeed = 0.2;
@@ -33,5 +32,9 @@ public final class Constants {
 
     // tolerance
     public static final double kTolerance = 5;
+  }
+  public static class IndexerConstants {
+    public static final int kIndexerID = 2;
+    public static final double kIndexerSpeed = 0.2;
   }
 }
