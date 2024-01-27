@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test2"
+            "pathName": "Test2direction"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "intakeCommand"
+            "name": "drivetrainCommand"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
           }
         }
       ]
