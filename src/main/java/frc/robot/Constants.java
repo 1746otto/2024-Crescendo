@@ -16,4 +16,24 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class ShooterConstants {
+    // speed constants
+    public static final double kTopShootingRollerSpeed = 0.0;
+    public static final double kBottomShootingRollerSpeed = 0.0;
+    public static final double kIndexingRollerSpeed = 0.0;
+    public static final double kPrimingRollerSpeed = 0.0;
+
+    // device IDs 
+    public static final int kShootingTopRollerMotorID = 0;
+    public static final int kShootingBottomRollerMotorID = 0;
+    public static final int kPrimingRollerMotorID = 0;
+    public static final int kIndexingRollerMotorID = 0;
+    public static final int kShooterAnalogInputChannel = 0;
+
+    // PID constants (top shooting roller)
+    public static final double topRollerKP = 0.1;
+    public static final double topRollerKI = 0;
+    public static final double topRollerKD = 0;
+
+  }
 }
