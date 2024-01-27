@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 
 public final class Autos {
-  private double MaxSpeed = 3;
+  private double MaxSpeed = 1;
   private double MaxAngularRate = 1.5 * Math.PI;
   SwerveDrivetrain swerve;
   Telemetry telemetry;
