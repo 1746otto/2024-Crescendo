@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -125,9 +126,11 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Creates a command for shooting based on certain conditions.
    */
-  public Command shootCommand() {
-    return run (this::primeAndIndexNote).until(beamBreakLastState).finallyDo(runTopRollers()).andThen(() -> stop());
-  }
+  Command shootCommand = new StartEndCommand(
+    () -> primeAndIndexNote(),
+    () -> runTopRollers()
+  );
+
 
   /**
    * Periodic method for updating the state of the beam break.
