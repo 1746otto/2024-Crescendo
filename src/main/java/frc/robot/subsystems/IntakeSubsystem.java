@@ -12,61 +12,149 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 
+/**
+ * The IntakeSubsystem class represents a subsystem for controlling the intake
+ * mechanism of a robot.
+ * It includes functionality for intake and outtake operations, positioning the
+ * intake, retrieving the current position,
+ * checking if the intake is at the required position, and detecting the
+ * presence of an object on the intake.
+ */
+public class IntakeSubsystem extends SubsystemBase {
 
-public class IntakeSubsystem extends SubsystemBase{
+    /** Motor controller for turning the intake mechanism. */
     CANSparkMax turningMotor;
+
+    /** Motor controller for controlling the intake. */
     CANSparkMax intakeMotor;
+
+    /** PID controller for maintaining the turning motor position. */
     SparkPIDController pidController;
+
+    /** Flag indicating whether the intake is outside or not. */
     boolean outside;
+
+    /** The required position for the turning motor. */
     double reqPosition;
 
-    public IntakeSubsystem(){
+    /**
+     * Creates a new IntakeSubsystem with initialized motor controllers and PID
+     * controller.
+     */
+    public IntakeSubsystem() {
+
+        // Initialization of motor controllers and PID controller
         turningMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
+
+        // Setting the initial required position to the origin
         reqPosition = IntakeConstants.kOriginPosition;
+
     }
 
-    public void intake(double speed){
+    /**
+     * Sets the intake motor speed for intake operation.
+     *
+     * @param speed The speed at which the intake motor should operate.
+     */
+    public void intake(double speed) {
         intakeMotor.set(speed);
     }
-    public void outtake(){
+
+    /**
+     * Sets the intake motor speed for outtake operation.
+     */
+    public void outtake() {
         intakeMotor.set(-IntakeConstants.kIntakeSpeed);
     }
-    public void intakeToReq(double req){
+
+    /**
+     * Sets the target position for the turning motor using PID control.
+     *
+     * @param req The target position for the turning motor.
+     */
+    public void intakeToReq(double req) {
         pidController.setReference(req, ControlType.kPosition);
     }
-    public void setRequest(double req){
+
+    /**
+     * Sets the required position for the turning motor.
+     *
+     * @param req The required position for the turning motor.
+     */
+    public void setRequest(double req) {
         reqPosition = req;
     }
-    public double getPosition(){
+
+    /**
+     * Gets the current position of the turning motor.
+     *
+     * @return The current position of the turning motor.
+     */
+    public double getPosition() {
         return turningMotor.getEncoder().getPosition();
     }
-    public boolean isAtReqPosition(double reqPos){
+
+    /**
+     * Checks if the turning motor is at the required position within a specified
+     * tolerance.
+     *
+     * @param reqPos The required position to check against.
+     * @return True if the turning motor is at the required position; false
+     *         otherwise.
+     */
+    public boolean isAtReqPosition(double reqPos) {
+
         if ((getPosition() >= (reqPos - IntakeConstants.kTolerance))
-         && (getPosition() <= (reqPos + IntakeConstants.kTolerance))){
-            return true;
-        }
-        return false;
-    }
-    public boolean objectOnHand(){
-        if (intakeMotor.getOutputCurrent() >= IntakeConstants.kIntakeCurrentLimit){
+                && (getPosition() <= (reqPos + IntakeConstants.kTolerance))) {
             return true;
         }
         return false;
     }
 
-    //COMMANDS
-    public Command IntakeCommand(){
-        return run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand())
-        .andThen(() -> intake(IntakeConstants.kItakeStowSpeed));
+    /**
+     * Checks if an object is detected on the intake based on the current output
+     * current.
+     *
+     * @return True if an object is detected on the intake; false otherwise.
+     */
+    public boolean objectOnHand() {
+        if (intakeMotor.getOutputCurrent() >= IntakeConstants.kIntakeCurrentLimit) {
+            return true;
+        }
+        return false;
     }
-    public InstantCommand OuttakeCommand(){
+
+    /**
+     * COMMANDS
+     */
+
+    /**
+     * Creates a command for intake operation until an object is detected and then
+     * transitions to stow position.
+     *
+     * @return A Command object for intake operation.
+     */
+    public Command IntakeCommand() {
+        return run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand())
+                .andThen(() -> intake(IntakeConstants.kItakeStowSpeed));
+    }
+
+    /**
+     * Creates an InstantCommand for outtake operation.
+     *
+     * @return An InstantCommand object for outtake operation.
+     */
+    public InstantCommand OuttakeCommand() {
         return new InstantCommand(() -> outtake());
     }
 
-
+    /**
+     * Periodic method for updating the turning motor's position based on the
+     * required position.
+     */
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
