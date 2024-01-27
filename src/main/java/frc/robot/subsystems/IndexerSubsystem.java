@@ -16,7 +16,23 @@ public class IndexerSubsystem extends SubsystemBase{
         indexerMotor.set(IndexerConstants.kIndexerSpeed);
     }
 
+    public void stop(){
+        indexerMotor.set(0);
+    }
+    public void forward(){
+        indexerMotor.set(.2);
+    }
+
+    public void backward(){
+        indexerMotor.set(-.2);
+    }
+    
     public Command IndexCommand(){
         return run(() -> index());
     }
+
+    public Command indexStop(){
+        return run(() -> stop());
+    }
 }
+
