@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -138,8 +141,9 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return A Command object for intake operation.
      */
     public Command IntakeCommand() {
-        return run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand())
-                .andThen(() -> intake(IntakeConstants.kItakeStowSpeed));
+        return new SequentialCommandGroup(new ParallelDeadlineGroup(run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand() == true),
+         runOnce(() -> setRequest(IntakeConstants.kOutPosition))), runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
+          run(() -> intake(IntakeConstants.kItakeStowSpeed)).until(() -> objectOnHand() == false));
     }
 
     /**
@@ -158,6 +162,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        
 
         intakeToReq(reqPosition);
     }
