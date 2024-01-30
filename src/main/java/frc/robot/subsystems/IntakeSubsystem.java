@@ -51,6 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
+        pidController.setOutputRange(-.2, .2);
 
         // Setting the initial required position to the origin
         reqPosition = IntakeConstants.kOriginPosition;
@@ -63,7 +64,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed The speed at which the intake motor should operate.
      */
     public void intake(double speed) {
-        intakeMotor.set(speed);
+            intakeMotor.set(speed);
     }
 
     /**
