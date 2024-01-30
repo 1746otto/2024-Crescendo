@@ -33,4 +33,9 @@ public final class Constants {
     // tolerance
     public static final double kTolerance = 5;
   }
+  
+  public static class IndexerConstants {
+    public static final int kIndexerID = 2;
+    public static final double kIndexerSpeed = 0.2;
+  }
 }
