@@ -141,9 +141,14 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return A Command object for intake operation.
      */
     public Command IntakeCommand() {
-        return new SequentialCommandGroup(new ParallelDeadlineGroup(run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand() == true),
-         runOnce(() -> setRequest(IntakeConstants.kOutPosition))), runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
-          run(() -> intake(IntakeConstants.kItakeStowSpeed)).until(() -> objectOnHand() == false));
+        return new SequentialCommandGroup(
+            new ParallelDeadlineGroup(run(() -> intake(IntakeConstants.kIntakeSpeed))
+            .until(() -> objectOnHand() == true),
+            runOnce(() -> setRequest(IntakeConstants.kOutPosition))),
+            runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
+            run(() -> intake(IntakeConstants.kItakeStowSpeed))
+            .until(() -> objectOnHand() == false)
+             );
     }
 
     /**
@@ -162,7 +167,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        
+
 
         intakeToReq(reqPosition);
     }
