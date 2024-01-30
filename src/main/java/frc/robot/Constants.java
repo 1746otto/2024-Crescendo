@@ -24,10 +24,10 @@ public final class Constants {
     public static final double kPrimingRollerSpeed = 0.0;
 
     // device IDs 
-    public static final int kShootingTopRollerMotorID = 0;
-    public static final int kShootingBottomRollerMotorID = 0;
-    public static final int kPrimingRollerMotorID = 0;
-    public static final int kIndexingRollerMotorID = 0;
+    public static final int kShootingTopRollerMotorID = 31;
+    public static final int kShootingBottomRollerMotorID = 32;
+    public static final int kPrimingRollerMotorID = 12;
+    public static final int kIndexingRollerMotorID = 22;
     public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)
