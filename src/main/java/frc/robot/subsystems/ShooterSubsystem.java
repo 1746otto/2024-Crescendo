@@ -78,25 +78,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Sets the indexing roller speed for indexing notes in the shooting mechanism.
-   */
-  public void indexNote() {
-    indexerNeo.set(indexingSpeed);
-  }
-
-  /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
-  public BooleanConsumer runTopRollers() {
+  public void runShooterRollers() {
     topRollerNeo.set(topShootingSpeed);
-    return null;
-  }
-
-  /**
-   * Sets the speed for the bottom shooting roller.
-   */
-  public void runBottomRollers() {
-    bottomRollerNeo.set(bottomShootingSpeed);
   }
 
   /**
@@ -107,19 +92,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Sets the speed for both the priming and indexing rollers.
-   */
-  public void primeAndIndexNote() {
-    primerNeo.set(primingSpeed);
-    indexerNeo.set(indexingSpeed);
-  }
-
-  /**
    * Stops all motor movements.
    */
   public void stop() {
     primerNeo.set(0);
-    indexerNeo.set(0);
     topRollerNeo.set(0);
   }
 
@@ -127,7 +103,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return new ParallelCommandGroup(run(() -> runTopRollers()), run(() -> primeNote()));
+    return new ParallelCommandGroup(run(() -> runShooterRollers()));
   }
 
 

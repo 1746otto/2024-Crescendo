@@ -135,6 +135,18 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         return run(() -> intake(IntakeConstants.kIntakeSpeed));
     }
+    public Command ManualIntakeCommand(){
+        return new ParallelCommandGroup(
+            runOnce(() -> setRequest(IntakeConstants.kOutPosition)),
+            run(() -> intake(IntakeConstants.kIntakeSpeed))
+            );
+    }
+    public Command ManualReturnToOrigin(){
+        return new SequentialCommandGroup(
+            runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
+            run(() -> intake(IntakeConstants.kIntakeStowSpeed))
+            );
+    }
     
 
     /**
@@ -153,9 +165,9 @@ public class IntakeSubsystem extends SubsystemBase {
             .until(() -> objectOnHand() == true),
             runOnce(() -> setRequest(IntakeConstants.kOutPosition))),
             runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
-            run(() -> intake(IntakeConstants.kItakeStowSpeed))
+            run(() -> intake(IntakeConstants.kIntakeStowSpeed))
             .until(() -> objectOnHand() == false)
-             );
+            );
     }
 
     /**
