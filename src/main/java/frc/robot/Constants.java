@@ -28,7 +28,7 @@ public final class Constants {
 
     // Positions
     public static final double kOriginPosition = 0.0;
-    public static final double kOutPosition = 20.0;
+    public static final double kOutPosition = -5.0;
 
     // tolerance
     public static final double kTolerance = 5;
@@ -50,7 +50,6 @@ public final class Constants {
     public static final int kShootingTopRollerMotorID = 31;
     public static final int kShootingBottomRollerMotorID = 32;
     public static final int kPrimingRollerMotorID = 12;
-    public static final int kIndexingRollerMotorID = 22;
     public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)

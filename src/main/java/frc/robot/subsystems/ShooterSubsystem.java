@@ -52,7 +52,6 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    indexerNeo = new CANSparkMax(ShooterConstants.kIndexingRollerMotorID, MotorType.kBrushless);
     primerNeo = new CANSparkMax(ShooterConstants.kPrimingRollerMotorID, MotorType.kBrushless);
     topRollerNeo = new CANSparkMax(ShooterConstants.kShootingTopRollerMotorID, MotorType.kBrushless);
 

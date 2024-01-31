@@ -131,6 +131,12 @@ public class IntakeSubsystem extends SubsystemBase {
         return false;
     }
 
+    public Command basicIntake()
+    {
+        return run(() -> intake(IntakeConstants.kIntakeSpeed));
+    }
+    
+
     /**
      * COMMANDS
      */
@@ -168,8 +174,6 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
-
         intakeToReq(reqPosition);
     }
 }
