@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -125,10 +126,9 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Creates a command for shooting based on certain conditions.
    */
-  Command shootCommand = new StartEndCommand(
-    () -> primeAndIndexNote(),
-    () -> runTopRollers()
-  );
+  public Command ShootCommand(){
+    return new ParallelCommandGroup(run(() -> runTopRollers()), run(() -> primeNote()));
+  }
 
 
   /**
