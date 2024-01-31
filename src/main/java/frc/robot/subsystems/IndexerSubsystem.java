@@ -31,7 +31,7 @@ public class IndexerSubsystem extends SubsystemBase{
         return run(() -> index());
     }
 
-    public Command indexStop(){
+    public Command StopCommand(){
         return run(() -> stop());
     }
 }

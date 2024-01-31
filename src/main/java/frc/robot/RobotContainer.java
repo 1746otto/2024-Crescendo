@@ -18,6 +18,11 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.PrimerSubsystem;
+
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
   private double MaxSpeed = 6; // 6 meters per second desired top speed
@@ -25,6 +30,7 @@ public class RobotContainer {
   private IntakeSubsystem m_intake = new IntakeSubsystem();
   private IndexerSubsystem m_index = new IndexerSubsystem();
   private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private PrimerSubsystem m_primer = new PrimerSubsystem();
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -46,9 +52,17 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
-    joystick.a().onTrue(m_intake.basicIntake ());
-    joystick.b().whileTrue(m_intake.OuttakeCommand());
-    joystick.y().whileTrue(m_index.IndexCommand());
+    // Intake
+    joystick.a().whileTrue(m_intake.ManualIntakeCommand());
+    joystick.a().whileFalse(m_intake.ReturnToOrigin());
+
+    // Shooting
+    joystick.b().onTrue(m_shooter.ShootCommand());
+    joystick.b().onFalse(m_shooter.StopCommand());
+
+    //
+    joystick.y().onTrue(new ParallelCommandGroup(m_index.IndexCommand(), m_primer.PrimeCommand(), m_intake.OuttakeCommand()));
+    joystick.y().onFalse(new ParallelCommandGroup(m_index.StopCommand(), m_primer.StopCommand(), m_intake.StopCommand()));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));

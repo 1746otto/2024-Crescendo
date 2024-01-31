@@ -41,15 +41,11 @@ public final class Constants {
 
   public static class ShooterConstants {
     // speed constants
-    public static final double kTopShootingRollerSpeed = 1.0;
-    public static final double kBottomShootingRollerSpeed = 1.0;
-    public static final double kIndexingRollerSpeed = 1.0;
-    public static final double kPrimingRollerSpeed = 1.0;
+    public static final double kShooterRollerSpeed = 0.6;
 
     // device IDs 
-    public static final int kShootingTopRollerMotorID = 31;
-    public static final int kShootingBottomRollerMotorID = 32;
-    public static final int kPrimingRollerMotorID = 12;
+    public static final int kShooterTopRollerMotorID = 31;
+    public static final int kShooterBottomRollerMotorID = 32;
     public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)
@@ -57,5 +53,12 @@ public final class Constants {
     public static final double topRollerKI = 0;
     public static final double topRollerKD = 0;
 
+  }
+  
+  public static class PrimerConstants {
+    // IDs
+    public static final int kPrimerRollerMotorID = 12;
+    //Speeds
+    public static final double kPrimerRollerSpeed = 0.5;
   }
 }

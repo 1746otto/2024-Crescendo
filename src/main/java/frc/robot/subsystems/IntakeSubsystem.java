@@ -15,6 +15,8 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * The IntakeSubsystem class represents a subsystem for controlling the intake
  * mechanism of a robot.
@@ -52,6 +54,7 @@ public class IntakeSubsystem extends SubsystemBase {
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
         pidController.setOutputRange(-.2, .2);
+        turningMotor.getEncoder().setPosition(0.0);
 
         // Setting the initial required position to the origin
         reqPosition = IntakeConstants.kOriginPosition;
@@ -141,11 +144,8 @@ public class IntakeSubsystem extends SubsystemBase {
             run(() -> intake(IntakeConstants.kIntakeSpeed))
             );
     }
-    public Command ManualReturnToOrigin(){
-        return new SequentialCommandGroup(
-            runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
-            run(() -> intake(IntakeConstants.kIntakeStowSpeed))
-            );
+    public Command ReturnToOrigin(){
+        return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
     }
     
 
@@ -178,6 +178,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public InstantCommand OuttakeCommand() {
         return new InstantCommand(() -> outtake());
     }
+    public Command StopCommand(){
+        return run(() -> intake(0.0));
+    }
 
     /**
      * Periodic method for updating the turning motor's position based on the
@@ -186,7 +189,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        System.out.println(getPosition());
+        SmartDashboard.getNumber("Intake Position", getPosition());
         intakeToReq(reqPosition);
     }
 }

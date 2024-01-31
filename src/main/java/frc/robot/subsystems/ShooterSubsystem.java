@@ -20,12 +20,6 @@ import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
-
-  /** CANSparkMax motor controller for the indexing roller. */
-  private CANSparkMax indexerNeo;
-
-  /** CANSparkMax motor controller for the priming roller. */
-  private CANSparkMax primerNeo;
   
   /** CANSparkMax motor controller for the top shooting roller with PID control. */
   private CANSparkMax topRollerNeo;
@@ -40,10 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private SparkPIDController pidController;
 
   /** Speed settings for various roller movements. */
-  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kTopShootingRollerSpeed;
-  private double bottomShootingSpeed = frc.robot.Constants.ShooterConstants.kBottomShootingRollerSpeed;
-  private double primingSpeed = frc.robot.Constants.ShooterConstants.kPrimingRollerSpeed;
-  private double indexingSpeed = frc.robot.Constants.ShooterConstants.kIndexingRollerSpeed;
+  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShooterRollerSpeed;
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
@@ -53,8 +44,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    primerNeo = new CANSparkMax(ShooterConstants.kPrimingRollerMotorID, MotorType.kBrushless);
-    topRollerNeo = new CANSparkMax(ShooterConstants.kShootingTopRollerMotorID, MotorType.kBrushless);
+    topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
 
     // Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
@@ -63,25 +53,19 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setD(ShooterConstants.topRollerKD);
 
     // Making the bottom roller follow the top roller
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShootingBottomRollerMotorID, MotorType.kBrushless);
+    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo.follow(topRollerNeo);
 
     // Initialization of analog input for beam break detection
     beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
 
   }
-  /**
-   * Sets the priming roller speed for priming the shooting mechanism.
-   */
-  public void primeNote() {
-    primerNeo.set(primingSpeed);
-  }
 
   /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
-  public void runShooterRollers() {
-    topRollerNeo.set(topShootingSpeed);
+  public void runShooterRollers(double speed) {
+    topRollerNeo.set(speed);
   }
 
   /**
@@ -95,7 +79,6 @@ public class ShooterSubsystem extends SubsystemBase {
    * Stops all motor movements.
    */
   public void stop() {
-    primerNeo.set(0);
     topRollerNeo.set(0);
   }
 
@@ -103,15 +86,20 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return new ParallelCommandGroup(run(() -> runShooterRollers()));
+    return run(() -> runShooterRollers(ShooterConstants.kShooterRollerSpeed));
   }
-
+  public Command ReverseCommand(){
+    return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
+  }
+  public Command StopCommand(){
+    return run(() -> runShooterRollers(0.0));
+  }
 
   /**
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0) && (primerNeo.get() < 0));
+    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
 }
