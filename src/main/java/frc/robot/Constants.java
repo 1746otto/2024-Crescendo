@@ -28,20 +28,20 @@ public final class Constants {
 
     // Positions
     public static final double kOriginPosition = 0.0;
-    public static final double kOutPosition = -5.0;
+    public static final double kOutPosition = 21.92;
 
     // tolerance
     public static final double kTolerance = 5;
   }
   
   public static class IndexerConstants {
-    public static final int kIndexerID = 22;
-    public static final double kIndexerSpeed = 0.2;
+    public static final int kIndexerID = 12;
+    public static final double kIndexerSpeed = 0.1;
   }
 
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 0.6;
+    public static final double kShooterRollerSpeed = 0.1;
 
     // device IDs 
     public static final int kShooterTopRollerMotorID = 31;
@@ -57,8 +57,8 @@ public final class Constants {
   
   public static class PrimerConstants {
     // IDs
-    public static final int kPrimerRollerMotorID = 12;
+    public static final int kPrimerRollerMotorID = 22;
     //Speeds
-    public static final double kPrimerRollerSpeed = 0.5;
+    public static final double kPrimerRollerSpeed = 0.1;
   }
 }

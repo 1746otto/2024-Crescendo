@@ -45,6 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
+    topRollerNeo.setInverted(true);
 
     // Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();

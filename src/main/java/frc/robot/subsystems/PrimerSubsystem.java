@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
 public class PrimerSubsystem extends SubsystemBase{
@@ -29,9 +30,9 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   public Command PrimeCommand(){
-    return run(() -> primeNote());
+    return new InstantCommand(() -> primeNote());
   }
   public Command StopCommand(){
-    return run(() -> stop());
+    return new InstantCommand(() -> stop());
   }
 }

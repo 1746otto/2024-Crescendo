@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -53,7 +54,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
-        pidController.setOutputRange(-.2, .2);
+        pidController.setOutputRange(-.1, .1);
         turningMotor.getEncoder().setPosition(0.0);
 
         // Setting the initial required position to the origin
@@ -139,13 +140,22 @@ public class IntakeSubsystem extends SubsystemBase {
         return run(() -> intake(IntakeConstants.kIntakeSpeed));
     }
     public Command ManualIntakeCommand(){
-        return new ParallelCommandGroup(
+        return new SequentialCommandGroup(
             runOnce(() -> setRequest(IntakeConstants.kOutPosition)),
             run(() -> intake(IntakeConstants.kIntakeSpeed))
             );
     }
     public Command ReturnToOrigin(){
         return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
+    }
+    public Command ManIntakeCommand(){
+        return new StartEndCommand(() -> 
+        {setRequest(IntakeConstants.kOriginPosition);
+        intake(IntakeConstants.kIntakeSpeed);}
+        , () -> 
+        {setRequest(IntakeConstants.kOutPosition);
+        intake(0.0);}, 
+        this);
     }
     
 
@@ -169,6 +179,7 @@ public class IntakeSubsystem extends SubsystemBase {
             .until(() -> objectOnHand() == false)
             );
     }
+    
 
     /**
      * Creates an InstantCommand for outtake operation.
@@ -187,9 +198,10 @@ public class IntakeSubsystem extends SubsystemBase {
      * required position.
      */
     @Override
-    public void periodic() {
+    public void periodic() {    
         // This method will be called once per scheduler run
-        SmartDashboard.getNumber("Intake Position", getPosition());
+        SmartDashboard.putNumber("Intake Position", getPosition());
+        System.out.println(getPosition());
         intakeToReq(reqPosition);
     }
 }

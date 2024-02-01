@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -10,6 +11,7 @@ public class IndexerSubsystem extends SubsystemBase{
     CANSparkMax indexerMotor;
     public IndexerSubsystem(){
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
+        indexerMotor.setInverted(true);
     }
 
     public void index(){
@@ -28,10 +30,10 @@ public class IndexerSubsystem extends SubsystemBase{
     }
     
     public Command IndexCommand(){
-        return run(() -> index());
+        return new InstantCommand(() -> index());
     }
 
     public Command StopCommand(){
-        return run(() -> stop());
+        return new InstantCommand(() -> stop());
     }
 }

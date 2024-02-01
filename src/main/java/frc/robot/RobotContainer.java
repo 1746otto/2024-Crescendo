@@ -53,16 +53,19 @@ public class RobotContainer {
         ));
 
     // Intake
-    joystick.a().whileTrue(m_intake.ManualIntakeCommand());
-    joystick.a().whileFalse(m_intake.ReturnToOrigin());
+    joystick.a().whileTrue(m_intake.ManIntakeCommand());
 
     // Shooting
-    joystick.b().onTrue(m_shooter.ShootCommand());
-    joystick.b().onFalse(m_shooter.StopCommand());
+    joystick.b().toggleOnTrue((m_shooter.ShootCommand()));
+    joystick.b().toggleOnFalse(m_shooter.StopCommand());
 
     //
-    joystick.y().onTrue(new ParallelCommandGroup(m_index.IndexCommand(), m_primer.PrimeCommand(), m_intake.OuttakeCommand()));
-    joystick.y().onFalse(new ParallelCommandGroup(m_index.StopCommand(), m_primer.StopCommand(), m_intake.StopCommand()));
+    joystick.y().whileTrue(m_index.IndexCommand());
+    joystick.y().whileFalse(m_index.StopCommand());
+
+    joystick.x().onTrue(m_primer.PrimeCommand());
+    joystick.x().onFalse(m_primer.StopCommand());
+
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
