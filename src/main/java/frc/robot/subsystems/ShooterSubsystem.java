@@ -45,7 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
-    topRollerNeo.setInverted(true);
+    //topRollerNeo.setInverted(true);
+    
 
     // Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
@@ -55,7 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo.follow(topRollerNeo);
+    //bottomRollerNeo.setInverted(false);
 
     // Initialization of analog input for beam break detection
     beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
@@ -67,6 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void runShooterRollers(double speed) {
     topRollerNeo.set(speed);
+    bottomRollerNeo.set(speed);
   }
 
   /**
@@ -81,6 +83,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void stop() {
     topRollerNeo.set(0);
+    bottomRollerNeo.set(0);
   }
 
   /**

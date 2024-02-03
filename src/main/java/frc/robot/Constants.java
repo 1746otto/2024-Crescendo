@@ -41,7 +41,7 @@ public final class Constants {
 
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 0.1;
+    public static final double kShooterRollerSpeed = 1;
 
     // device IDs 
     public static final int kShooterTopRollerMotorID = 31;
@@ -59,6 +59,6 @@ public final class Constants {
     // IDs
     public static final int kPrimerRollerMotorID = 22;
     //Speeds
-    public static final double kPrimerRollerSpeed = 0.1;
+    public static final double kPrimerRollerSpeed = 0.4;
   }
 }
