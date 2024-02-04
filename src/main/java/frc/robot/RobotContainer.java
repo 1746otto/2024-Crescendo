@@ -42,7 +42,7 @@ public class RobotContainer {
  
   //pathplanner testing
 
-  public Command auton1 = drivetrain.getAutoPathWorks("Test2");
+  public Command auton1 = drivetrain.getAutoPath("PathPlanTest");
 
 
   private void configureBindings() {

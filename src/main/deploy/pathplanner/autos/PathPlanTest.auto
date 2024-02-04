@@ -22,12 +22,6 @@
           "data": {
             "name": "drivetrainCommand"
           }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
-          }
         }
       ]
     }

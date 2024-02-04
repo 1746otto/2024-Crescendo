@@ -80,7 +80,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return new PathPlannerAuto(pathName);
     }
     public Command getAutoPathWorks(String pathName) {
-          
+        //seedFieldRelative();
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     }
 
