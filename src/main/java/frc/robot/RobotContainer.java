@@ -43,6 +43,7 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
+    //Don't initialize any commands before this, it breaks named commands 
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       configureBindings();
       
