@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkBase;
@@ -127,6 +128,11 @@ public class IntakeSubsystem extends SubsystemBase {
         return false;
     }
 
+    public void stop() {
+        intakeMotor.set(0);
+        turningMotor.set(0);
+    }
+
     /**
      * COMMANDS
      */
@@ -137,19 +143,26 @@ public class IntakeSubsystem extends SubsystemBase {
      *
      * @return A Command object for intake operation.
      */
-    public Command IntakeCommand() {
-        return run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> objectOnHand())
-                .andThen(() -> intake(IntakeConstants.kItakeStowSpeed));
-    }
+
+    Command IntakeCommand = new StartEndCommand(
+        () -> intake(IntakeConstants.kIntakeSpeed),
+        () -> intake(IntakeConstants.kIntakeStowSpeed)
+    );
 
     /**
      * Creates an InstantCommand for outtake operation.
      *
      * @return An InstantCommand object for outtake operation.
      */
-    public InstantCommand OuttakeCommand() {
+    
+    public InstantCommand runOuttakeMotor() {
         return new InstantCommand(() -> outtake());
     }
+
+    Command OuttakeCommand = new StartEndCommand(
+        () -> runOuttakeMotor(),
+        () -> stop()
+        );
 
     /**
      * Periodic method for updating the turning motor's position based on the
