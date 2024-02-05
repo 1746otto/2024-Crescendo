@@ -39,11 +39,17 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
+  
  
   //pathplanner testing
-
-  public Command auton1 = drivetrain.getAutoPath("PathPlanTest");
-
+  public RobotContainer() {
+      NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+      configureBindings();
+      
+    
+  }
+ 
+ 
 
   private void configureBindings() {
     
@@ -67,13 +73,10 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
-  public RobotContainer() {
-    NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
-    configureBindings();
-    
-  }
+  
 
   public Command getAutonomousCommand() {
+    Command auton1 = drivetrain.getAutoPath("PathPlanTest");
     return auton1;
   }
 }
