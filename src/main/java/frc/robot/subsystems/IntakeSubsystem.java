@@ -171,13 +171,16 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public Command IntakeCommand() {
         return new SequentialCommandGroup(
-            new ParallelDeadlineGroup(run(() -> intake(IntakeConstants.kIntakeSpeed))
-            .until(() -> objectOnHand() == true),
-            runOnce(() -> setRequest(IntakeConstants.kOutPosition))),
             runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
-            run(() -> intake(IntakeConstants.kIntakeStowSpeed))
-            .until(() -> objectOnHand() == false)
+            run(() -> intake(IntakeConstants.kIntakeSpeed))
+            .until(() -> objectOnHand() == true),
+            run(() -> intake(0.0)),
+            runOnce(() -> setRequest(IntakeConstants.kOutPosition))
             );
+    }
+
+    public Command PosConfirmCommand(double pos){
+        return new InstantCommand(() -> isAtReqPosition(pos));
     }
     
 

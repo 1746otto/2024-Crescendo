@@ -19,10 +19,14 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
+import frc.robot.Constants.IntakeConstants;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import java.util.function.BooleanSupplier;
 
 public class RobotContainer {
   private double MaxSpeed = 6; // 6 meters per second desired top speed
@@ -53,18 +57,29 @@ public class RobotContainer {
         ));
 
     // Intake
-    joystick.a().whileTrue(m_intake.ManIntakeCommand());
+    joystick.a().onTrue(new SequentialCommandGroup(
+      m_intake.IntakeCommand()
+      .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
+    new ParallelDeadlineGroup(
+      m_primer.PrimeCommand().until(() -> m_primer.objectPinchedInPrimer()).finallyDo(() -> m_primer.StopCommand()),
+      m_index.IndexCommand().finallyDo(() -> m_index.StopCommand()),
+      m_intake.OuttakeCommand().until(() -> !m_intake.objectOnHand()).finallyDo(() -> m_intake.StopCommand())
+    )
+    ));
+
+    joystick.b().toggleOnTrue(m_intake.IntakeCommand());
+    joystick.b().toggleOnFalse(m_intake.StopCommand());
 
     // Shooting
-    joystick.b().toggleOnTrue((m_shooter.ShootCommand()));
-    joystick.b().toggleOnFalse(m_shooter.StopCommand());
+    // joystick.b().toggleOnTrue((m_shooter.ShootCommand()));
+    // joystick.b().toggleOnFalse(m_shooter.StopCommand());
 
-    //
-    joystick.y().whileTrue(m_index.IndexCommand());
-    joystick.y().whileFalse(m_index.StopCommand());
 
-    joystick.x().onTrue(m_primer.PrimeCommand());
-    joystick.x().onFalse(m_primer.StopCommand());
+    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.ShootCommand().finallyDo(() -> m_shooter.StopCommand()),
+     new SequentialCommandGroup(
+      new WaitCommand(2.0),
+      m_primer.PrimeCommand().finallyDo(() -> m_primer.StopCommand())
+     )));
 
 
     // reset the field-centric heading on left bumper press

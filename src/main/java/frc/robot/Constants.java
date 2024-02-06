@@ -21,7 +21,7 @@ public final class Constants {
     public static final int kIntakeID = 11;
     public static final double kIntakeSpeed = 0.2;
     public static final double kIntakeStowSpeed = 0.1;
-    public static final double kIntakeCurrentLimit = 30;
+    public static final double kIntakeCurrentLimit = 20;
 
     // PID constants
     public static final double kP = 0.1;
@@ -36,7 +36,7 @@ public final class Constants {
   
   public static class IndexerConstants {
     public static final int kIndexerID = 12;
-    public static final double kIndexerSpeed = 0.1;
+    public static final double kIndexerSpeed = 0.2;
   }
 
   public static class ShooterConstants {
@@ -60,5 +60,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 22;
     //Speeds
     public static final double kPrimerRollerSpeed = 0.4;
+    public static final double kPrimerReverseSpeed = -0.1;
+    public static final double kPrimerCurrentLimit = 20;
   }
 }
