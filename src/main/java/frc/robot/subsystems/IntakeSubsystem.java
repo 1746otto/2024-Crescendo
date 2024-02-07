@@ -8,9 +8,12 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
+import com.revrobotics.CANSensor;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.reduxrobotics.sensors.canandcoder.Canandcoder;
 
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.SparkPIDController;
@@ -27,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * presence of an object on the intake.
  */
 public class IntakeSubsystem extends SubsystemBase {
+    Canandcoder CNCoder;
 
     /** Motor controller for turning the intake mechanism. */
     CANSparkMax turningMotor;
@@ -48,14 +52,18 @@ public class IntakeSubsystem extends SubsystemBase {
      * controller.
      */
     public IntakeSubsystem() {
+        CNCoder = new Canandcoder(IntakeConstants.kCanancoderID);
+        CNCoder.setPartyMode(10);
 
         // Initialization of motor controllers and PID controller
         turningMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
+        pidController.setFF(IntakeConstants.kFF);
         pidController.setOutputRange(-.1, .1);
         turningMotor.getEncoder().setPosition(0.0);
+        // pidController.setFeedbackDevice();
 
         // Setting the initial required position to the origin
         reqPosition = IntakeConstants.kOriginPosition;
@@ -204,7 +212,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {    
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Intake Position", getPosition());
-        System.out.println(getPosition());
+        SmartDashboard.putNumber("CCCoder Abs Pos", CNCoder.getAbsPosition());
         intakeToReq(reqPosition);
     }
 }

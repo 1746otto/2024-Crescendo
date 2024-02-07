@@ -26,6 +26,7 @@ public final class Constants {
 
     // PID constants
     public static final double kP = 0.1;
+    public static final double kFF = 0.1;
 
     // Positions
     public static final double kOriginPosition = 0.0;
