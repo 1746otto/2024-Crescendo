@@ -17,6 +17,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class IntakeConstants {
+    public static final int kCanancoderID = 0;
     public static final int kIntakeTurnID = 21;
     public static final int kIntakeID = 11;
     public static final double kIntakeSpeed = 0.2;
