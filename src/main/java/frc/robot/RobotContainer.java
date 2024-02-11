@@ -79,10 +79,10 @@ public class RobotContainer {
   
 
   public Command getAutonomousCommand() {
-    Command auton = drivetrain.getAutoPath("New Auto");
+    Command auton = drivetrain.getAutoPath("5Piece");
     Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
-    return baseAuton1;
+    return auton;
   }
 }

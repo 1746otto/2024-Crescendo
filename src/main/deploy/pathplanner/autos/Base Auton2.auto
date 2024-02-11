@@ -2,44 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.78,
-      "y": 4.49
+      "x": 0.71,
+      "y": 4.54
     },
-    "rotation": -55.0
+    "rotation": -59.49000000000001
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "shootCommand"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Auton2P1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Auton2P2"
+            "pathName": "TestAuton2"
           }
         },
         {

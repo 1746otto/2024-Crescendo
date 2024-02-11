@@ -12,34 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "shootCommand"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Auton3P1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Auton3P2"
+            "pathName": "TestAuton3"
           }
         },
         {

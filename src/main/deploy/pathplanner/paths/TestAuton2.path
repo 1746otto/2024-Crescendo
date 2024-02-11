@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1746100466074212,
-        "y": 4.174865035273137
+        "x": 1.6470426161191307,
+        "y": 3.9779350736314463
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.416187831723392,
-        "y": 4.065699960183331
+        "x": 2.485895437892571,
+        "y": 4.078685020894053
       },
       "prevControl": {
-        "x": 2.4447399261454326,
-        "y": 4.062513227772589
+        "x": 2.5144475323146116,
+        "y": 4.0754982884833115
       },
       "nextControl": {
-        "x": 2.365493451556383,
-        "y": 4.0713580188158325
+        "x": 2.435201057725562,
+        "y": 4.084343079526555
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 4.45051985796062
       },
       "prevControl": {
-        "x": 1.0773411655979133,
-        "y": 4.2288352687109665
+        "x": 1.5584757467184427,
+        "y": 4.043139636420515
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.2,
+      "waypointRelativePos": 0.9,
       "rotationDegrees": 0.3018033944320506,
       "rotateFast": false
     }
@@ -72,7 +72,7 @@
     },
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "sequential",
         "data": {
@@ -81,23 +81,6 @@
               "type": "named",
               "data": {
                 "name": "intakeCommand"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "shootCommand"
               }
             }
           ]
