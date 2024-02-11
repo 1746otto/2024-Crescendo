@@ -83,6 +83,7 @@ public class RobotContainer {
     Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
-    return auton;
+    Command theory = drivetrain.getAutoPath("ThreeSouthSide");
+    return theory;
   }
 }
