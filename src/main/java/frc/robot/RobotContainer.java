@@ -44,6 +44,8 @@ public class RobotContainer {
   //pathplanner testing
   public RobotContainer() {
     //Don't initialize any commands before this, it breaks named commands 
+      NamedCommands.registerCommand("intakeCommand", led.setLedConeCommand());
+      NamedCommands.registerCommand("shootCommand", led.setLedCubeCommand());
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       configureBindings();
       
@@ -77,7 +79,10 @@ public class RobotContainer {
   
 
   public Command getAutonomousCommand() {
-    Command auton1 = drivetrain.getAutoPath("PathPlanTest");
-    return auton1;
+    Command auton = drivetrain.getAutoPath("New Auto");
+    Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
+    Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
+    Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
+    return baseAuton1;
   }
 }

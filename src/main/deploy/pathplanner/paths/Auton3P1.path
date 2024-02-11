@@ -28,12 +28,18 @@
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.03,
-    "maxAcceleration": 3.05,
+    "maxVelocity": 3.03,
+    "maxAcceleration": 1.85,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 360.0
   },
