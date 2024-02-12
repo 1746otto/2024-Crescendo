@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  /** Creates new ShooterSubsystem. */
-  
   /** CANSparkMax motor controller for the top shooting roller with PID control. */
   private CANSparkMax topRollerNeo;
   
@@ -32,9 +30,6 @@ public class ShooterSubsystem extends SubsystemBase {
   
   /** PID controller for the top shooting roller. */
   private SparkPIDController pidController;
-
-  /** Speed settings for various roller movements. */
-  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShooterRollerSpeed;
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
@@ -56,6 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
+    bottomRollerNeo.follow(topRollerNeo);
     //bottomRollerNeo.setInverted(false);
 
     // Initialization of analog input for beam break detection
@@ -68,29 +64,37 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void runShooterRollers(double speed) {
     topRollerNeo.set(speed);
-    bottomRollerNeo.set(speed);
   }
 
   /**
-   * Returns a BooleanSupplier representing the state of the beam break.
+   * Returns a BooleanSupplier representing if the beambreak has been broken or not.
    */
   public BooleanSupplier isBeamBreakBroken() {
     return beamBreakLastState;
   }
 
 
-  
+
 
   /**
-   * Creates a command for shooting based on certain conditions.
+   * Command for running the shooter
+   * @return
    */
-  public Command ShootCommand(){
+  public Command shootCommand(){
     return run(() -> runShooterRollers(ShooterConstants.kShooterRollerSpeed));
   }
-  public Command ReverseCommand(){
+  /**
+   * Command for running the shooter backwards if game piece is sticking out too much.
+   * @return
+   */
+  public Command reverseCommand(){
     return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
   }
-  public Command StopCommand(){
+  /**
+   * Command to stop the shooter.
+   * @return
+   */
+  public Command stopCommand(){
     return run(() -> runShooterRollers(ShooterConstants.kShooterStopSpeed));
   }
 

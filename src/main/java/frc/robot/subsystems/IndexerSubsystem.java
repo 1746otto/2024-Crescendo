@@ -34,6 +34,9 @@ public class IndexerSubsystem extends SubsystemBase{
     public void indexBackwards(){
         indexerMotor.set(-IndexerConstants.kIndexerSpeed);
     }
+
+
+    
     
     /**
      * Command to start running the indexer using startIndexing().

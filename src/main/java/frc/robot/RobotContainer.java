@@ -75,7 +75,7 @@ public class RobotContainer {
     // joystick.b().toggleOnFalse(m_shooter.StopCommand());
 
 
-    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.ShootCommand().finallyDo(() -> m_shooter.StopCommand()),
+    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand().finallyDo(() -> m_shooter.stopCommand()),
      new SequentialCommandGroup(
       new WaitCommand(2.0),
       m_primer.PrimeCommand().finallyDo(() -> m_primer.StopCommand())
