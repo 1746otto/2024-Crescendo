@@ -35,8 +35,11 @@ public class PrimerSubsystem extends SubsystemBase{
   public void returnNote() {
     primerNeo.set(PrimerConstants.kPrimerReverseSpeed);
   }
+  /**
+   * Stops the primer motor
+   */
   public void stopPrimer(){
-    primerNeo.set(0.0);
+    primerNeo.set(PrimerConstants.kPrimerStopSpeed);
   }
 
   /**
@@ -48,12 +51,24 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
 
+  /**
+   * Command to run the primer forwards to move piece into holding space
+   * @return
+   */
   public Command PrimeCommand(){
     return run(() -> primeNote());
   }
+  /**
+   * Command to run the primer backwards if the game piece ends up too far in holding space.
+   * @return
+   */
   public Command ReverseCommand(){
     return run(() -> returnNote());
   }
+  /**
+   * Command to stop the primer from running.
+   * @return
+   */
   public Command StopCommand(){
     return run(() -> stopPrimer());
   }
