@@ -119,11 +119,8 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public boolean isAtReqPosition(double reqPos) {
 
-        if ((getPosition() >= (reqPos - IntakeConstants.kTolerance))
-                && (getPosition() <= (reqPos + IntakeConstants.kTolerance))) {
-            return true;
-        }
-        return false;
+        return ((getPosition() >= (reqPos - IntakeConstants.kTolerance))
+                && (getPosition() <= (reqPos + IntakeConstants.kTolerance)));
     }
 
     /**
