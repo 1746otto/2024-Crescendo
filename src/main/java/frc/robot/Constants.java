@@ -23,6 +23,7 @@ public final class Constants {
     public static final double kIntakeSpeed = 0.2;
     public static final double kIntakeStowSpeed = 0.1;
     public static final double kIntakeCurrentLimit = 20;
+    public static final double kTestingOutputRange = 0.1;
 
     // PID constants
     public static final double kP = 0.1;

@@ -27,39 +27,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * presence of an object on the intake.
  */
 public class IntakeSubsystem extends SubsystemBase {
-    Canandcoder CNCoder;
+    private Canandcoder canNCoder;
 
     /** Motor controller for turning the intake mechanism. */
-    CANSparkMax turningMotor;
+    private CANSparkMax positionMotor;
 
     /** Motor controller for controlling the intake. */
-    CANSparkMax intakeMotor;
+    private CANSparkMax intakeMotor;
 
     /** PID controller for maintaining the turning motor position. */
-    SparkPIDController pidController;
+    private SparkPIDController pidController;
 
     /** Flag indicating whether the intake is outside or not. */
-    boolean outside;
+    private boolean isOutside;
 
-    /** The required position for the turning motor. */
-    double reqPosition;
+    /** The requested position for the turning motor. */
+    private double reqPosition;
 
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
      * controller.
      */
     public IntakeSubsystem() {
-        CNCoder = new Canandcoder(IntakeConstants.kCanancoderID);
-        CNCoder.setPartyMode(10);
+        canNCoder = new Canandcoder(IntakeConstants.kCanancoderID);
 
         // Initialization of motor controllers and PID controller
-        turningMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
+        positionMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
-        pidController = turningMotor.getPIDController();
+        pidController = positionMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
         pidController.setFF(IntakeConstants.kFF);
-        pidController.setOutputRange(-.1, .1);
-        turningMotor.getEncoder().setPosition(0.0);
+        pidController.setOutputRange(-IntakeConstants.kTestingOutputRange, IntakeConstants.kTestingOutputRange);
+        positionMotor.getEncoder().setPosition(0.0);
         // pidController.setFeedbackDevice();
 
         // Setting the initial required position to the origin
@@ -107,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return The current position of the turning motor.
      */
     public double getPosition() {
-        return turningMotor.getEncoder().getPosition();
+        return positionMotor.getEncoder().getPosition();
     }
 
     /**
@@ -209,7 +208,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {    
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Intake Position", getPosition());
-        SmartDashboard.putNumber("CCCoder Abs Pos", CNCoder.getAbsPosition());
+        SmartDashboard.putNumber("CCCoder Abs Pos", canNCoder.getAbsPosition());
         intakeToReq(reqPosition);
     }
 }

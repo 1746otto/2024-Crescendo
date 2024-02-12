@@ -62,7 +62,7 @@ public class RobotContainer {
       .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
     new ParallelDeadlineGroup(
       m_primer.PrimeCommand().until(() -> m_primer.objectPinchedInPrimer()).finallyDo(() -> m_primer.StopCommand()),
-      m_index.IndexCommand().finallyDo(() -> m_index.StopCommand()),
+      m_index.indexCommand().finallyDo(() -> m_index.stopCommand()),
       m_intake.OuttakeCommand().until(() -> !m_intake.objectOnHand()).finallyDo(() -> m_intake.StopCommand())
     )
     ));
