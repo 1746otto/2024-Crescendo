@@ -32,7 +32,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     private SendableBuilder driveTrainBuilder;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    public NetworkTable driveTrainBuild = inst.getTable("testFr");
+public NetworkTable driveTrainBuild = inst.getTable("testFr");
 
     private final DoublePublisher frontLeftAngle = driveTrainBuild.getDoubleTopic("frontLeftAngle").publish();
     private final DoublePublisher frontLeftVelocity = driveTrainBuild.getDoubleTopic("frontLeftVelocity").publish();
@@ -47,6 +47,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private final DoublePublisher backRightVelocity = driveTrainBuild.getDoubleTopic("backRightVelocity").publish();
 
     private final DoublePublisher robotAngle = driveTrainBuild.getDoubleTopic("robotAngle").publish();
+
+    // private DoubleSupplier FRONTLEFTTANGLE;
+    // private double idk;
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
@@ -63,7 +66,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             driveTrainBuilder.setSmartDashboardType("SwerveDrive");
 
             
-            driveTrainBuilder.addDoubleProperty("frontLeftAngle", (DoubleSupplier) frontLeftAngle, null);
+            driveTrainBuilder.addDoubleProperty("Front Left Angle", null, frontLeftAngle);
             driveTrainBuilder.addDoubleProperty("Front Left Velocity", (DoubleSupplier) frontLeftVelocity, null);
 
             driveTrainBuilder.addDoubleProperty("Front Right Angle", (DoubleSupplier) frontRightAngle, null);
@@ -76,10 +79,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             driveTrainBuilder.addDoubleProperty("Back Right Velocity", (DoubleSupplier) backRightVelocity, null);
 
             driveTrainBuilder.addDoubleProperty("Robot Angle", (DoubleSupplier) robotAngle, null);
-            frontLeftAngle.set(1);
     }
     });
     }
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         if (Utils.isSimulation()) {
@@ -95,7 +98,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             driveTrainBuilder.setSmartDashboardType("SwerveDrive");
 
             
-            driveTrainBuilder.addDoubleProperty("frontLeftAngle", (DoubleSupplier) frontLeftAngle, null);
+            driveTrainBuilder.addDoubleProperty("Front Left Angle", null, frontLeftAngle);
             driveTrainBuilder.addDoubleProperty("Front Left Velocity", (DoubleSupplier) frontLeftVelocity, null);
 
             driveTrainBuilder.addDoubleProperty("Front Right Angle", (DoubleSupplier) frontRightAngle, null);
@@ -108,7 +111,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             driveTrainBuilder.addDoubleProperty("Back Right Velocity", (DoubleSupplier) backRightVelocity, null);
 
             driveTrainBuilder.addDoubleProperty("Robot Angle", (DoubleSupplier) robotAngle, null);
-            frontLeftAngle.set(1);
     }
     });
     }
@@ -136,7 +138,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     public void periodic() {
         driveTrainBuilder.update();
         
-        System.out.println(edu.wpi.first.math.MathUtil.inputModulus(getState().ModuleStates[0].angle.getDegrees(), -180, 180));
+        System.out.println(MathUtil.inputModulus(getState().ModuleStates[0].angle.getDegrees(), -180, 180));
         frontLeftVelocity.set(getState().ModuleStates[0].speedMetersPerSecond / (2 * 40));
     
         frontRightAngle.set(getState().ModuleStates[1].angle.getDegrees());
@@ -149,5 +151,47 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         backRightVelocity.set(getState().ModuleStates[3].speedMetersPerSecond / (2 * 40));
 
         robotAngle.set(getPigeon2().getRotation2d().getDegrees());
+
+       // FRONTLEFTTANGLE = () -> getState().ModuleStates[0].angle.getDegrees();
+        //idk = MathUtil.inputModulus(getState().ModuleStates[0].angle.getDegrees(), -180, 180);
+
+        //System.out.println(idk);
+
+    //     SmartDashboard.putData("Swerve Drive", new Sendable() {
+    //     @Override
+    //     public void initSendable(SendableBuilder builder) {
+    //         driveTrainBuilder = builder;
+
+
+
+    //         driveTrainBuilder.setSmartDashboardType("SwerveDrive");
+
+            
+    //         driveTrainBuilder.addDoubleProperty("frontLeftAngle", () -> getState().ModuleStates[0].angle.getDegrees(), null);
+    //         driveTrainBuilder.addDoubleProperty("Front Left Velocity", (DoubleSupplier) frontLeftVelocity, null);
+
+    //         driveTrainBuilder.addDoubleProperty("Front Right Angle", (DoubleSupplier) frontRightAngle, null);
+    //         driveTrainBuilder.addDoubleProperty("Front Right Velocity", (DoubleSupplier) frontRightVelocity, null);
+
+    //         driveTrainBuilder.addDoubleProperty("Back Left Angle", (DoubleSupplier) backLeftAngle, null);
+    //         driveTrainBuilder.addDoubleProperty("Back Left Velocity", (DoubleSupplier) backLeftVelocity, null);
+
+    //         driveTrainBuilder.addDoubleProperty("Back Right Angle", (DoubleSupplier) backRightAngle, null);
+    //         driveTrainBuilder.addDoubleProperty("Back Right Velocity", (DoubleSupplier) backRightVelocity, null);
+
+    //         driveTrainBuilder.addDoubleProperty("Robot Angle", (DoubleSupplier) robotAngle, null);
+    //         frontLeftAngle.set(1);
+    // }
+    // });
     }
+
+    // private double getFrontLeftAngle()
+    // {
+    //     return getState().ModuleStates[0].angle.getDegrees();
+    // }
+
+    // private double test(){
+    //     System.out.println(getState().ModuleStates[0].angle.getDegrees());
+    //     return 2.0;
+    // }
 }
