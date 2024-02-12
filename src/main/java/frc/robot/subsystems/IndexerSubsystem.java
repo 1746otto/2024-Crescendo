@@ -8,32 +8,46 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerSubsystem extends SubsystemBase{
-    CANSparkMax indexerMotor;
+    private CANSparkMax indexerMotor;
     public IndexerSubsystem(){
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
         indexerMotor.setInverted(true);
     }
 
-    public void index(){
+    /**
+     * Indexer is set to run at the value of kIndexerSpeed.
+     */
+    public void startIndexing(){
         indexerMotor.set(IndexerConstants.kIndexerSpeed);
     }
 
-    public void stop(){
+    /**
+     * Indexer is set to stop running.
+     */
+    public void stopIndexing(){
         indexerMotor.set(0);
     }
-    public void forward(){
-        indexerMotor.set(.2);
-    }
 
-    public void backward(){
-        indexerMotor.set(-.2);
+    /**
+     * Indexer run back at the value of kIndexerSpeed.
+     */
+    public void indexBackwards(){
+        indexerMotor.set(-IndexerConstants.kIndexerSpeed);
     }
     
-    public Command IndexCommand(){
-        return new InstantCommand(() -> index());
+    /**
+     * Command to start running the indexer using startIndexing().
+     * @return
+     */
+    public Command indexCommand(){
+        return runOnce(() -> startIndexing());
     }
 
-    public Command StopCommand(){
-        return new InstantCommand(() -> stop());
+    /**
+     * Command to stop the indexer using stopIndexing().
+     * @return
+     */
+    public Command stopCommand(){
+        return runOnce(() -> stopIndexing());
     }
 }
