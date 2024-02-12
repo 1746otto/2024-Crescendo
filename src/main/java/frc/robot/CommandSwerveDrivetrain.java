@@ -32,6 +32,12 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     private SendableBuilder driveTrainBuilder;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+//     DoubleSupplier frontLeftVelocityDS = () -> getState().ModuleStates[0].speedMetersPerSecond / (2 * 40);
+
+//     DoubleSupplier frontRightAngleDS = () -> getState().ModuleStates[1].angle.getDegrees();
+// DoubleSupplier frontRightVelocityDS = () -> getState().ModuleStates[1].speedMetersPerSecond / (2 * 40);
+
 public NetworkTable driveTrainBuild = inst.getTable("testFr");
 
     private final DoublePublisher frontLeftAngle = driveTrainBuild.getDoubleTopic("frontLeftAngle").publish();
@@ -47,6 +53,16 @@ public NetworkTable driveTrainBuild = inst.getTable("testFr");
     private final DoublePublisher backRightVelocity = driveTrainBuild.getDoubleTopic("backRightVelocity").publish();
 
     private final DoublePublisher robotAngle = driveTrainBuild.getDoubleTopic("robotAngle").publish();
+
+
+
+    // backLeftAngle.set(getState().ModuleStates[2].angle.getDegrees());
+    // backLeftVelocity.set(getState().ModuleStates[2].speedMetersPerSecond / (2 * 40));
+
+    // backRightAngle.set(getState().ModuleStates[3].angle.getDegrees());
+    // backRightVelocity.set(getState().ModuleStates[3].speedMetersPerSecond / (2 * 40));
+
+    // robotAngle.set(getPigeon2().getRotation2d().getDegrees());
 
     // private DoubleSupplier FRONTLEFTTANGLE;
     // private double idk;
@@ -69,8 +85,8 @@ public NetworkTable driveTrainBuild = inst.getTable("testFr");
             driveTrainBuilder.addDoubleProperty("Front Left Angle", null, frontLeftAngle);
             driveTrainBuilder.addDoubleProperty("Front Left Velocity", (DoubleSupplier) frontLeftVelocity, null);
 
-            driveTrainBuilder.addDoubleProperty("Front Right Angle", (DoubleSupplier) frontRightAngle, null);
-            driveTrainBuilder.addDoubleProperty("Front Right Velocity", (DoubleSupplier) frontRightVelocity, null);
+            // driveTrainBuilder.addDoubleProperty("Front Right Angle", frontRightAngleDS, null);
+            // driveTrainBuilder.addDoubleProperty("Front Right Velocity", frontRightVelocityDS, frontRightVelocity);
 
             driveTrainBuilder.addDoubleProperty("Back Left Angle", (DoubleSupplier) backLeftAngle, null);
             driveTrainBuilder.addDoubleProperty("Back Left Velocity", (DoubleSupplier) backLeftVelocity, null);
@@ -97,12 +113,12 @@ public NetworkTable driveTrainBuild = inst.getTable("testFr");
 
             driveTrainBuilder.setSmartDashboardType("SwerveDrive");
 
-            
+
             driveTrainBuilder.addDoubleProperty("Front Left Angle", null, frontLeftAngle);
             driveTrainBuilder.addDoubleProperty("Front Left Velocity", (DoubleSupplier) frontLeftVelocity, null);
 
-            driveTrainBuilder.addDoubleProperty("Front Right Angle", (DoubleSupplier) frontRightAngle, null);
-            driveTrainBuilder.addDoubleProperty("Front Right Velocity", (DoubleSupplier) frontRightVelocity, null);
+            // driveTrainBuilder.addDoubleProperty("Front Right Angle", frontRightAngleDS, null);
+            // driveTrainBuilder.addDoubleProperty("Front Right Velocity", frontRightVelocityDS, frontRightVelocity);
 
             driveTrainBuilder.addDoubleProperty("Back Left Angle", (DoubleSupplier) backLeftAngle, null);
             driveTrainBuilder.addDoubleProperty("Back Left Velocity", (DoubleSupplier) backLeftVelocity, null);
@@ -138,7 +154,8 @@ public NetworkTable driveTrainBuild = inst.getTable("testFr");
     public void periodic() {
         driveTrainBuilder.update();
         
-        System.out.println(MathUtil.inputModulus(getState().ModuleStates[0].angle.getDegrees(), -180, 180));
+    //  System.out.println(frontRightAngleDS.getAsDouble());
+        
         frontLeftVelocity.set(getState().ModuleStates[0].speedMetersPerSecond / (2 * 40));
     
         frontRightAngle.set(getState().ModuleStates[1].angle.getDegrees());
