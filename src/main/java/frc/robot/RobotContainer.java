@@ -66,7 +66,7 @@ public class RobotContainer {
       m_intake.intakeWCurrSensingCommand()
       .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
     new ParallelDeadlineGroup(
-      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()).andThen(() -> m_primer.StopCommand()),
+      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()),
       m_index.indexCommand(),
       m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
     )
@@ -88,7 +88,7 @@ public class RobotContainer {
 
 
 
-    
+
 
 
     // reset the field-centric heading on left bumper press
