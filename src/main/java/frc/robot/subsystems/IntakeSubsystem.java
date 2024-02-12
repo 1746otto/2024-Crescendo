@@ -58,7 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
         pidController.setP(IntakeConstants.kP);
         pidController.setFF(IntakeConstants.kFF);
         pidController.setOutputRange(-IntakeConstants.kTestingOutputRange, IntakeConstants.kTestingOutputRange);
-        positionMotor.getEncoder().setPosition(0.0);
+        positionMotor.getEncoder().setPosition(IntakeConstants.kOriginPosition);
         // pidController.setFeedbackDevice();
 
         // Setting the initial required position to the origin
@@ -83,38 +83,38 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the target position for the turning motor using PID control.
+     * Position motor runs to the current requested position, using PID control.
      *
-     * @param req The target position for the turning motor.
+     * @param req The requested position for the position motor.
      */
-    public void intakeToReq(double req) {
+    public void runToRequest(double req) {
         pidController.setReference(req, ControlType.kPosition);
     }
 
     /**
-     * Sets the required position for the turning motor.
+     * Requested a position for the position motor to go.
      *
-     * @param req The required position for the turning motor.
+     * @param req The requested position for the position motor.
      */
     public void setRequest(double req) {
         reqPosition = req;
     }
 
     /**
-     * Gets the current position of the turning motor.
+     * Gets the current position of the position motor.
      *
-     * @return The current position of the turning motor.
+     * @return The current position of the position motor.
      */
     public double getPosition() {
         return positionMotor.getEncoder().getPosition();
     }
 
     /**
-     * Checks if the turning motor is at the required position within a specified
+     * Checks if the position motor is at the requested position within a specified
      * tolerance.
      *
-     * @param reqPos The required position to check against.
-     * @return True if the turning motor is at the required position; false
+     * @param reqPos The requested position to check against.
+     * @return True if the position motor is at the requested position; false
      *         otherwise.
      */
     public boolean isAtReqPosition(double reqPos) {
@@ -132,36 +132,12 @@ public class IntakeSubsystem extends SubsystemBase {
      *
      * @return True if an object is detected on the intake; false otherwise.
      */
-    public boolean objectOnHand() {
-        if (intakeMotor.getOutputCurrent() >= IntakeConstants.kIntakeCurrentLimit) {
-            return true;
-        }
-        return false;
+    public boolean isObjectOnHand() {
+        return (intakeMotor.getOutputCurrent() >= IntakeConstants.kIntakeCurrentLimit);
     }
 
-    public Command basicIntake()
-    {
-        return run(() -> intake(IntakeConstants.kIntakeSpeed));
-    }
-    public Command ManualIntakeCommand(){
-        return new SequentialCommandGroup(
-            runOnce(() -> setRequest(IntakeConstants.kOutPosition)),
-            run(() -> intake(IntakeConstants.kIntakeSpeed))
-            );
-    }
-    public Command ReturnToOrigin(){
-        return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
-    }
-    public Command ManIntakeCommand(){
-        return new StartEndCommand(() -> 
-        {setRequest(IntakeConstants.kOriginPosition);
-        intake(IntakeConstants.kIntakeSpeed);}
-        , () -> 
-        {setRequest(IntakeConstants.kOutPosition);
-        intake(0.0);}, 
-        this);
-    }
-    
+
+
 
     /**
      * COMMANDS
@@ -173,31 +149,54 @@ public class IntakeSubsystem extends SubsystemBase {
      *
      * @return A Command object for intake operation.
      */
-    public Command IntakeCommand() {
+    public Command intakeWCurrSensingCommand() {
         return new SequentialCommandGroup(
             runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
             run(() -> intake(IntakeConstants.kIntakeSpeed))
-            .until(() -> objectOnHand() == true),
-            run(() -> intake(0.0)),
+            .until(() -> isObjectOnHand()),
+            run(() -> intake(IntakeConstants.kIntakeStopSpeed)),
             runOnce(() -> setRequest(IntakeConstants.kOutPosition))
             );
     }
 
-    public Command PosConfirmCommand(double pos){
-        return new InstantCommand(() -> isAtReqPosition(pos));
+    /**
+     * Creates a command for intake operation until command is told to stop and then moves to stow position.
+     * @return
+     */
+    public Command basicIntakeCommand(){
+        return new StartEndCommand(() -> 
+        {setRequest(IntakeConstants.kOriginPosition);
+        intake(IntakeConstants.kIntakeSpeed);}
+        , () -> 
+        {setRequest(IntakeConstants.kOutPosition);
+        intake(IntakeConstants.kIntakeStopSpeed);}, 
+        this);
+    }
+
+    /**
+     * Command to request position motor to head to the origin position
+     * @return
+     */
+    public Command requestOriginPosCommand(){
+        return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
     }
     
 
     /**
-     * Creates an InstantCommand for outtake operation.
+     * Command to run the intake motor backwards.
      *
-     * @return An InstantCommand object for outtake operation.
+     * @return
      */
-    public InstantCommand OuttakeCommand() {
-        return new InstantCommand(() -> outtake());
+    public Command outtakeCommand() {
+        return run(() -> outtake());
     }
-    public Command StopCommand(){
-        return run(() -> intake(0.0));
+
+    /**
+     * COmmand to stop the intake motor.
+     * @return
+     */
+    public Command stopIntakingCommand(){
+        return run(() -> intake(IntakeConstants.kIntakeStopSpeed));
     }
 
     /**
@@ -209,6 +208,6 @@ public class IntakeSubsystem extends SubsystemBase {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Intake Position", getPosition());
         SmartDashboard.putNumber("CCCoder Abs Pos", canNCoder.getAbsPosition());
-        intakeToReq(reqPosition);
+        runToRequest(reqPosition);
     }
 }

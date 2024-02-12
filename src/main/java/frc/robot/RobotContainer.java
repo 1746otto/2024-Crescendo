@@ -58,17 +58,17 @@ public class RobotContainer {
 
     // Intake
     joystick.a().onTrue(new SequentialCommandGroup(
-      m_intake.IntakeCommand()
+      m_intake.intakeWCurrSensingCommand()
       .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
     new ParallelDeadlineGroup(
-      m_primer.PrimeCommand().until(() -> m_primer.objectPinchedInPrimer()).finallyDo(() -> m_primer.StopCommand()),
+      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()).finallyDo(() -> m_primer.StopCommand()),
       m_index.indexCommand().finallyDo(() -> m_index.stopCommand()),
-      m_intake.OuttakeCommand().until(() -> !m_intake.objectOnHand()).finallyDo(() -> m_intake.StopCommand())
+      m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).finallyDo(() -> m_intake.stopIntakingCommand())
     )
     ));
 
-    joystick.b().toggleOnTrue(m_intake.IntakeCommand());
-    joystick.b().toggleOnFalse(m_intake.StopCommand());
+    joystick.b().toggleOnTrue(m_intake.intakeWCurrSensingCommand());
+    joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
 
     // Shooting
     // joystick.b().toggleOnTrue((m_shooter.ShootCommand()));

@@ -22,6 +22,7 @@ public final class Constants {
     public static final int kIntakeID = 11;
     public static final double kIntakeSpeed = 0.2;
     public static final double kIntakeStowSpeed = 0.1;
+    public static final double kIntakeStopSpeed = 0.0;
     public static final double kIntakeCurrentLimit = 20;
     public static final double kTestingOutputRange = 0.1;
 
@@ -45,6 +46,7 @@ public final class Constants {
   public static class ShooterConstants {
     // speed constants
     public static final double kShooterRollerSpeed = 1;
+    public static final double kShooterStopSpeed = 0.0;
 
     // device IDs 
     public static final int kShooterTopRollerMotorID = 31;
@@ -64,6 +66,7 @@ public final class Constants {
     //Speeds
     public static final double kPrimerRollerSpeed = 0.4;
     public static final double kPrimerReverseSpeed = -0.1;
+    public static final double kPrimerStopSpeed = 0.0;
     public static final double kPrimerCurrentLimit = 20;
   }
 }

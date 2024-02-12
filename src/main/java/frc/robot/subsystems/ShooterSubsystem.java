@@ -78,13 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return beamBreakLastState;
   }
 
-  /**
-   * Stops all motor movements.
-   */
-  public void stop() {
-    topRollerNeo.set(0);
-    bottomRollerNeo.set(0);
-  }
+
+  
 
   /**
    * Creates a command for shooting based on certain conditions.
@@ -96,7 +91,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
   }
   public Command StopCommand(){
-    return run(() -> runShooterRollers(0.0));
+    return run(() -> runShooterRollers(ShooterConstants.kShooterStopSpeed));
   }
 
   /**
