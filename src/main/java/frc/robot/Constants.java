@@ -13,9 +13,16 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  /**
+   * Constants to initialize controller inputs.
+   */
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  /**
+   * Constants for IntakeSubsytem.
+   * IDs, speeds, current limits, output range, positions, position tolerance, and PID values are included
+   */
   public static class IntakeConstants {
     public static final int kCanancoderID = 0;
     public static final int kIntakeTurnID = 21;
@@ -38,11 +45,19 @@ public final class Constants {
     public static final double kTolerance = 5;
   }
   
+  /**
+   * Constants for the IndexerSubsystem.
+   * IDs and speeds are included.
+   */
   public static class IndexerConstants {
     public static final int kIndexerID = 12;
     public static final double kIndexerSpeed = 0.2;
   }
 
+  /**
+   * Constants for the ShooterSubsystem.
+   * IDs, speeds, and PID values are included.
+   */
   public static class ShooterConstants {
     // speed constants
     public static final double kShooterRollerSpeed = 1;
@@ -60,6 +75,10 @@ public final class Constants {
 
   }
   
+  /**
+   * Constants for the PrimerSubsystem.
+   * IDs, speeds, and current limits are included.
+   */
   public static class PrimerConstants {
     // IDs
     public static final int kPrimerRollerMotorID = 22;

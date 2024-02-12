@@ -29,12 +29,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.BooleanSupplier;
 
 public class RobotContainer {
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  // SUBSYSTEMS
   private IntakeSubsystem m_intake = new IntakeSubsystem();
   private IndexerSubsystem m_index = new IndexerSubsystem();
   private ShooterSubsystem m_shooter = new ShooterSubsystem();
   private PrimerSubsystem m_primer = new PrimerSubsystem();
+
+  private double MaxSpeed = 6; // 6 meters per second desired top speed
+  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -56,30 +58,33 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
-    // Intake
+
+
+
+    // Intake to primer
     joystick.a().onTrue(new SequentialCommandGroup(
       m_intake.intakeWCurrSensingCommand()
       .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
     new ParallelDeadlineGroup(
-      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()).finallyDo(() -> m_primer.StopCommand()),
-      m_index.indexCommand().finallyDo(() -> m_index.stopCommand()),
-      m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).finallyDo(() -> m_intake.stopIntakingCommand())
+      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()).andThen(() -> m_primer.StopCommand()),
+      m_index.indexCommand(),
+      m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
     )
     ));
+    joystick.a().onFalse(m_index.stopCommand());
 
+    // Basic Intaking with current sensing
     joystick.b().toggleOnTrue(m_intake.intakeWCurrSensingCommand());
     joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
 
+
     // Shooting
-    // joystick.b().toggleOnTrue((m_shooter.ShootCommand()));
-    // joystick.b().toggleOnFalse(m_shooter.StopCommand());
-
-
-    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand().finallyDo(() -> m_shooter.stopCommand()),
+    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
      new SequentialCommandGroup(
       new WaitCommand(2.0),
-      m_primer.PrimeCommand().finallyDo(() -> m_primer.StopCommand())
-     )));
+      m_primer.PrimeCommand()))
+     );
+    joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
 
 
     // reset the field-centric heading on left bumper press

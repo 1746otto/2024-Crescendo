@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
-
+/**
+ * Class for PrimerSubsystem to move game pieces from indexer to a holding space near the shooter.
+ */
 public class PrimerSubsystem extends SubsystemBase{
     /** CANSparkMax motor controller for the priming roller. */
     private CANSparkMax primerNeo;

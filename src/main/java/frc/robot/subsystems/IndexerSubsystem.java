@@ -7,8 +7,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.IndexerConstants;
 
+/**
+ * Class for IndexerSubsytem to take game pieces from the intake and move them to the primer.
+ */
 public class IndexerSubsystem extends SubsystemBase{
     private CANSparkMax indexerMotor;
+    /**
+     * Initialize the motor controller to invertly run the indexer.
+     */
     public IndexerSubsystem(){
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
         indexerMotor.setInverted(true);
@@ -36,7 +42,7 @@ public class IndexerSubsystem extends SubsystemBase{
     }
 
 
-    
+
     
     /**
      * Command to start running the indexer using startIndexing().

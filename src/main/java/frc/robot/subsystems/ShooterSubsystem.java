@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
+/**
+ * Class for ShooterSubystem to propel game pieces from holding space into scoring stations.
+ */
 public class ShooterSubsystem extends SubsystemBase {
   /** CANSparkMax motor controller for the top shooting roller with PID control. */
   private CANSparkMax topRollerNeo;
