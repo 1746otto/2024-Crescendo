@@ -203,8 +203,8 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {    
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("Intake Position", getPosition());
-        SmartDashboard.putNumber("CCCoder Abs Pos", canNCoder.getAbsPosition());
+        SmartDashboard.putNumber(IntakeConstants.kIntakePosLabel, getPosition());
+        SmartDashboard.putNumber(IntakeConstants.kIntakeCanNCoderAbsPosLabel, canNCoder.getAbsPosition());
         runToRequest(reqPosition);
     }
 }

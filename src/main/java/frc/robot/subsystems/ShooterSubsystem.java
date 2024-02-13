@@ -43,7 +43,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
-    //topRollerNeo.setInverted(true);
     
 
     // Setting PID values for the top shooting roller
@@ -55,7 +54,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo.follow(topRollerNeo);
-    //bottomRollerNeo.setInverted(false);
 
     // Initialization of analog input for beam break detection
     beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
@@ -73,7 +71,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Returns a BooleanSupplier representing if the beambreak has been broken or not.
    */
   public BooleanSupplier isBeamBreakBroken() {
-    return beamBreakLastState;
+    return () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
 
@@ -105,7 +103,6 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
 }

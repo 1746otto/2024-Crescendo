@@ -43,6 +43,10 @@ public final class Constants {
 
     // tolerance
     public static final double kTolerance = 5;
+
+    // SmartDashboard Labels
+    public static final String kIntakePosLabel = "Intake Position";
+    public static final String kIntakeCanNCoderAbsPosLabel = "Canancoder Absolute Position";
   }
   
   /**
