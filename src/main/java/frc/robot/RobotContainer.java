@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -15,10 +17,18 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
+import frc.robot.subsystems.ExampleSubsystem;
 
 public class RobotContainer {
+  public final SendableChooser<Command> m_numberChooser = new SendableChooser<>();
+  public final SendableChooser<Command> m_locationChooser = new SendableChooser<>();
+  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -56,6 +66,18 @@ public class RobotContainer {
   }
 
   public RobotContainer() {
+    // m_locationChooser.setDefaultOption("Score only",  "1");
+    // m_chooser.addOption("Score only2", Autos.exampleAuto(m_exampleSubsystem));
+    // SmartDashboard.putData("Auton Selector: ", m_chooser);
+    Shuffleboard.getTab("Auton")
+   .add("NumGamePieces", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 1, "max", 1)) // specify widget properties here
+   .getEntry();
+   //Shuffleboard.getTab("Auton").add("NumGamePieces").withWidget(BuiltInWidgets.k);
+
+    
+    
     configureBindings();
   }
 
