@@ -24,14 +24,20 @@ public final class Constants {
    * IDs, speeds, current limits, output range, positions, position tolerance, and PID values are included
    */
   public static class IntakeConstants {
+    // IDs
     public static final int kCanancoderID = 0;
     public static final int kIntakeTurnID = 21;
     public static final int kIntakeID = 11;
+    // Speeds
     public static final double kIntakeSpeed = 0.2;
+    public static final double kIntakeRevSpeed = -0.2;
     public static final double kIntakeStowSpeed = 0.1;
     public static final double kIntakeStopSpeed = 0.0;
+    // Current limit
     public static final double kIntakeCurrentLimit = 20;
-    public static final double kTestingOutputRange = 0.1;
+    // Output ranges
+    public static final double kTestingOutputMax = 0.1;
+    public static final double kTestingOutputMin = -0.1;
 
     // PID constants
     public static final double kP = 0.1;
@@ -56,6 +62,10 @@ public final class Constants {
   public static class IndexerConstants {
     public static final int kIndexerID = 12;
     public static final double kIndexerSpeed = 0.2;
+    public static final double kIndexerRevSpeed = -kIndexerSpeed;
+    public static final double kIndexerStopSpeed = 0.0;
+    // Constant that sets motor inverted
+    public static final boolean kMotorInvert = true;
   }
 
   /**
@@ -86,10 +96,16 @@ public final class Constants {
   public static class PrimerConstants {
     // IDs
     public static final int kPrimerRollerMotorID = 22;
+    public static final int kPrimerSlotID = 0;
     //Speeds
     public static final double kPrimerRollerSpeed = 0.4;
     public static final double kPrimerReverseSpeed = -0.1;
     public static final double kPrimerStopSpeed = 0.0;
     public static final double kPrimerCurrentLimit = 20;
+    public static final double kPrimerPlaceholderSpeed = 0.2;
+    // PID values
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kFF = 0.0;
   }
 }

@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,9 +26,6 @@ public class ShooterSubsystem extends SubsystemBase {
   
   /** CANSparkMax motor controller for the bottom shooting roller (follows top roller). */
   private CANSparkMax bottomRollerNeo;
-  
-  /** Analog input for detecting beam breaks. */
-  private AnalogInput beamBreak;
   
   /** PID controller for the top shooting roller. */
   private SparkPIDController pidController;
@@ -53,11 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo.follow(topRollerNeo);
-
-    // Initialization of analog input for beam break detection
-    beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
-
+    bottomRollerNeo.follow(topRollerNeo);    
   }
 
   /**
@@ -65,13 +57,6 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void runShooterRollers(double speed) {
     topRollerNeo.set(speed);
-  }
-
-  /**
-   * Returns a BooleanSupplier representing if the beambreak has been broken or not.
-   */
-  public BooleanSupplier isBeamBreakBroken() {
-    return () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
 

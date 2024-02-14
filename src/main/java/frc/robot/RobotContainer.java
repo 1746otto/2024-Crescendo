@@ -20,7 +20,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.IntakeConstants;
-
+import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -63,10 +63,10 @@ public class RobotContainer {
 
     // Intake to primer
     joystick.a().onTrue(new SequentialCommandGroup(
-      m_intake.intakeWCurrSensingCommand()
+      m_intake.intakeWithCurrentSensingCommand()
       .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
     new ParallelDeadlineGroup(
-      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()),
+      m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed).until(() -> m_primer.isObjectPinchedInPrimer()),
       m_index.indexCommand(),
       m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
     )
@@ -74,7 +74,7 @@ public class RobotContainer {
     joystick.a().onFalse(m_index.stopCommand());
 
     // Basic Intaking with current sensing
-    joystick.b().toggleOnTrue(m_intake.intakeWCurrSensingCommand());
+    joystick.b().toggleOnTrue(m_intake.intakeWithCurrentSensingCommand());
     joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
 
 
@@ -82,7 +82,7 @@ public class RobotContainer {
     joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
      new SequentialCommandGroup(
       new WaitCommand(2.0),
-      m_primer.PrimeCommand()))
+      m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
      );
     joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
 

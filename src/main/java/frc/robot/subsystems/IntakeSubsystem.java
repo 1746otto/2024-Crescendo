@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * presence of an object on the intake.
  */
 public class IntakeSubsystem extends SubsystemBase {
-    private Canandcoder canNCoder;
 
     /** Motor controller for turning the intake mechanism. */
     private CANSparkMax positionMotor;
@@ -49,15 +48,13 @@ public class IntakeSubsystem extends SubsystemBase {
      * controller.
      */
     public IntakeSubsystem() {
-        canNCoder = new Canandcoder(IntakeConstants.kCanancoderID);
-
         // Initialization of motor controllers and PID controller
         positionMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         pidController = positionMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
         pidController.setFF(IntakeConstants.kFF);
-        pidController.setOutputRange(-IntakeConstants.kTestingOutputRange, IntakeConstants.kTestingOutputRange);
+        pidController.setOutputRange(IntakeConstants.kTestingOutputMin, IntakeConstants.kTestingOutputMax);
         positionMotor.getEncoder().setPosition(IntakeConstants.kOriginPosition);
         // pidController.setFeedbackDevice();
 
@@ -75,12 +72,6 @@ public class IntakeSubsystem extends SubsystemBase {
             intakeMotor.set(speed);
     }
 
-    /**
-     * Sets the intake motor speed for outtake operation.
-     */
-    public void outtake() {
-        intakeMotor.set(-IntakeConstants.kIntakeSpeed);
-    }
 
     /**
      * Position motor runs to the current requested position, using PID control.
@@ -146,35 +137,36 @@ public class IntakeSubsystem extends SubsystemBase {
      *
      * @return A Command object for intake operation.
      */
-    public Command intakeWCurrSensingCommand() {
+    public Command intakeWithCurrentSensingCommand() {
         return new SequentialCommandGroup(
-            runOnce(() -> setRequest(IntakeConstants.kOriginPosition)),
-            run(() -> intake(IntakeConstants.kIntakeSpeed))
-            .until(() -> isObjectOnHand()),
+            setRequestPositionToOriginCommand(),
+            run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> isObjectOnHand()),
             run(() -> intake(IntakeConstants.kIntakeStopSpeed)),
             runOnce(() -> setRequest(IntakeConstants.kOutPosition))
-            );
+        );
     }
 
     /**
      * Creates a command for intake operation until command is told to stop and then moves to stow position.
      * @return
      */
-    public Command basicIntakeCommand(){
-        return new StartEndCommand(() -> 
-        {setRequest(IntakeConstants.kOriginPosition);
-        intake(IntakeConstants.kIntakeSpeed);}
-        , () -> 
-        {setRequest(IntakeConstants.kOutPosition);
-        intake(IntakeConstants.kIntakeStopSpeed);}, 
-        this);
+    public Command basicIntakeCommand() {
+        return new StartEndCommand(() -> {
+            setRequest(IntakeConstants.kOriginPosition);
+            intake(IntakeConstants.kIntakeSpeed);
+            }
+            , () -> {
+            setRequest(IntakeConstants.kOutPosition);
+            intake(IntakeConstants.kIntakeStopSpeed);
+            }, 
+            this);
     }
 
     /**
      * Command to request position motor to head to the origin position
      * @return
      */
-    public Command requestOriginPosCommand(){
+    public Command setRequestPositionToOriginCommand(){
         return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
     }
     
@@ -185,7 +177,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return
      */
     public Command outtakeCommand() {
-        return run(() -> outtake());
+        return run(() -> intake(IntakeConstants.kIntakeRevSpeed));
     }
 
     /**
@@ -204,7 +196,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {    
         // This method will be called once per scheduler run
         SmartDashboard.putNumber(IntakeConstants.kIntakePosLabel, getPosition());
-        SmartDashboard.putNumber(IntakeConstants.kIntakeCanNCoderAbsPosLabel, canNCoder.getAbsPosition());
         runToRequest(reqPosition);
     }
 }

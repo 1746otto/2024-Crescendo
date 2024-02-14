@@ -10,35 +10,35 @@ import frc.robot.Constants.IndexerConstants;
 /**
  * Class for IndexerSubsytem to take game pieces from the intake and move them to the primer.
  */
-public class IndexerSubsystem extends SubsystemBase{
+public class IndexerSubsystem extends SubsystemBase {
     private CANSparkMax indexerMotor;
     /**
      * Initialize the motor controller to invertly run the indexer.
      */
-    public IndexerSubsystem(){
+    public IndexerSubsystem() {
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
-        indexerMotor.setInverted(true);
+        indexerMotor.setInverted(IndexerConstants.kMotorInvert);
     }
 
     /**
      * Indexer is set to run at the value of kIndexerSpeed.
      */
-    public void startIndexing(){
+    public void startIndexing() {
         indexerMotor.set(IndexerConstants.kIndexerSpeed);
     }
 
     /**
      * Indexer is set to stop running.
      */
-    public void stopIndexing(){
-        indexerMotor.set(0);
+    public void stopIndexing() {
+        indexerMotor.set(IndexerConstants.kIndexerStopSpeed);
     }
 
     /**
      * Indexer run back at the value of kIndexerSpeed.
      */
-    public void indexBackwards(){
-        indexerMotor.set(-IndexerConstants.kIndexerSpeed);
+    public void indexBackwards() {
+        indexerMotor.set(IndexerConstants.kIndexerRevSpeed);
     }
 
 
@@ -46,17 +46,17 @@ public class IndexerSubsystem extends SubsystemBase{
     
     /**
      * Command to start running the indexer using startIndexing().
-     * @return
+     * @return A command that starts runs the indexer
      */
-    public Command indexCommand(){
+    public Command indexCommand() {
         return runOnce(() -> startIndexing());
     }
 
     /**
      * Command to stop the indexer using stopIndexing().
-     * @return
+     * @return A command to stop the indexer
      */
-    public Command stopCommand(){
+    public Command stopCommand() {
         return runOnce(() -> stopIndexing());
     }
 }
