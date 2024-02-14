@@ -66,21 +66,21 @@ public class ShooterSubsystem extends SubsystemBase {
    * Command for running the shooter
    * @return
    */
-  public Command shootCommand(){
+  public Command shootCommand() {
     return run(() -> runShooterRollers(ShooterConstants.kShooterRollerSpeed));
   }
   /**
    * Command for running the shooter backwards if game piece is sticking out too much.
    * @return
    */
-  public Command reverseCommand(){
+  public Command reverseCommand() {
     return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
   }
   /**
    * Command to stop the shooter.
    * @return
    */
-  public Command stopCommand(){
+  public Command stopCommand() {
     return run(() -> runShooterRollers(ShooterConstants.kShooterStopSpeed));
   }
 

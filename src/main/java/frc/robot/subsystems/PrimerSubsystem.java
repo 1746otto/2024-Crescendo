@@ -34,7 +34,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /**
    * Creates a new PrimerSubsystem with initialized motor controller.
    */
-  public PrimerSubsystem(){
+  public PrimerSubsystem() {
     primerNeo = new CANSparkMax(PrimerConstants.kPrimerRollerMotorID, MotorType.kBrushless);
     // Initialization of analog input for beam break detection
     beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
@@ -60,7 +60,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /**
    * Stops the primer motor
    */
-  public void stopPrimer(){
+  public void stopPrimer() {
     primerNeo.set(PrimerConstants.kPrimerStopSpeed);
   }
 
@@ -68,7 +68,7 @@ public class PrimerSubsystem extends SubsystemBase{
    * Checks if the game piece is pinched into the primer at a certain point.
    * @return true or false if game piece is held well in primer.
    */
-  public boolean isObjectPinchedInPrimer(){
+  public boolean isObjectPinchedInPrimer() {
     return (primerNeo.getOutputCurrent() >= PrimerConstants.kPrimerCurrentLimit);
   }
 
@@ -80,7 +80,7 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   /** Returns the velocity of the motor */
-  public double getVelocity(){
+  public double getVelocity() {
     return pidController.getSmartMotionMaxVelocity(PrimerConstants.kPrimerSlotID);
   }
 
@@ -91,21 +91,21 @@ public class PrimerSubsystem extends SubsystemBase{
    * Command to run the primer forwards at a certain speed to move piece into holding space
    * @return
    */
-  public Command PrimeCommand(double rpm){
+  public Command PrimeCommand(double rpm) {
     return run(() -> primeNote(rpm));
   }
   /**
    * Command to run the primer backwards if the game piece ends up too far in holding space.
    * @return
    */
-  public Command ReverseCommand(){
+  public Command ReverseCommand() {
     return run(this::returnNote);
   }
   /**
    * Command to stop the primer from running.
    * @return
    */
-  public Command StopCommand(){
+  public Command StopCommand() {
     return run(this::stopPrimer);
   }
 }

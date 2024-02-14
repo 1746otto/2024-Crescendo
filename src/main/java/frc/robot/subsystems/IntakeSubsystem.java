@@ -166,7 +166,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Command to request position motor to head to the origin position
      * @return
      */
-    public Command setRequestPositionToOriginCommand(){
+    public Command setRequestPositionToOriginCommand() {
         return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
     }
     
@@ -184,7 +184,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * COmmand to stop the intake motor.
      * @return
      */
-    public Command stopIntakingCommand(){
+    public Command stopIntakingCommand() {
         return run(() -> intake(IntakeConstants.kIntakeStopSpeed));
     }
 
