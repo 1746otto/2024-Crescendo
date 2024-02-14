@@ -3,9 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 
 public class ArmRollerSubsystem extends SubsystemBase{
     private CANSparkMax motor;
@@ -14,7 +14,8 @@ public class ArmRollerSubsystem extends SubsystemBase{
     }
 
     public void intake(){
-        motor.set(0.4);
+        motor.set(0);
+       
     }
     public void outtake(){
         motor.set(-0.4);
