@@ -46,13 +46,12 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       encoder.getPosition();
       m_pidController = master.getPIDController();
 
-      
       master.getPIDController().setFeedbackDevice(encoder);
     }
     public void setRequest(double position) {
         m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
     }
-    public boolean atRequest(double position){
+    public boolean atRequest(double position) {
         targetPose = position;
         return (Math.abs(encoder.getPosition() - position) < tolerance);
     }
@@ -62,11 +61,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void stop() {
         master.set(0);
     }
-    public Command runPivot(double position){
+    public Command runPivot(double position) {
         return new RunCommand(() -> setRequest(position)).until(() -> atRequest(position));
     }
-    public Command runPivot(){
-        return new RunCommand(() -> setRequest(ampPos)).until(() -> atRequest(ampPos));
+    public Command goToAmpPose(){
+        return runPivot(ampPos);
     }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
