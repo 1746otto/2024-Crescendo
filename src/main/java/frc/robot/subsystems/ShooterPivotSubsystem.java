@@ -13,6 +13,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
@@ -44,9 +45,8 @@ public class ShooterPivotSubsystem {
         m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
     
     }
- 
-    public Command runPivot(){
-        return new InstantCommand(() -> setRequest(Math.PI));
+    public Command runPivot(double position){
+        return new RunCommand(() -> setRequest(position));
     }
 
     

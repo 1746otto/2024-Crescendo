@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ArmRollerSubsystem;
 import frc.robot.subsystems.LEDSubsystemtest;
+import frc.robot.subsystems.ShooterPivotSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = 6; // 6 meters per second desired top speed
@@ -30,6 +31,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
+  private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -45,6 +47,8 @@ public class RobotContainer {
   public RobotContainer() {
     //Don't initialize any commands before this, it breaks named commands 
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+      NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
+
       configureBindings();
       
     
