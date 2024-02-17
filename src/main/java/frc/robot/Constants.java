@@ -107,5 +107,18 @@ public final class Constants {
     public static final double kP = 0.1;
     public static final double kI = 0.0;
     public static final double kFF = 0.0;
+  }//Should go away for final competition code
+  public static class LEDConstants {
+  public static final int PWMPortLeft = 0;
+  public static final int LEDLength = 135;
+  public static final int coneHValue = 18;
+  public static final int coneSValue = 255;
+  public static final int coneVValue = 130;
+  public static final int cubeHValue = 134;
+  public static final int cubeSValue = 255;
+  public static final int cubeVValue = 130;
   }
 }
+
+
+
