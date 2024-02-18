@@ -50,6 +50,8 @@ public class Vision {
                     tempPose = field.getTagPose(target.getFiducialId()).get()
                         .transformBy(target.getBestCameraToTarget().inverse())
                         .transformBy(VisionConstants.camera1Transform.inverse());
+                    SmartDashboard.putString("posenormal", tempPose.toString());
+                    SmartDashboard.putString("posebackwards", tempPose.toString());
                     if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                         while (continueLoop == true) {
                             // Rohan wouldn't let me use for loop :(
