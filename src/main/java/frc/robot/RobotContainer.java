@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.LEDSubsystemtest;
+import frc.robot.subsystems.ShooterPivotSubsystem;
 
 public class RobotContainer {
   // SUBSYSTEMS
@@ -43,6 +44,7 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final Vision vision = new Vision(drivetrain);
   private final LEDSubsystemtest led = new LEDSubsystemtest();
+  private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -59,6 +61,7 @@ public class RobotContainer {
 
     //Don't initialize any commands before this, it breaks named commands 
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+      NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
 
       // Just make sure this doesn't get optimized away.
       vision.toString();
