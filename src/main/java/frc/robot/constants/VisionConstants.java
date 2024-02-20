@@ -1,11 +1,10 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
@@ -23,6 +22,6 @@ public class VisionConstants {
         new Transform3d(new Pose3d(), new Pose3d(0.5, 0, 0.5, new Rotation3d())), 
         new Transform3d(new Pose3d(), new Pose3d(-0.5, 0, 0.5, new Rotation3d()))
     }; // TODO: Get the actual transforms for the cameras.
-    public static final Matrix<N3, N1> kVisionStdDeviations = VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these values for our robot.
+    public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these values for our robot.
     
 }
