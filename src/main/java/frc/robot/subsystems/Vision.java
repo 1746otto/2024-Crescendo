@@ -46,7 +46,7 @@ public class Vision {
             while (true) {
                 getResult();
                 
-                filterMethod1();
+                filter1();
             }
         });
     }
@@ -78,7 +78,7 @@ public class Vision {
      * - <EXPERIMENTAL> Perpendicularity: If the angle between the the camera plane and
      *   the tag plane is too small to filter out with the angular filter.
      */
-    public void filterMethod1() {
+    public void filter1() {
 
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
@@ -149,7 +149,7 @@ public class Vision {
      * - <EXPERIMENTAL> Angular: The robot angle from and tag and gyro are compared.
      *   If the vision angle is out of tolerance it is discarded.
      */
-    private void filterMethod2() {
+    private void filter2() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
@@ -224,7 +224,7 @@ public class Vision {
      *   Pros: Works regardless of angle relative to the tag.
      *   Cons: Ineffective if the tag and the camera have similar elevations.
      */
-    private void filterMethod3() {
+    private void filter3() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
@@ -298,7 +298,7 @@ public class Vision {
      * - Ambiguity: Tags with greater that 0.2 pose ambiguity are rejected.
      *   The best pose transform is always used. No alternates are considered.
      */
-    private void filterMethod4() {
+    private void filter4() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
