@@ -11,6 +11,7 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -55,7 +56,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       m_pidController = master.getPIDController();
 
       master.getPIDController().setFeedbackDevice(encoder);
-      double max = encoder.getPosition() + limit;
+      double max = encoder.getPosition() + limit;//Might need to be changed to be through sparkmax
       double min = encoder.getPosition() - limit;
       
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
@@ -64,8 +65,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public void setRequest(double position) {
-        targetPose = position;
-        m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
+        m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
     }
     public boolean atRequest(double position) {
         return (Math.abs(encoder.getPosition() - position) < tolerance);
@@ -95,6 +95,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
         m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
+        m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
+        
     }    
 }
     
