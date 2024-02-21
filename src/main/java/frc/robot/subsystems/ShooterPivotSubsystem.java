@@ -11,7 +11,9 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -24,16 +26,23 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 
 public class ShooterPivotSubsystem extends SubsystemBase{
-    SparkPIDController m_pidController;
-    SparkAbsoluteEncoder encoder;
+    private SparkPIDController m_pidController;
+    private SparkAbsoluteEncoder encoder;
 
-    CANSparkMax master;
-    CANSparkMax slave;
-
-    //Poses
+    private CANSparkMax master;
+    private CANSparkMax slave;
+  
+    //Poses and tolerances
     public static double ampPos = 40;//to change
-    double tolerance = 5;
-    double targetPose;
+    public static double tolerance = 5;//To change
+    private double targetPose;
+    private double limit = 5.52380952383 / ( 2 * Math.PI);
+    private static double kDt = 0.02;
+
+    private final TrapezoidProfile m_profile =
+      new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
+    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
+    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
     public ShooterPivotSubsystem(){
       master = new CANSparkMax(0,MotorType.kBrushless);
@@ -43,27 +52,37 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       encoder = master.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
       encoder.setAverageDepth(8); //To change 
-      encoder.getPosition();
       m_pidController = master.getPIDController();
 
       master.getPIDController().setFeedbackDevice(encoder);
+      double max = encoder.getPosition() + limit;
+      double min = encoder.getPosition() - limit;
+      
+      master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
+      master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
+      
     }
+
     public void setRequest(double position) {
-        m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
+        m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
     }
     public boolean atRequest(double position) {
         targetPose = position;
         return (Math.abs(encoder.getPosition() - position) < tolerance);
     }
+
     public double getTargetPose(){
         return targetPose;
     }
+
     public void stop() {
         master.set(0);
     }
+
     public Command runPivot(double position) {
         return new RunCommand(() -> setRequest(position)).until(() -> atRequest(position));
     }
+
     public Command goToAmpPose(){
         return runPivot(ampPos);
     }
@@ -74,6 +93,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
+        m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
     }    
 }
     
