@@ -34,7 +34,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
   
     //Poses and tolerances
     public static double ampPos = 40;//to change
-    public static double tolerance = 5;//To change
+    public static double tolerance = 0.3;//To change
     private double targetPose;
     private double limit = 5.52380952383 / ( 2 * Math.PI);
     private static double kDt = 0.02;
@@ -64,10 +64,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public void setRequest(double position) {
+        targetPose = position;
         m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
     }
     public boolean atRequest(double position) {
-        targetPose = position;
         return (Math.abs(encoder.getPosition() - position) < tolerance);
     }
 
@@ -86,6 +86,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToAmpPose(){
         return runPivot(ampPos);
     }
+    
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
