@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
@@ -51,6 +53,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // Initialization of motor controllers and PID controller
         positionMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
+        intakeMotor.setInverted(IntakeConstants.kIntakeState);
         pidController = positionMotor.getPIDController();
         pidController.setP(IntakeConstants.kP);
         pidController.setFF(IntakeConstants.kFF);
@@ -139,10 +142,10 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public Command intakeWithCurrentSensingCommand() {
         return new SequentialCommandGroup(
-            setRequestPositionToOriginCommand(),
+            setRequestPositionToGroundCommand(),
             run(() -> intake(IntakeConstants.kIntakeSpeed)).until(() -> isObjectOnHand()),
-            run(() -> intake(IntakeConstants.kIntakeStopSpeed)),
-            runOnce(() -> setRequest(IntakeConstants.kOutPosition))
+            runOnce(() -> intake(IntakeConstants.kIntakeStopSpeed)),
+            runOnce(() -> setRequest(IntakeConstants.kOriginPosition))
         );
     }
 
@@ -152,22 +155,25 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public Command basicIntakeCommand() {
         return new StartEndCommand(() -> {
-            setRequest(IntakeConstants.kOriginPosition);
+            setRequest(IntakeConstants.kOutakePosition);
             intake(IntakeConstants.kIntakeSpeed);
             }
             , () -> {
-            setRequest(IntakeConstants.kOutPosition);
+            setRequest(IntakeConstants.kOriginPosition);
             intake(IntakeConstants.kIntakeStopSpeed);
             }, 
             this);
+    }
+    public Command basicTest() {
+        return run(() -> setRequest(IntakeConstants.kOutakePosition)).finallyDo(() -> setRequest(IntakeConstants.kOriginPosition));
     }
 
     /**
      * Command to request position motor to head to the origin position
      * @return
      */
-    public Command setRequestPositionToOriginCommand() {
-        return runOnce(() -> setRequest(IntakeConstants.kOriginPosition));
+    public Command setRequestPositionToGroundCommand() {
+        return runOnce(() -> setRequest(IntakeConstants.kOutakePosition));
     }
     
 
@@ -177,7 +183,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return
      */
     public Command outtakeCommand() {
-        return run(() -> intake(IntakeConstants.kIntakeRevSpeed));
+        return runOnce(() -> intake(IntakeConstants.kIntakeRevSpeed));
     }
 
     /**
@@ -185,7 +191,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return
      */
     public Command stopIntakingCommand() {
-        return run(() -> intake(IntakeConstants.kIntakeStopSpeed));
+        return runOnce(() -> intake(IntakeConstants.kIntakeStopSpeed));
     }
 
     /**
@@ -196,6 +202,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {    
         // This method will be called once per scheduler run
         SmartDashboard.putNumber(IntakeConstants.kIntakePosLabel, getPosition());
+        SmartDashboard.putNumber("Intake current", intakeMotor.getOutputCurrent());
         runToRequest(reqPosition);
     }
 }

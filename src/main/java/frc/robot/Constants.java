@@ -29,23 +29,24 @@ public final class Constants {
     public static final int kIntakeTurnID = 21;
     public static final int kIntakeID = 11;
     // Speeds
-    public static final double kIntakeSpeed = 0.2;
-    public static final double kIntakeRevSpeed = -0.2;
+    public static final double kIntakeSpeed = 0.8;
+    public static final double kIntakeRevSpeed = -0.6;
     public static final double kIntakeStowSpeed = 0.1;
     public static final double kIntakeStopSpeed = 0.0;
+    public static final boolean kIntakeState = true;
     // Current limit
-    public static final double kIntakeCurrentLimit = 20;
+    public static final double kIntakeCurrentLimit = 50;
     // Output ranges
     public static final double kTestingOutputMax = 0.1;
     public static final double kTestingOutputMin = -0.1;
 
     // PID constants
-    public static final double kP = 0.1;
+    public static final double kP = 0.2;
     public static final double kFF = 0.1;
 
     // Positions
-    public static final double kOriginPosition = 0.0;
-    public static final double kOutPosition = 21.92;
+    public static final double kOutakePosition = 17;
+    public static final double kOriginPosition = 0;
 
     // tolerance
     public static final double kTolerance = 5;
