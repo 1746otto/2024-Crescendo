@@ -1,7 +1,5 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -50,17 +48,6 @@ public class Telemetry {
     /* Keep a reference of the last pose to calculate the speeds */
     private Pose2d m_lastPose = new Pose2d();
     private double lastTime = Utils.getCurrentTimeSeconds();
-
-    SwerveModuleState[] states = new SwerveModuleState[] {
-        new SwerveModuleState(),
-        new SwerveModuleState(),
-        new SwerveModuleState(),
-        new SwerveModuleState()
-    };
-
-    // WPILib
-    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-        .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
     /* Mechanisms to represent the swerve module states */
     private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
@@ -113,8 +100,6 @@ public class Telemetry {
         velocityY.set(velocities.getY());
         odomPeriod.set(state.OdometryPeriod);
 
-        Logger.recordOutput("MyStates", states);
-
         /* Telemeterize the module's states */
         for (int i = 0; i < 4; ++i) {
             m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
@@ -124,8 +109,7 @@ public class Telemetry {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
     }
-    public void periodic() {
-        publisher.set(states);
-    }
+      
+      
     
 }

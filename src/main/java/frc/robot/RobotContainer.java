@@ -30,10 +30,10 @@ import java.util.function.BooleanSupplier;
 
 public class RobotContainer {
   // SUBSYSTEMS
-  private IntakeSubsystem m_intake = new IntakeSubsystem();
-  private IndexerSubsystem m_index = new IndexerSubsystem();
-  private ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private PrimerSubsystem m_primer = new PrimerSubsystem();
+  // private IntakeSubsystem m_intake = new IntakeSubsystem();
+  // private IndexerSubsystem m_index = new IndexerSubsystem();
+  // private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  // private PrimerSubsystem m_primer = new PrimerSubsystem();
 
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
@@ -62,29 +62,29 @@ public class RobotContainer {
 
 
     // Intake to primer
-    joystick.a().onTrue(new SequentialCommandGroup(
-      m_intake.intakeWCurrSensingCommand()
-      .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
-    new ParallelDeadlineGroup(
-      m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()),
-      m_index.indexCommand(),
-      m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
-    )
-    ));
-    joystick.a().onFalse(m_index.stopCommand());
+    // joystick.a().onTrue(new SequentialCommandGroup(
+    //   m_intake.intakeWCurrSensingCommand()
+    //   .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
+    // new ParallelDeadlineGroup(
+    //   m_primer.PrimeCommand().until(() -> m_primer.isObjectPinchedInPrimer()),
+    //   m_index.indexCommand(),
+    //   m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
+    // )
+    // ));
+    // joystick.a().onFalse(m_index.stopCommand());
 
-    // Basic Intaking with current sensing
-    joystick.b().toggleOnTrue(m_intake.intakeWCurrSensingCommand());
-    joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
+    // // Basic Intaking with current sensing
+    // joystick.b().toggleOnTrue(m_intake.intakeWCurrSensingCommand());
+    // joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
 
 
-    // Shooting
-    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
-     new SequentialCommandGroup(
-      new WaitCommand(2.0),
-      m_primer.PrimeCommand()))
-     );
-    joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
+    // // Shooting
+    // joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
+    //  new SequentialCommandGroup(
+    //   new WaitCommand(2.0),
+    //   m_primer.PrimeCommand()))
+    //  );
+    // joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
 
 
 
