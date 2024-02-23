@@ -51,7 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public IntakeSubsystem() {
         // Initialization of motor controllers and PID controller
-        positionMotor = new CANSparkMax(IntakeConstants.kIntakeTurnID, MotorType.kBrushless);
+        positionMotor = new CANSparkMax(IntakeConstants.kIntakeWristID, MotorType.kBrushless);
         intakeMotor = new CANSparkMax(IntakeConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(IntakeConstants.kIntakeState);
         pidController = positionMotor.getPIDController();
