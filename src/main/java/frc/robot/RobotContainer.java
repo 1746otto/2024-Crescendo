@@ -16,13 +16,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-  private IntakeSubsystem m_intake = new IntakeSubsystem();
+  private IntakeRollerSubsystem m_intake = new IntakeRollerSubsystem();
   private IndexerSubsystem m_index = new IndexerSubsystem();
   private ShooterSubsystem m_shooter = new ShooterSubsystem();
 

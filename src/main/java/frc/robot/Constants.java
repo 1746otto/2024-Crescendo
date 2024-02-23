@@ -16,13 +16,18 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
-  public static class IntakeConstants {
-    public static final int kIntakeTurnID = 21;
+
+  public static class IntakeRollerConstants
+  {
     public static final int kIntakeID = 11;
     public static final double kIntakeSpeed = 0.2;
     public static final double kItakeStowSpeed = 0.1;
     public static final double kIntakeCurrentLimit = 30;
+  }
 
+  public static class IntakeWristConstants
+  {
+    public static final int kIntakeTurnID = 21;
     // PID constants
     public static final double kP = 0.1;
 
@@ -32,6 +37,7 @@ public final class Constants {
 
     // tolerance
     public static final double kTolerance = 5;
+
   }
   
   public static class IndexerConstants {
