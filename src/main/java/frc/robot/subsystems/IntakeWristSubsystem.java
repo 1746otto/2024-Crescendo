@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
@@ -92,10 +93,16 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * Periodic method for updating the turning motor's position based on the
      * required position.
      */
+
+    public Command runWrist() {
+        return new StartEndCommand(() -> setRequest(IntakeWristConstants.kOutPosition), 
+        () -> setRequest(IntakeWristConstants.kOriginPosition), 
+        this);
+    }
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         System.out.println(getPosition());
-        intakeToReq(reqPosition);
+        //intakeToReq(reqPosition);
     }
 }

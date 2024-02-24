@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -61,6 +62,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         intakeMotor.set(-IntakeRollerConstants.kIntakeSpeed);
     }
 
+    public void stopIntake() {
+        intakeMotor.set(0);
+    }
+
     /**
      * Checks if an object is detected on the intake based on the current output
      * current.
@@ -78,6 +83,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     {
         return run(() -> intake(IntakeRollerConstants.kIntakeSpeed));
     }
+
+    public Command intakeWithCurrenSensing() {
+        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed)).until(() -> objectOnHand());
+    }
     
 
     /**
@@ -89,6 +98,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      *
      * @return An InstantCommand object for outtake operation.
      */
+    public Command runRollerCommand() {
+        //replace with currentSensing when that works
+        return new StartEndCommand(() -> basicIntake(), () -> stopIntake(), this);
+        
+    }
     public InstantCommand OuttakeCommand() {
         return new InstantCommand(() -> outtake());
     }
