@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.24,
-      "y": 1.87
+      "x": 1.21,
+      "y": 2.58
     },
-    "rotation": 0
+    "rotation": -75.01999999999998
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tune path"
+            "pathName": "Auton3"
           }
         }
       ]

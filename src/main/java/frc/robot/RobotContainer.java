@@ -37,9 +37,9 @@ import frc.robot.subsystems.LEDSubsystemtest;
 public class RobotContainer {
   // SUBSYSTEMS
   private IntakeSubsystem m_intake = new IntakeSubsystem();
-  private IndexerSubsystem m_index = new IndexerSubsystem();
-  private ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private PrimerSubsystem m_primer = new PrimerSubsystem();
+  //private IndexerSubsystem m_index = new IndexerSubsystem();
+  //private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  //private PrimerSubsystem m_primer = new PrimerSubsystem();
 
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
@@ -47,7 +47,7 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  private final LEDSubsystemtest led = new LEDSubsystemtest();
+  //private final LEDSubsystemtest led = new LEDSubsystemtest();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -62,6 +62,12 @@ public class RobotContainer {
   //pathplanner testing
   public RobotContainer() {
     //Don't initialize any commands before this, it breaks named commands 
+      NamedCommands.registerCommand("intakeCommand", new SequentialCommandGroup(
+      m_intake.intakeWithCurrentSensingCommand()
+      .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOriginPosition)),
+      m_intake.outtakeCommand().withTimeout(2.5).until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
+    ));
+      //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       configureBindings();
       
@@ -85,27 +91,31 @@ public class RobotContainer {
     // Intake to primer
     joystick.a().onTrue(new SequentialCommandGroup(
       m_intake.intakeWithCurrentSensingCommand()
-      .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOutPosition)),
+      .until(() -> m_intake.isAtReqPosition(IntakeConstants.kOriginPosition)),
     new ParallelDeadlineGroup(
-      m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed).until(() -> m_primer.isObjectPinchedInPrimer()),
-      m_index.indexCommand(),
+      //m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed).until(() -> m_primer.isObjectPinchedInPrimer()),
+      //m_index.indexCommand(),
       m_intake.outtakeCommand().until(() -> !m_intake.isObjectOnHand()).andThen(() -> m_intake.stopIntakingCommand())
-    )
-    ));
-    joystick.a().onFalse(m_index.stopCommand());
+    
+    )));
+    //joystick.a().onFalse(m_index.stopCommand());
 
-    // Basic Intaking with current sensing
-    joystick.b().toggleOnTrue(m_intake.intakeWithCurrentSensingCommand());
-    joystick.b().toggleOnFalse(m_intake.stopIntakingCommand());
+    // Basic Intaking with current sensing to test
+    // joystick.b().toggleOnTrue(m_intake.basicIntakeCommand());
+    // joystick.x().toggleOnTrue(m_intake.outtakeCommand());
+    // joystick.x().toggleOnFalse(m_intake.stopIntakingCommand());
+
+
+
 
 
     // Shooting
-    joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
-     new SequentialCommandGroup(
-      new WaitCommand(2.0),
-      m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
-     );
-    joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
+    // joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
+    //  new SequentialCommandGroup(
+    //   new WaitCommand(2.0),
+    //   m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
+    //  );
+    // joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
 
 
 
@@ -124,7 +134,11 @@ public class RobotContainer {
   
 
   public Command getAutonomousCommand() {
-    Command auton1 = drivetrain.getAutoPath("PathPlanTest");
-    return auton1;
+    Command auton = drivetrain.getAutoPath("5Piece");
+    Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
+    Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
+    Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
+    Command theory = drivetrain.getAutoPath("ThreeSouthSide");
+    return theory;
   }
 }

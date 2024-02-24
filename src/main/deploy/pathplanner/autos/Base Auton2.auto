@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.24,
-      "y": 1.87
+      "x": 0.71,
+      "y": 4.54
     },
-    "rotation": 0
+    "rotation": -59.49000000000001
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tune path"
+            "pathName": "TestAuton2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCommand"
           }
         }
       ]
