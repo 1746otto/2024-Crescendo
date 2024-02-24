@@ -16,22 +16,52 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
-  public static class IntakeConstants {
-    public static final int kSparkBaseID = 2;
-    public static final int kIntakeTurnID = 0;
-    public static final int kIntakeID = 1;
+
+  public static class IntakeRollerConstants
+  {
+    public static final int kIntakeID = 11;
     public static final double kIntakeSpeed = 0.2;
     public static final double kIntakeStowSpeed = 0.1;
     public static final double kIntakeCurrentLimit = 30;
+  }
 
+  public static class IntakeWristConstants
+  {
+    public static final int kIntakeTurnID = 21;
     // PID constants
     public static final double kP = 0.1;
 
     // Positions
     public static final double kOriginPosition = 0.0;
-    public static final double kOutPosition = 20.0;
+    public static final double kOutPosition = -5.0;
 
     // tolerance
     public static final double kTolerance = 5;
+
+  }
+  
+  public static class IndexerConstants {
+    public static final int kIndexerID = 22;
+    public static final double kIndexerSpeed = 0.2;
+  }
+
+  public static class ShooterConstants {
+    // speed constants
+    public static final double kTopShootingRollerSpeed = 1.0;
+    public static final double kBottomShootingRollerSpeed = 1.0;
+    public static final double kIndexingRollerSpeed = 1.0;
+    public static final double kPrimingRollerSpeed = 1.0;
+
+    // device IDs 
+    public static final int kShootingTopRollerMotorID = 31;
+    public static final int kShootingBottomRollerMotorID = 32;
+    public static final int kPrimingRollerMotorID = 12;
+    public static final int kShooterAnalogInputChannel = 0;
+
+    // PID constants (top shooting roller)
+    public static final double topRollerKP = 0.1;
+    public static final double topRollerKI = 0;
+    public static final double topRollerKD = 0;
+
   }
 }
