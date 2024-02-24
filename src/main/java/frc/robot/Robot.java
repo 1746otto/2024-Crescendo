@@ -31,9 +31,9 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
   
-  // float[] states = {
-  //   SwerveDrivetrain.SwerveDriveState.getModule(0).speedMetersPerSecond
-  // };
+  SwerveModuleState[] states = m_robotContainer.getModuleArray();
+
+
 
   // modulestate = {
   //   m_moduleSpeeds[0], m_moduleDirections[0],
@@ -76,7 +76,7 @@ public class Robot extends LoggedRobot {
 
   
   // WPILib
-  //StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", states.struct).publish();
+  StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
   
   @Override
@@ -86,7 +86,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
-      //Logger.recordOutput("MyStates", states);
+      Logger.recordOutput("MyStates", states);
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start();} // Start logging! No more data receivers, replay sources, or metadata values may be added.
@@ -95,8 +95,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    //publisher.set(states);
-    //Logger.recordOutput("MyStates", states); 
+    publisher.set(states);
+    Logger.recordOutput("MyStates", states); 
   }
 
   @Override
