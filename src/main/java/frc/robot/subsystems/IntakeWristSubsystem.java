@@ -95,7 +95,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      */
 
     public Command runWrist() {
-        return new StartEndCommand(() -> setRequest(IntakeWristConstants.kOutPosition), 
+        return new StartEndCommand(() -> setRequest(IntakeWristConstants.kOutakePosition), 
         () -> setRequest(IntakeWristConstants.kOriginPosition), 
         this);
     }
