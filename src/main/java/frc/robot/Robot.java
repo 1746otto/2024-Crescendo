@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import java.util.;
+import java.util.*;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -24,21 +24,32 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
   
-  float[] modulestate;
-  modulestate = new float[8];
+  // float[] states = {
+  //   SwerveDrivetrain.SwerveDriveState.getModule(0).speedMetersPerSecond
+  // };
 
-    [
-    m_moduleSpeeds[0], m_moduleDirections[0],
-    m_moduleSpeeds[1], m_moduleDirections[1],
-    m_moduleSpeeds[2], m_moduleDirections[2],
-    m_moduleSpeeds[3], m_moduleDirections[3]
-    ];
+  // modulestate = {
+  //   m_moduleSpeeds[0], m_moduleDirections[0],
+  //   m_moduleSpeeds[1], m_moduleDirections[1],
+  //   m_moduleSpeeds[2], m_moduleDirections[2],
+  //   m_moduleSpeeds[3], m_moduleDirections[3]
+  // };
+
+  // modulestate[0] = m_moduleSpeeds[0];
+  // modulestate[1] = m_moduleDirections[0];
+  // modulestate[2] = m_moduleSpeeds[1];
+  // modulestate[3] = m_moduleDirections[1];
+  // modulestate[4] = m_moduleSpeeds[2];
+  // modulestate[5] = m_moduleDirections[2];
+  // modulestate[6] = m_moduleSpeeds[3];
+  // modulestate[7] = m_moduleDirections[3];
 
   private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
         new Mechanism2d(1, 1),
@@ -65,7 +76,7 @@ public class Robot extends LoggedRobot {
 
   
   // WPILib
-  StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", states.struct).publish();
+  //StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", states.struct).publish();
 
   
   @Override
@@ -75,7 +86,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
-      Logger.recordOutput("MyStates", states);
+      //Logger.recordOutput("MyStates", states);
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start();} // Start logging! No more data receivers, replay sources, or metadata values may be added.
@@ -84,8 +95,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    publisher.set(states);
-    Logger.recordOutput("MyStates", states); 
+    //publisher.set(states);
+    //Logger.recordOutput("MyStates", states); 
   }
 
   @Override
