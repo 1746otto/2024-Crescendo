@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -88,10 +89,8 @@ public class RobotContainer {
 
     //joystick.a().onFalse(m_index.stopCommand());
 
-    // Basic Intaking with current sensing to test
-    // joystick.b().toggleOnTrue(m_intake.basicIntakeCommand());
-    // joystick.x().toggleOnTrue(m_intake.outtakeCommand());
-    // joystick.x().toggleOnFalse(m_intake.stopIntakingCommand());
+    // Basic Intaking/Shooting to test
+    // joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
 
 
 

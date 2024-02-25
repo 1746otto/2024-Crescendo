@@ -41,6 +41,9 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
     }
 
+    public void testIntake() {
+        turningMotor.set(0.1);
+    }
     /**
      * Sets the target position for the turning motor using PID control.
      *
