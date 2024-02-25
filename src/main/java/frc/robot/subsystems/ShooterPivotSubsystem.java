@@ -63,6 +63,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
       
     }
+    public void testShooter() {
+        master.set(0.1);
+    }
 
     public void setRequest(double position) {
         m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
