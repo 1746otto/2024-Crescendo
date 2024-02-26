@@ -91,12 +91,7 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
     //Testing intake, primer, and shooter
-    joystick.a().whileTrue(new ParallelCommandGroup(m_intakeWristSubsystem.runWrist(),m_intakeRollers.runRollerCommand()));
-    joystick.a().whileFalse(m_intakeRollers.runStopCommand());
-    joystick.b().whileTrue(m_primer.ForwardCommand());
-    joystick.b().whileFalse(m_primer.StopCommand());
-    joystick.x().whileTrue(m_shooter.shootCommand());
-    joystick.x().whileFalse(m_shooter.stopCommand());
+    joystick.y().
 
 
 

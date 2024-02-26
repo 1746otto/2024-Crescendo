@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterWristConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -88,6 +89,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public Command goToAmpPose(){
         return runPivot(ampPos);
+    }
+
+    public Command runToNormalPos() {
+        return runPivot(ShooterWristConstants.normalPos);
     }
     
     public Command stopCommand() {
