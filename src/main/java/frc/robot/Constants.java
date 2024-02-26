@@ -120,6 +120,7 @@ public final class Constants {
     public static int ShooterMasterID = 51;
     public static int ShooterSlaveID = 52;
 
+    public static double normalPos = 0; // To change
     public static double ampPos = 0;// To change
     public static double tolerance = 0;// To change
     public static double limit = 5.52380952383 / (2 * Math.PI);
