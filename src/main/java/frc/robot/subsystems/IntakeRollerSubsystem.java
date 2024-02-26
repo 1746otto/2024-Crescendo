@@ -78,15 +78,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         }
         return false;
     }
-
-    public Command basicIntake()
-    {
-        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed));
-    }
-
-    public Command intakeWithCurrenSensing() {
-        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed)).until(() -> objectOnHand());
-    }
     
 
     /**
@@ -98,16 +89,20 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      *
      * @return An InstantCommand object for outtake operation.
      */
-    public Command runRollerCommand() {
-        //replace with currentSensing when that works
-        return run(() -> basicIntake());
-        
-    }
 
     public Command runStopCommand() {
         return run(() -> stopIntake());
     }
-    public InstantCommand OuttakeCommand() {
-        return new InstantCommand(() -> outtake());
+    public Command basicIntake() {
+        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed));
+    }
+    public Command intakeWithCurrentSensing() {
+        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed)).until(() -> objectOnHand());
+    }
+    public Command outtakeWithCurrentSensing() {
+        return run(() -> intake(-IntakeRollerConstants.kIntakeSpeed)).until(() -> !objectOnHand());
+    }
+    public Command StowCommand() {
+        return run(() -> intake(IntakeRollerConstants.kIntakeStowSpeed)).until(() -> !objectOnHand());
     }
 }
