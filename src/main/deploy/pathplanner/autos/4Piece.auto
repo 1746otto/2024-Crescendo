@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.24,
-      "y": 1.87
+      "x": 0.769176567484491,
+      "y": 4.571346787467586
     },
-    "rotation": 0
+    "rotation": -60.870000000000005
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tune path"
+            "pathName": "Auton4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCommand"
           }
         }
       ]

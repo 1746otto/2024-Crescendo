@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -47,6 +49,15 @@ public class LEDSubsystemtest extends SubsystemBase {
       ledBuffer.setHSV(i, 0, 0, 0);
     }
     led.setData(ledBuffer);
+  }
+  public Command setLedConeCommand(){
+    return runOnce(() -> setLedtoCone());
+  }
+  public Command setLedCubeCommand(){
+    return runOnce(() -> setLEDToCube());
+  }
+  public Command turnOffLed(){
+    return runOnce(() -> setLedOff());
   }
 
   @Override
