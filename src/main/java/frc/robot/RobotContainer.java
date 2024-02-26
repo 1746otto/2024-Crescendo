@@ -28,6 +28,8 @@ import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.PrimerConstants;
+import frc.robot.commands.AmpPosition;
+import frc.robot.commands.ShooterPosition;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -63,6 +65,9 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  private enum AmpPositionState {Amp, Normal};
+  private AmpPositionState ampPosition;
   
  
   //pathplanner testing
@@ -92,6 +97,16 @@ public class RobotContainer {
         ));
     //Testing intake, primer, and shooter
     joystick.y().
+
+    if (ampPosition == AmpPositionState.Normal)
+    {
+      joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
+      ampPosition = AmpPositionState.Amp;
+    }else if (ampPosition == AmpPositionState.Amp)
+    {
+      joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
+      ampPosition = AmpPositionState.Normal;
+    }
 
 
 
