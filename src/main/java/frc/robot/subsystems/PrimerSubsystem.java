@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,10 +26,10 @@ import com.revrobotics.CANSparkBase.ControlType;
  */
 public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
-  private CANSparkMax primerNeo;
+  private TalonSRX primerNeo;
 
   /** CANSparkMan pid controller */
-  private SparkPIDController pidController;
+  //private SparkPIDController pidController;
 
   /** Analog input for detecting beam breaks. */
   private AnalogInput beamBreak;
@@ -35,13 +38,13 @@ public class PrimerSubsystem extends SubsystemBase{
    * Creates a new PrimerSubsystem with initialized motor controller.
    */
   public PrimerSubsystem() {
-    primerNeo = new CANSparkMax(PrimerConstants.kPrimerRollerMotorID, MotorType.kBrushless);
+    primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
+    
     // Initialization of analog input for beam break detection
     beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
-    pidController = primerNeo.getPIDController();
-    pidController.setP(PrimerConstants.kP);
-    pidController.setI(PrimerConstants.kI);
-    pidController.setFF(PrimerConstants.kFF);
+    // pidController.setP(PrimerConstants.kP);
+    // pidController.setI(PrimerConstants.kI);
+    // pidController.setFF(PrimerConstants.kFF);
 
   }
 
@@ -49,19 +52,22 @@ public class PrimerSubsystem extends SubsystemBase{
    * Sets the priming roller speed for priming the shooting mechanism.
    */
   public void primeNote(double rpm) {
-    pidController.setReference(rpm, ControlType.kVelocity);
+    //pidController.setReference(rpm, ControlType.kVelocity);
   }
   /**
    * Run the motor backwards at a slow speed of kPrimerReverseSpeed.
    */
   public void returnNote() {
-    primerNeo.set(PrimerConstants.kPrimerReverseSpeed);
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerReverseSpeed);
+  }
+  public void note() {
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerRollerSpeed);
   }
   /**
    * Stops the primer motor
    */
   public void stopPrimer() {
-    primerNeo.set(PrimerConstants.kPrimerStopSpeed);
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerStopSpeed);
   }
 
   /**
@@ -80,9 +86,9 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   /** Returns the velocity of the motor */
-  public double getVelocity() {
-    return pidController.getSmartMotionMaxVelocity(PrimerConstants.kPrimerSlotID);
-  }
+  // public double getVelocity() {
+  //   return pidController.getSmartMotionMaxVelocity(PrimerConstants.kPrimerSlotID);
+  // }
 
 
 
@@ -93,6 +99,9 @@ public class PrimerSubsystem extends SubsystemBase{
    */
   public Command PrimeCommand(double rpm) {
     return run(() -> primeNote(rpm));
+  }
+  public Command ForwardCommand() {
+    return run(this::note);
   }
   /**
    * Command to run the primer backwards if the game piece ends up too far in holding space.

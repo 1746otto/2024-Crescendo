@@ -26,7 +26,7 @@ public final class Constants {
 
   public static class IntakeRollerConstants
   {
-    public static final int kIntakeID = 11;
+    public static final int kIntakeID = 12;
     public static final double kIntakeSpeed = 0.2;
     public static final double kIntakeStowSpeed = 0.1;
     public static final double kIntakeCurrentLimit = 30;
@@ -35,7 +35,7 @@ public final class Constants {
 
   public static class IntakeWristConstants
   {
-    public static final int kIntakeTurnID = 21;
+    public static final int kIntakeTurnID = 11;
     // PID constants
     public static final double kP = 0.2;
     public static final double kFF = 0.1;
@@ -46,8 +46,6 @@ public final class Constants {
 
     // tolerance
     public static final double kTolerance = 5;
-    public static final String kIntakePosLabel = "Intake Position";
-    public static final String kIntakeCanNCoderAbsPosLabel = "Canancoder Absolute Position";
 
   }
   
@@ -58,7 +56,7 @@ public final class Constants {
    * IDs and speeds are included.
    */
   public static class IndexerConstants {
-    public static final int kIndexerID = 22;
+    public static final int kIndexerID = 41;
     public static final double kIndexerSpeed = 0.2;
     public static final double kIndexerRevSpeed = -kIndexerSpeed;
     public static final double kIndexerStopSpeed = 0.0;
@@ -72,7 +70,7 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 1;
+    public static final double kShooterRollerSpeed = 1.0;
     public static final double kShooterStopSpeed = 0.0;
 
     // device IDs
@@ -96,7 +94,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kPrimerRollerSpeed = 0.4;
+    public static final double kPrimerRollerSpeed = 0.8;
     public static final double kPrimerReverseSpeed = -0.1;
     public static final double kPrimerStopSpeed = 0.0;
     public static final double kPrimerCurrentLimit = 20;

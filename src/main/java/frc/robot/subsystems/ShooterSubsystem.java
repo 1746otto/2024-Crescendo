@@ -46,10 +46,12 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setP(ShooterConstants.topRollerKP);
     pidController.setI(ShooterConstants.topRollerKI);
     pidController.setD(ShooterConstants.topRollerKD);
+    topRollerNeo.setInverted(true);
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo.follow(topRollerNeo);    
+    bottomRollerNeo.follow(topRollerNeo,true); 
+
   }
 
   /**
