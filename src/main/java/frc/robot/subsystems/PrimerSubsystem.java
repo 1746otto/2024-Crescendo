@@ -31,17 +31,11 @@ public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMan pid controller */
   //private SparkPIDController pidController;
 
-  /** Analog input for detecting beam breaks. */
-  private AnalogInput beamBreak;
-
   /**
    * Creates a new PrimerSubsystem with initialized motor controller.
    */
   public PrimerSubsystem() {
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
-    
-    // Initialization of analog input for beam break detection
-    beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
     // pidController.setFF(PrimerConstants.kFF);
@@ -76,13 +70,6 @@ public class PrimerSubsystem extends SubsystemBase{
    */
   public boolean isObjectPinchedInPrimer() {
     return (primerNeo.getOutputCurrent() >= PrimerConstants.kPrimerCurrentLimit);
-  }
-
-  /**
-   * Returns a BooleanSupplier representing if the beambreak has been broken or not.
-   */
-  public BooleanSupplier isBeamBreakBroken() {
-    return () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
   /** Returns the velocity of the motor */
