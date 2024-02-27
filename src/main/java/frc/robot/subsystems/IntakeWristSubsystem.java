@@ -8,12 +8,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 
 public class IntakeWristSubsystem extends SubsystemBase{
@@ -62,7 +57,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      *
      * @param req The required position for the turning motor.
      */
-    public void setRequest(double req) {
+    private void setRequest(double req) {
         reqPosition = req;
     }
 
@@ -92,22 +87,8 @@ public class IntakeWristSubsystem extends SubsystemBase{
         return false;
     }
 
-    /**
-     * COMMANDS
-     */
-    public Command IntakePositionCheck(double requestedPos) {
-        return run(() -> isAtReqPosition(requestedPos)).until(() -> isAtReqPosition(requestedPos) == true);
-    }
-
-    /**
-     * Periodic method for updating the turning motor's position based on the
-     * required position.
-     */
-    public Command requestWristToOriginPos() {
-        return runOnce(() -> setRequest(IntakeWristConstants.kOriginPosition));
-    }
-    public Command requestWristToIntakePos() {
-        return runOnce(() -> setRequest(IntakeWristConstants.kIntakePosition));
+    public boolean isStowed() {
+        return isAtReqPosition(IntakeWristConstants.kOriginPosition);
     }
 
     @Override
@@ -116,5 +97,18 @@ public class IntakeWristSubsystem extends SubsystemBase{
         //System.out.println(getPosition());
         intakeToReq(reqPosition);
         SmartDashboard.putNumber("Pose", getPosition());
+    }
+
+    // ======================================
+    // ==============Commands================
+    // ======================================
+    public Command intakePositionCheck(double requestedPos) {
+        return run(() -> isAtReqPosition(requestedPos)).until(() -> isAtReqPosition(requestedPos) == true);
+    }
+    public Command setStowedPose() {
+        return runOnce(() -> setRequest(IntakeWristConstants.kOriginPosition));
+    }
+    public Command setIntakePose() {
+        return runOnce(() -> setRequest(IntakeWristConstants.kIntakePosition));
     }
 }

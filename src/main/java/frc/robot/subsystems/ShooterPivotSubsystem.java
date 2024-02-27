@@ -1,28 +1,18 @@
 package frc.robot.subsystems;
 
 
-import java.util.function.BooleanSupplier;
-
-import com.reduxrobotics.sensors.canandcolor.Canandcolor;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterWristConstants;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 
@@ -35,11 +25,12 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     private CANSparkMax slave;
   
     //Poses and tolerances
-    public static double ampPos = 40;//to change
     public static double tolerance = 0.3;//To change
     private double targetPose;
     private double limit = 5.52380952383 / ( 2 * Math.PI);
     private static double kDt = 0.02;
+
+    private boolean ampMode;
 
     private final TrapezoidProfile m_profile =
       new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
@@ -62,6 +53,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
+
+      ampMode = false;
       
     }
     public void testShooter() {
@@ -83,21 +76,19 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         master.set(0);
     }
 
-    public Command runPivot(double position) {
-        return runOnce(() -> setRequest(position));
+    public boolean isAtSetPose() {
+        if (ampMode) {
+            return atRequest(ShooterWristConstants.ampPos);
+        }
+        else {
+            return atRequest(ShooterWristConstants.intakePos);
+        }
     }
 
-    public Command goToAmpPose(){
-        return runPivot(ampPos);
+    private void toggleAmp() {
+        this.ampMode = !this.ampMode;
     }
 
-    public Command goToNormalPos() {
-        return runPivot(ShooterWristConstants.normalPos);
-    }
-    
-    public Command stopCommand() {
-        return new InstantCommand(() -> stop());
-    }
     @Override
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
@@ -106,6 +97,35 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
         
     }    
+
+    // ======================================
+    // ==============Commands================
+    // ======================================
+    public Command runPivot(double position) {
+        return runOnce(() -> setRequest(position));
+    }
+    public Command goToAmpPose(){
+        return runPivot(ShooterWristConstants.ampPos);
+    }
+    public Command goToIntakePose() {
+        return runPivot(ShooterWristConstants.intakePos);
+    }
+    public Command stopCommand() {
+        return new InstantCommand(() -> stop());
+    }
+    public Command toggleAmpMode() {
+        return runOnce(() -> toggleAmp());
+    }
+    public Command goToSetPose() {
+        return runOnce(() -> {
+            if (ampMode) {
+                runPivot(ShooterWristConstants.ampPos);
+            }
+            else {
+                runPivot(ShooterWristConstants.intakePos);
+            }
+        });
+    }
 }
     
   

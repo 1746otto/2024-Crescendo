@@ -28,7 +28,8 @@ public final class Constants {
   {
     public static final int kIntakeID = 12;
     public static final double kIntakeSpeed = 0.2;
-    public static final double kIntakeStowSpeed = 0.1;
+    public static final double kOuttakeSpeed = -kIntakeSpeed;
+    public static final double kIntakeHoldSpeed = 0.1;
     public static final double kIntakeCurrentLimit = 30;
     
   }
@@ -70,7 +71,8 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 1.0;
+    public static final double kShootSpeed = 1.0;
+    public static final double kReverseSpeed = -kShootSpeed;
     public static final double kShooterStopSpeed = 0.0;
 
     // device IDs
@@ -123,7 +125,7 @@ public final class Constants {
     public static int ShooterSlaveID = 52;
     public static double podiumPos = 0; // To change
     public static double subwooferPos = 0; // To change
-    public static double normalPos = 0; // To change
+    public static double intakePos = 0; // To change
     public static double ampPos = 0;// To change
     public static double tolerance = 0;// To change
     public static double limit = 5.52380952383 / (2 * Math.PI);

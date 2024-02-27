@@ -8,41 +8,26 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
-import frc.robot.Constants.IntakeWristConstants;
-import frc.robot.Constants.PrimerConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
-import frc.robot.commands.TeleopIntakeToPrimerCommand;
 import frc.robot.commands.podiumPosition;
 import frc.robot.commands.subwooferPosition;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import java.util.function.BooleanSupplier;
-import frc.robot.subsystems.ArmRollerSubsystem;
 import frc.robot.subsystems.LEDSubsystemtest;
 import frc.robot.subsystems.ShooterPivotSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
   // SUBSYSTEMS
@@ -58,7 +43,9 @@ public class RobotContainer {
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
-    private IndexerSubsystem indexer = new IndexerSubsystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final IndexerSubsystem indexer = new IndexerSubsystem();
+  private final ClimberSubsystem climber = new ClimberSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -73,15 +60,15 @@ public class RobotContainer {
   private AmpPositionState ampPosition;
   
  
-  //pathplanner testing
   public RobotContainer() {
+    // Pathplanner event commands
     //Don't initialize any commands before this, it breaks named commands 
-      NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
-      NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
-      //Change timeout
-      //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
-      //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
-      configureBindings();
+    NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+    NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
+    //Change timeout
+    //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
+    //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+    configureBindings();
       
     
   }
@@ -96,53 +83,38 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
-    //Testing intake, primer, and shooter
+    
+    // ==========================================================
+    // ===================Controller bindings====================
+    // ==========================================================
 
-    if (ampPosition == AmpPositionState.Normal)
-    {
-      joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
-      ampPosition = AmpPositionState.Amp;
-    }else if (ampPosition == AmpPositionState.Amp)
-    {
-      joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
-      ampPosition = AmpPositionState.Normal;
-    }
+    // Intake rollers stopped and intake stowed
+    joystick.a().onTrue(intakeWrist.setStowedPose().alongWith(intakeRollers.stop()));
 
-    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
-    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
+    // Extend intake, outake rollers once extended, pivot to amp, run shooter, primer, and indexer in reverse
+    joystick.b().whileTrue(intakeWrist.setIntakePose().andThen(intakeRollers.outtake())
+      .alongWith(pivot.goToAmpPose().andThen(shooter.setToReverse(), primer.setToReverse(), indexer.setToReverse())));
+    
+    // Toggle climber position
+    joystick.x().onTrue(climber.toggle());
 
-    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
-    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
-
-
-
-    //joystick.a().onFalse(m_index.stopCommand());
-
-    // Basic Intaking/Shooting to test
-    //joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
-    //joystick.a().whileTrue(new RunCommand(() -> m_shooter.runShooterRollers(0.1), m_shooter));
-
-
-
-
-
-    // Shooting
-    // joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
-    //  new SequentialCommandGroup(
-    //   new WaitCommand(2.0),
-    //   m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
-    //  );
-    // joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
+    // Extend intake, run rollers in. Intake should automatically stall and stow when note is sensed. Once stowed, intake roller, indexer, and primer run to move note to primed position
+    joystick.y().onTrue(intakeWrist.setIntakePose().alongWith(intakeRollers.intakeWithCurrentSensing())
+      .andThen(intakeWrist.setStowedPose().alongWith(intakeRollers.hold())).until(() -> intakeWrist.isStowed())
+      .andThen(intakeRollers.outtake(), indexer.index(), primer.setToForward()).until(() -> primer.isNoteInShotPosition())
+      .andThen(intakeRollers.stop(), indexer.stop(), primer.stop())
+      .andThen(primer.setToForward().until(() -> primer.isNoteInShotPosition()))
+      .andThen(pivot.goToSetPose()).until(() -> pivot.isAtSetPose())
+      .andThen(primer.goToSetPose()));
+    
+    // Toggles between amp and speaker modes
+    joystick.rightBumper().onTrue(pivot.toggleAmpMode().alongWith(primer.toggleAmpMode()));
 
 
 
 
-
-
-    // joystick.x().whileTrue(new RunCommand(() -> pivot.testShooter(), pivot));
-    // // reset the field-centric heading on left bumper press
-    // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-
+    
+    // Generated Swerve Sim
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }

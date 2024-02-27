@@ -9,7 +9,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public ClimberSubsystem() {}
+  private boolean shouldBeDown;
+  public ClimberSubsystem() {
+    shouldBeDown = true;
+  }
 
   /**
    * Example command factory method.
@@ -25,14 +28,14 @@ public class ClimberSubsystem extends SubsystemBase {
         });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  private void toggleTargetPose() {
+    // Skeleton. Needs to be written.
+    if (shouldBeDown) {
+
+    }
+    else {
+
+    }
   }
 
   @Override
@@ -43,5 +46,12 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  // ======================================
+  // ==============Commands================
+  // ======================================
+  public Command toggle() {
+    return runOnce(() -> toggleTargetPose());
   }
 }

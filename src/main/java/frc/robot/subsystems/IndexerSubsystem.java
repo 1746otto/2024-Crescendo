@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -43,20 +42,25 @@ public class IndexerSubsystem extends SubsystemBase {
 
 
 
-    
+    // ======================================
+    // ==============Commands================
+    // ======================================
     /**
      * Command to start running the indexer using startIndexing().
      * @return A command that starts runs the indexer
      */
-    public Command indexCommand() {
+    public Command index() {
         return runOnce(() -> startIndexing());
+    }
+    public Command setToReverse() {
+        return runOnce(() -> indexBackwards());
     }
 
     /**
      * Command to stop the indexer using stopIndexing().
      * @return A command to stop the indexer
      */
-    public Command stopCommand() {
+    public Command stop() {
         return runOnce(() -> stopIndexing());
     }
 }

@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private SparkPIDController pidController;
 
   /** Speed settings for various roller movements. */
-  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShooterRollerSpeed;
+  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShootSpeed;
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
@@ -78,22 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Stops all motor movements.
    */
-  public void stop() {
+  private void stop() {
     topRollerNeo.set(0);
-  }
-
-  /**
-   * Creates a command for shooting based on certain conditions.
-   */
-  public Command ShootCommand(){
-    return run(() -> runShooterRollers(ShooterConstants.kShooterRollerSpeed));
-  }
-  
-  public Command ReverseCommand(){
-    return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
-  }
-  public Command StopCommand(){
-    return run(() -> runShooterRollers(0.0));
   }
 
   /**
@@ -101,6 +87,20 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void periodic() {
     beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
+  }
+
+  // ======================================
+  // ==============Commands================
+  // ======================================
+  public Command setToShoot(){
+    return run(() -> runShooterRollers(ShooterConstants.kShootSpeed));
+  }
+  
+  public Command setToReverse(){
+    return run(() -> runShooterRollers(ShooterConstants.kReverseSpeed));
+  }
+  public Command setToStop(){
+    return run(() -> runShooterRollers(0.0));
   }
 
 }

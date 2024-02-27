@@ -10,15 +10,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PrimerConstants;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.PrimerConstants;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj.AnalogInput;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 
 
 /**
@@ -28,13 +20,14 @@ public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
   private TalonSRX primerNeo;
 
-  /** CANSparkMan pid controller */
-  //private SparkPIDController pidController;
+  private boolean ampMode;
 
   /**
    * Creates a new PrimerSubsystem with initialized motor controller.
    */
   public PrimerSubsystem() {
+    ampMode = false;
+
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -72,36 +65,56 @@ public class PrimerSubsystem extends SubsystemBase{
     return (primerNeo.getOutputCurrent() >= PrimerConstants.kPrimerCurrentLimit);
   }
 
-  /** Returns the velocity of the motor */
-  // public double getVelocity() {
-  //   return pidController.getSmartMotionMaxVelocity(PrimerConstants.kPrimerSlotID);
-  // }
+  public boolean isNoteInShotPosition() {
+    // Placeholder. Needs beambreak
+    return false;
+  }
+
+  private void toggleAmp() {
+    this.ampMode = !ampMode;
+  }
 
 
 
-
+  // ======================================
+  // ==============Commands================
+  // ======================================
   /**
    * Command to run the primer forwards at a certain speed to move piece into holding space
    * @return
    */
-  public Command PrimeCommand(double rpm) {
+  public Command setToPrime(double rpm) {
     return run(() -> primeNote(rpm));
   }
-  public Command ForwardCommand() {
+  public Command setToForward() {
     return run(this::note);
   }
   /**
    * Command to run the primer backwards if the game piece ends up too far in holding space.
    * @return
    */
-  public Command ReverseCommand() {
+  public Command setToReverse() {
     return run(this::returnNote);
   }
   /**
    * Command to stop the primer from running.
    * @return
    */
-  public Command StopCommand() {
+  public Command stop() {
     return run(this::stopPrimer);
+  }
+  public Command toggleAmpMode() {
+    return runOnce(() -> toggleAmp());
+  }
+  public Command goToSetPose() {
+    // Need to determine logic here with beambreaks
+    return runOnce(() -> {
+      if (ampMode) {
+
+      }
+      else {
+
+      }
+    });
   }
 }

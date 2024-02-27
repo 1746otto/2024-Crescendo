@@ -55,14 +55,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
             intakeMotor.set(speed);
     }
 
-    /**
-     * Sets the intake motor speed for outtake operation.
-     */
-    public void outtake() {
-        intakeMotor.set(-IntakeRollerConstants.kIntakeSpeed);
-    }
-
-    public void stopIntake() {
+    private void stopIntake() {
         intakeMotor.set(0);
     }
 
@@ -90,19 +83,22 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      * @return An InstantCommand object for outtake operation.
      */
 
-    public Command runStopCommand() {
+    public Command stop() {
         return run(() -> stopIntake());
     }
     public Command basicIntake() {
         return run(() -> intake(IntakeRollerConstants.kIntakeSpeed));
+    }
+    public Command outtake() {
+        return run(() -> intake(IntakeRollerConstants.kOuttakeSpeed));
+    }
+    public Command hold() {
+        return run(() -> intake(IntakeRollerConstants.kIntakeHoldSpeed));
     }
     public Command intakeWithCurrentSensing() {
         return run(() -> intake(IntakeRollerConstants.kIntakeSpeed)).until(() -> objectOnHand());
     }
     public Command outtakeWithCurrentSensing() {
         return run(() -> intake(-IntakeRollerConstants.kIntakeSpeed)).until(() -> !objectOnHand());
-    }
-    public Command StowCommand() {
-        return run(() -> intake(IntakeRollerConstants.kIntakeStowSpeed)).until(() -> !objectOnHand());
     }
 }
