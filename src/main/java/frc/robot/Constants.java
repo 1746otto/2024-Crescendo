@@ -41,7 +41,7 @@ public final class Constants {
     public static final double kFF = 0.1;
 
     // Positions
-    public static final double kOutakePosition = 17;
+    public static final double kIntakePosition = 17;
     public static final double kOriginPosition = 0;
 
     // tolerance

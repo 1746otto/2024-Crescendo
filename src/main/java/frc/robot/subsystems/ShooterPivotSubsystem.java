@@ -84,14 +84,14 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return new RunCommand(() -> setRequest(position)).until(() -> atRequest(position));
+        return runOnce(() -> setRequest(position));
     }
 
     public Command goToAmpPose(){
         return runPivot(ampPos);
     }
 
-    public Command runToNormalPos() {
+    public Command goToNormalPos() {
         return runPivot(ShooterWristConstants.normalPos);
     }
     

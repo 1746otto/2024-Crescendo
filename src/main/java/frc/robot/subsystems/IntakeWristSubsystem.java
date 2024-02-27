@@ -95,17 +95,21 @@ public class IntakeWristSubsystem extends SubsystemBase{
     /**
      * COMMANDS
      */
+    public Command IntakePositionCheck(double requestedPos) {
+        return run(() -> isAtReqPosition(requestedPos)).until(() -> isAtReqPosition(requestedPos) == true);
+    }
 
     /**
      * Periodic method for updating the turning motor's position based on the
      * required position.
      */
-
-    public Command runWrist() {
-        return new StartEndCommand(() -> setRequest(IntakeWristConstants.kOutakePosition), 
-        () -> setRequest(IntakeWristConstants.kOriginPosition), 
-        this);
+    public Command requestWristToOriginPos() {
+        return runOnce(() -> setRequest(IntakeWristConstants.kOriginPosition));
     }
+    public Command requestWristToIntakePos() {
+        return runOnce(() -> setRequest(IntakeWristConstants.kIntakePosition));
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

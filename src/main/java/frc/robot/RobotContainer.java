@@ -27,9 +27,11 @@ import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
+import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
+import frc.robot.commands.TeleopIntakeToPrimerCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -45,17 +47,16 @@ public class RobotContainer {
 
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-  private IntakeRollerSubsystem m_intakeRollers = new IntakeRollerSubsystem();
-  private IntakeWristSubsystem m_intakeWristSubsystem = new IntakeWristSubsystem();
-  private IndexerSubsystem m_index = new IndexerSubsystem();
-  private ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private PrimerSubsystem m_primer = new PrimerSubsystem();
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
+  private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
+  private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
+  private final PrimerSubsystem primer = new PrimerSubsystem();
+    private IndexerSubsystem indexer = new IndexerSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -75,8 +76,6 @@ public class RobotContainer {
     //Don't initialize any commands before this, it breaks named commands 
       NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
-
-      NamedCommands.registerCommand("intakeCommand", new ParallelCommandGroup(m_intakeWristSubsystem.runWrist(),m_intakeRollers.runRollerCommand()).withTimeout(2));
       //Change timeout
       //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
       //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
@@ -95,8 +94,11 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
-    //Testing intake, primer, and shooter
-    joystick.y().
+
+
+    //Testing intake, index, and primer
+    joystick.y().onTrue(new TeleopIntakeToPrimerCommand(intakeRollers, intakeWrist, pivot, indexer, primer));
+
 
     if (ampPosition == AmpPositionState.Normal)
     {
