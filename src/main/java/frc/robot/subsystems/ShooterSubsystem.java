@@ -48,16 +48,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.topRollerKP);
-    pidController.setI(ShooterConstants.topRollerKI);
-    pidController.setD(ShooterConstants.topRollerKD);
+    pidController.setP(ShooterConstants.kP);
+    pidController.setI(ShooterConstants.kI);
+    pidController.setD(ShooterConstants.kD);
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo.follow(topRollerNeo);
 
     // Initialization of analog input for beam break detection
-    beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
+    //beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
 
   }
 
