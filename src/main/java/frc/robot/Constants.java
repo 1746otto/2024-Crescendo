@@ -76,12 +76,14 @@ public final class Constants {
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
     public static final int kShooterBottomRollerMotorID = 22;
-    public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)
-    public static final double topRollerKP = 0.1;
-    public static final double topRollerKI = 0;
-    public static final double topRollerKD = 0;
+    public static final double kP = 0.1;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kS = 0.17;
+    public static final double kV = 0.0001654583333333333;
+
 
   }
 
