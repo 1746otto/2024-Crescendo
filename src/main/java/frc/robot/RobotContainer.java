@@ -32,6 +32,8 @@ import frc.robot.Constants.PrimerConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
+import frc.robot.commands.podiumPosition;
+import frc.robot.commands.subwooferPosition;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -94,11 +96,7 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
-
-
-    //Testing intake, index, and primer
-    joystick.y().onTrue(new TeleopIntakeToPrimerCommand(intakeRollers, intakeWrist, pivot, indexer, primer));
-
+    //Testing intake, primer, and shooter
 
     if (ampPosition == AmpPositionState.Normal)
     {
@@ -110,6 +108,11 @@ public class RobotContainer {
       ampPosition = AmpPositionState.Normal;
     }
 
+    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
+    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
+
+    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
+    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
 
 
 
@@ -136,9 +139,9 @@ public class RobotContainer {
 
 
 
-    joystick.x().whileTrue(new RunCommand(() -> pivot.testShooter(), pivot));
-    // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    // joystick.x().whileTrue(new RunCommand(() -> pivot.testShooter(), pivot));
+    // // reset the field-centric heading on left bumper press
+    // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
