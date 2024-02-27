@@ -11,17 +11,17 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 
-public class podiumPosition extends Command {
+public class subwooferPosition extends Command {
     private ShooterPivotSubsystem m_PivotSubsystem;
 
-    public podiumPosition(ShooterPivotSubsystem pivotSubsystem) {
+    public subwooferPosition(ShooterPivotSubsystem pivotSubsystem) {
         m_PivotSubsystem = pivotSubsystem;
         addRequirements(pivotSubsystem);
     }
     // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_PivotSubsystem.runPivot(ShooterWristConstants.podiumPos);
+    m_PivotSubsystem.runPivot(ShooterWristConstants.subwooferPos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +39,7 @@ public class podiumPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_PivotSubsystem.atRequest(ShooterWristConstants.podiumPos);
+    return m_PivotSubsystem.atRequest(ShooterWristConstants.subwooferPos);
   }
 }
 

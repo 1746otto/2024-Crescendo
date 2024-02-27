@@ -119,7 +119,8 @@ public final class Constants {
   public static class ShooterWristConstants {
     public static int ShooterMasterID = 51;
     public static int ShooterSlaveID = 52;
-
+    public static double podiumPos = 0; // To change
+    public static double subwooferPos = 0; // To change
     public static double normalPos = 0; // To change
     public static double ampPos = 0;// To change
     public static double tolerance = 0;// To change
