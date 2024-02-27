@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PrimerConstants;
@@ -48,20 +49,25 @@ public class PrimerSubsystem extends SubsystemBase{
   public void primeNote(double rpm) {
     //pidController.setReference(rpm, ControlType.kVelocity);
   }
+  
+  public void setSpeed(double speed) {
+    primerNeo.set(ControlMode.PercentOutput,speed);
+  }
   /**
    * Run the motor backwards at a slow speed of kPrimerReverseSpeed.
    */
+  
   public void returnNote() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerReverseSpeed);
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kOuttake);
   }
   public void note() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerRollerSpeed);
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kIntake);
   }
   /**
    * Stops the primer motor
    */
   public void stopPrimer() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kPrimerStopSpeed);
+    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kStop);
   }
 
   /**
@@ -79,29 +85,24 @@ public class PrimerSubsystem extends SubsystemBase{
 
 
 
+  public Command ampCommand() {
+    return run(() -> setSpeedCommand(PrimerConstants.kAmp));
+  }
+  public Command intakeCommand() {
+    return run(() -> setSpeedCommand(PrimerConstants.kIntake));
+  }
+  public Command outtakeCommand() {
+    return run(() -> setSpeedCommand(PrimerConstants.kOuttake));
+  }
+  public Command shootCommand() {
+    return run(() -> setSpeedCommand(PrimerConstants.kShoot));
+  }
+  public Command stopCommand() {
+    return run(() -> setSpeedCommand(PrimerConstants.kStop));
+  }
 
-  /**
-   * Command to run the primer forwards at a certain speed to move piece into holding space
-   * @return
-   */
-  public Command PrimeCommand(double rpm) {
-    return run(() -> primeNote(rpm));
+  public Command setSpeedCommand(double speed) {
+    return runOnce(() -> setSpeed(speed));
   }
-  public Command ForwardCommand() {
-    return run(this::note);
-  }
-  /**
-   * Command to run the primer backwards if the game piece ends up too far in holding space.
-   * @return
-   */
-  public Command ReverseCommand() {
-    return run(this::returnNote);
-  }
-  /**
-   * Command to stop the primer from running.
-   * @return
-   */
-  public Command StopCommand() {
-    return run(this::stopPrimer);
-  }
+  
 }

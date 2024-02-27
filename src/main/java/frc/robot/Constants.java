@@ -83,6 +83,7 @@ public final class Constants {
     public static final double kD = 0;
     public static final double kS = 0.17;
     public static final double kV = 0.0001654583333333333;
+    public static final int kShooterAnalogInputChannel = 0;
 
 
   }
@@ -96,11 +97,13 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kPrimerRollerSpeed = 0.8;
-    public static final double kPrimerReverseSpeed = -0.1;
-    public static final double kPrimerStopSpeed = 0.0;
+    public static final double kIntake = 0.4;
+    public static final double kOuttake = -0.4;
+    public static final double kStop = 0.0;
+    public static final double kAmp = 0.2;
+    public static final double kShoot = 1;
     public static final double kPrimerCurrentLimit = 20;
-    public static final double kPrimerPlaceholderSpeed = 0.2;
+
     // PID values
     public static final double kP = 0.1;
     public static final double kI = 0.0;
