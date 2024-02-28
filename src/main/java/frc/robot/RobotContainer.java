@@ -108,13 +108,21 @@ public class RobotContainer {
       ampPosition = AmpPositionState.Normal;
     }
 
-    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
-    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
+    joystick.leftTrigger().onTrue(new podiumPosition(pivot));
+    joystick.leftTrigger().onFalse(new ShooterPosition(pivot));
 
-    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
-    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
+    joystick.leftBumper().onTrue(new subwooferPosition(pivot));
+    joystick.leftBumper().onFalse(new ShooterPosition(pivot));
 
 
+    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand()));
+    
+    joystick.back().onTrue(intakeWrist.intakePosCommand().alongWith(intakeRollers.intakeCommand()));
+    //joystick.start().onTrue(indexer.forwardCommand());
+
+    // joystick.y().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand())
+    // .until(null).andThen(intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand()))
+    // .andThen(null));
 
 
 

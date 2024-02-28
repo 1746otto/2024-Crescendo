@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -43,27 +44,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
         // Initialization of motor controllers and PID controller
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
+        intakeMotor.setInverted(true);
 
     }
 
-    /**
-     * Sets the intake motor speed for intake operation.
-     *
-     * @param speed The speed at which the intake motor should operate.
-     */
-    public void intake(double speed) {
-            intakeMotor.set(speed);
-    }
-
-    /**
-     * Sets the intake motor speed for outtake operation.
-     */
-    public void outtake() {
-        intakeMotor.set(-IntakeRollerConstants.kIntakeSpeed);
-    }
-
-    public void stopIntake() {
-        intakeMotor.set(0);
+    
+    public void setSpeed(double speed) {
+        intakeMotor.set(speed);
     }
 
     /**
@@ -90,19 +77,19 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      * @return An InstantCommand object for outtake operation.
      */
 
-    public Command runStopCommand() {
-        return run(() -> stopIntake());
+    public Command stopCommand() {
+        return setSpeedCommand(IntakeRollerConstants.kStop);
     }
-    public Command basicIntake() {
-        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed));
+    public Command intakeCommand() {
+        return setSpeedCommand(IntakeRollerConstants.kIntake);
     }
-    public Command intakeWithCurrentSensing() {
-        return run(() -> intake(IntakeRollerConstants.kIntakeSpeed)).until(() -> objectOnHand());
+    public Command outtakeCommand() {
+        return run(() -> setSpeed(IntakeRollerConstants.kOuttake));
     }
-    public Command outtakeWithCurrentSensing() {
-        return run(() -> intake(-IntakeRollerConstants.kIntakeSpeed)).until(() -> !objectOnHand());
+    public Command holdCommand() {
+        return run(() -> setSpeed(IntakeRollerConstants.kHold));
     }
-    public Command StowCommand() {
-        return run(() -> intake(IntakeRollerConstants.kIntakeStowSpeed)).until(() -> !objectOnHand());
+    public Command setSpeedCommand(double speed){
+        return run(() -> setSpeed(speed));
     }
 }

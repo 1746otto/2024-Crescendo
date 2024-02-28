@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.units.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,6 +26,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
     /** The required position for the turning motor. */
     double reqPosition;
+    double current;
 
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
@@ -39,15 +41,23 @@ public class IntakeWristSubsystem extends SubsystemBase{
         pidController.setOutputRange(-.2, .2);
 
         // Setting the initial required position to the origin
-        turningMotor.getEncoder().setPosition(IntakeWristConstants.kOriginPosition);
+        turningMotor.getEncoder().setPosition(IntakeWristConstants.kStow);
         turningMotor.setIdleMode(IdleMode.kBrake);
-        reqPosition = IntakeWristConstants.kOriginPosition;
+        reqPosition = IntakeWristConstants.kStow;
+        
 
+    }
+    public boolean isCurrentMax() {
+        if (turningMotor.getOutputCurrent() >= 40) {
+            return true;
+        }
+        return false;
     }
 
     public void testIntake() {
         turningMotor.set(0.1);
     }
+    
     /**
      * Sets the target position for the turning motor using PID control.
      *
@@ -103,18 +113,24 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * Periodic method for updating the turning motor's position based on the
      * required position.
      */
-    public Command requestWristToOriginPos() {
-        return runOnce(() -> setRequest(IntakeWristConstants.kOriginPosition));
+    public Command indexPosCommand() {
+        return run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isCurrentMax() == true);
     }
-    public Command requestWristToIntakePos() {
-        return runOnce(() -> setRequest(IntakeWristConstants.kIntakePosition));
+    public Command intakePosCommand() {
+        return run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(2).until(() -> isCurrentMax() == true);
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         //System.out.println(getPosition());
-        intakeToReq(reqPosition);
+        // intakeToReq(reqPosition);
+        current = turningMotor.getOutputCurrent();
+        if (current > 0) {
+            System.out.println(current);
+        }
         SmartDashboard.putNumber("Pose", getPosition());
+        SmartDashboard.putNumber("Current", current);
+        
     }
 }

@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private SparkPIDController pidController;
 
   /** Speed settings for various roller movements. */
-  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShooterRollerSpeed;
+  private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShoot;
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
-  public void runShooterRollers(double speed) {
+  public void setSpeed(double speed) {
     topRollerNeo.set(speed);
   }
 
@@ -76,24 +76,21 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Stops all motor movements.
-   */
-  public void stop() {
-    topRollerNeo.set(0);
-  }
-
-  /**
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return run(() -> runShooterRollers(ShooterConstants.kShooterRollerSpeed));
+    return run(() -> setSpeedCommand(ShooterConstants.kShoot));
   }
   
   public Command ReverseCommand(){
-    return run(() -> runShooterRollers(-ShooterConstants.kShooterRollerSpeed));
+    return run(() -> setSpeedCommand(ShooterConstants.kReverse));
   }
   public Command StopCommand(){
-    return run(() -> runShooterRollers(0.0));
+    return run(() -> setSpeedCommand(ShooterConstants.kStop));
+  }
+
+  public Command setSpeedCommand(double speed) {
+    return runOnce(() -> setSpeed(speed));
   }
 
   /**

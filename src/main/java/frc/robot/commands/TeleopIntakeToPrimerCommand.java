@@ -14,14 +14,14 @@ public class TeleopIntakeToPrimerCommand extends SequentialCommandGroup{
     ShooterPivotSubsystem pivot, IndexerSubsystem indexer, PrimerSubsystem primer) {
     addCommands(
         pivot.goToNormalPos(),
-        intakeWrist.requestWristToIntakePos(), 
-        intakeRollers.intakeWithCurrentSensing(),
-        intakeWrist.requestWristToOriginPos(),
-        intakeRollers.StowCommand().until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntakePosition)),
+        intakeWrist.intakePosCommand(), 
+        intakeRollers.intakeCommand(),
+        intakeWrist.indexPosCommand(),
+        intakeRollers.holdCommand().until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake)),
         new ParallelDeadlineGroup(
-          primer.ForwardCommand(),
-          intakeRollers.outtakeWithCurrentSensing(),
-          indexer.indexCommand()
+          primer.intakeCommand(),
+          intakeRollers.outtakeCommand(),
+          indexer.forwardCommand()
         ),
         pivot.goToAmpPose()
         );

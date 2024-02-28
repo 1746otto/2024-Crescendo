@@ -27,8 +27,10 @@ public final class Constants {
   public static class IntakeRollerConstants
   {
     public static final int kIntakeID = 12;
-    public static final double kIntakeSpeed = 0.2;
-    public static final double kIntakeStowSpeed = 0.1;
+    public static final double kIntake = 0.8;
+    public static final double kOuttake = -kIntake;
+    public static final double kHold = 0.1;
+    public static final double kStop = 0;
     public static final double kIntakeCurrentLimit = 30;
     
   }
@@ -41,8 +43,8 @@ public final class Constants {
     public static final double kFF = 0.1;
 
     // Positions
-    public static final double kIntakePosition = 17;
-    public static final double kOriginPosition = 0;
+    public static final double kIntake = 17.5;
+    public static final double kStow = 0;
 
     // tolerance
     public static final double kTolerance = 5;
@@ -57,9 +59,9 @@ public final class Constants {
    */
   public static class IndexerConstants {
     public static final int kIndexerID = 41;
-    public static final double kIndexerSpeed = 0.2;
-    public static final double kIndexerRevSpeed = -kIndexerSpeed;
-    public static final double kIndexerStopSpeed = 0.0;
+    public static final double kForward = 0.2;
+    public static final double kReverse = -kForward;
+    public static final double kStop = 0.0;
     // Constant that sets motor inverted
     public static final boolean kMotorInvert = true;
   }
@@ -70,8 +72,9 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 1.0;
-    public static final double kShooterStopSpeed = 0.0;
+    public static final double kShoot = 1.0;
+    public static final double kReverse = -kShoot;
+    public static final double kStop = 0.0;
 
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
