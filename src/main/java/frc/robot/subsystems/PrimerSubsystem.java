@@ -37,6 +37,7 @@ public class PrimerSubsystem extends SubsystemBase{
    */
   public PrimerSubsystem() {
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
+    primerNeo.setInverted(true);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
     // pidController.setFF(PrimerConstants.kFF);

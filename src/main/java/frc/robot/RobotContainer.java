@@ -52,9 +52,10 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+ // private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
@@ -76,7 +77,7 @@ public class RobotContainer {
   //pathplanner testing
   public RobotContainer() {
     //Don't initialize any commands before this, it breaks named commands 
-      NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+      //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
       //Change timeout
       //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
@@ -90,12 +91,12 @@ public class RobotContainer {
 
   private void configureBindings() {
     
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+    // drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+    //     drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+    //                                                                                        // negative Y (forward)
+    //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+    //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //     ));
     //Testing intake, primer, and shooter
 
     if (ampPosition == AmpPositionState.Normal)
@@ -115,9 +116,11 @@ public class RobotContainer {
     joystick.leftBumper().onFalse(new ShooterPosition(pivot));
 
 
-    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand()));
+    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand(), shooter.ShootCommand()));
     
-    joystick.back().onTrue(intakeWrist.intakePosCommand().alongWith(intakeRollers.intakeCommand()));
+    joystick.back().onTrue(intakeWrist.intakePosCommand()
+    .alongWith(intakeRollers.intakeCommand(), primer.stopCommand(), indexer.stopCommand(), shooter.StopCommand())
+    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand(), shooter.ShootCommand())));
     //joystick.start().onTrue(indexer.forwardCommand());
 
     // joystick.y().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand())
@@ -153,10 +156,10 @@ public class RobotContainer {
     // // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
-    if (Utils.isSimulation()) {
-      drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
-    }
-    drivetrain.registerTelemetry(logger::telemeterize);
+    // if (Utils.isSimulation()) {
+    //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
+    // }
+    // drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   

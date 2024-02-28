@@ -80,8 +80,15 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public Command stopCommand() {
         return setSpeedCommand(IntakeRollerConstants.kStop);
     }
-    public Command intakeCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake);
+    public Command intakeSenseCommand() {
+        return setSpeedCommand(IntakeRollerConstants.kIntake).until(() -> objectOnHand());
+    }
+    public Command dumbIntakeCommand(){
+        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(0.1);
+
+    }
+    public Command intakeCommand(){
+        return dumbIntakeCommand().andThen(intakeSenseCommand());
     }
     public Command outtakeCommand() {
         return setSpeedCommand(IntakeRollerConstants.kOuttake);

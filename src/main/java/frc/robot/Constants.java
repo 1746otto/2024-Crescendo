@@ -31,7 +31,7 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 30;
+    public static final double kIntakeCurrentLimit = 20;
     
   }
 
@@ -72,7 +72,7 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShoot = 1.0;
+    public static final double kShoot = 0.2;//1.0
     public static final double kReverse = -kShoot;
     public static final double kStop = 0.0;
 
@@ -104,7 +104,7 @@ public final class Constants {
     public static final double kOuttake = -0.4;
     public static final double kStop = 0.0;
     public static final double kAmp = 0.2;
-    public static final double kShoot = 1;
+    public static final double kShoot = 0.2;//1.0
     public static final double kPrimerCurrentLimit = 20;
 
     // PID values
