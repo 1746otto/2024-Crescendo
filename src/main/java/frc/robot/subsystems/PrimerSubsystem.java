@@ -86,19 +86,19 @@ public class PrimerSubsystem extends SubsystemBase{
 
 
   public Command ampCommand() {
-    return run(() -> setSpeedCommand(PrimerConstants.kAmp));
+    return setSpeedCommand(PrimerConstants.kAmp);
   }
   public Command intakeCommand() {
-    return run(() -> setSpeedCommand(PrimerConstants.kIntake));
+    return setSpeedCommand(PrimerConstants.kIntake);
   }
   public Command outtakeCommand() {
-    return run(() -> setSpeedCommand(PrimerConstants.kOuttake));
+    return setSpeedCommand(PrimerConstants.kOuttake);
   }
   public Command shootCommand() {
-    return run(() -> setSpeedCommand(PrimerConstants.kShoot));
+    return setSpeedCommand(PrimerConstants.kShoot);
   }
   public Command stopCommand() {
-    return run(() -> setSpeedCommand(PrimerConstants.kStop));
+    return setSpeedCommand(PrimerConstants.kStop);
   }
 
   public Command setSpeedCommand(double speed) {

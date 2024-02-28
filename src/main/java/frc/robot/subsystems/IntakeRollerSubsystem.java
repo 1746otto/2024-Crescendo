@@ -84,10 +84,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return setSpeedCommand(IntakeRollerConstants.kIntake);
     }
     public Command outtakeCommand() {
-        return run(() -> setSpeed(IntakeRollerConstants.kOuttake));
+        return setSpeedCommand(IntakeRollerConstants.kOuttake);
     }
     public Command holdCommand() {
-        return run(() -> setSpeed(IntakeRollerConstants.kHold));
+        return setSpeedCommand(IntakeRollerConstants.kHold);
     }
     public Command setSpeedCommand(double speed){
         return run(() -> setSpeed(speed));

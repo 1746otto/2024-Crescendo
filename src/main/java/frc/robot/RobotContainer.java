@@ -58,7 +58,7 @@ public class RobotContainer {
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
-    private IndexerSubsystem indexer = new IndexerSubsystem();
+  private final IndexerSubsystem indexer = new IndexerSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -115,7 +115,7 @@ public class RobotContainer {
     joystick.leftBumper().onFalse(new ShooterPosition(pivot));
 
 
-    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand()));
+    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand()));
     
     joystick.back().onTrue(intakeWrist.intakePosCommand().alongWith(intakeRollers.intakeCommand()));
     //joystick.start().onTrue(indexer.forwardCommand());

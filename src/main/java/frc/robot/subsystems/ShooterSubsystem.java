@@ -79,14 +79,14 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return run(() -> setSpeedCommand(ShooterConstants.kShoot));
+    return setSpeedCommand(ShooterConstants.kShoot);
   }
   
   public Command ReverseCommand(){
-    return run(() -> setSpeedCommand(ShooterConstants.kReverse));
+    return setSpeedCommand(ShooterConstants.kReverse);
   }
   public Command StopCommand(){
-    return run(() -> setSpeedCommand(ShooterConstants.kStop));
+    return setSpeedCommand(ShooterConstants.kStop);
   }
 
   public Command setSpeedCommand(double speed) {
