@@ -54,7 +54,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
  // private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
-  private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
+  //private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
@@ -78,7 +78,7 @@ public class RobotContainer {
   public RobotContainer() {
     //Don't initialize any commands before this, it breaks named commands 
       //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
-      NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
+      //NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
       //Change timeout
       //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
       //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
@@ -99,21 +99,21 @@ public class RobotContainer {
     //     ));
     //Testing intake, primer, and shooter
 
-    if (ampPosition == AmpPositionState.Normal)
-    {
-      joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
-      ampPosition = AmpPositionState.Amp;
-    }else if (ampPosition == AmpPositionState.Amp)
-    {
-      joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
-      ampPosition = AmpPositionState.Normal;
-    }
+    // if (ampPosition == AmpPositionState.Normal)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
+    //   ampPosition = AmpPositionState.Amp;
+    // }else if (ampPosition == AmpPositionState.Amp)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
+    //   ampPosition = AmpPositionState.Normal;
+    // }
 
-    joystick.leftTrigger().onTrue(new podiumPosition(pivot));
-    joystick.leftTrigger().onFalse(new ShooterPosition(pivot));
+    // joystick.leftTrigger().onTrue(new podiumPosition(pivot));
+    // joystick.leftTrigger().onFalse(new ShooterPosition(pivot));
 
-    joystick.leftBumper().onTrue(new subwooferPosition(pivot));
-    joystick.leftBumper().onFalse(new ShooterPosition(pivot));
+    // joystick.leftBumper().onTrue(new subwooferPosition(pivot));
+    // joystick.leftBumper().onFalse(new ShooterPosition(pivot));
 
 
     joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand(), shooter.ShootCommand()));

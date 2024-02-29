@@ -45,6 +45,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         // Initialization of motor controllers and PID controller
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(true);
+    
 
     }
 

@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
@@ -45,12 +46,17 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
+    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
+    topRollerNeo.setIdleMode(IdleMode.kCoast);
+    bottomRollerNeo.setIdleMode(IdleMode.kCoast);
+    topRollerNeo.setInverted(true);
 
-    // Setting PID values for the top shooting roller
-    // pidController = topRollerNeo.getPIDController();
-    // pidController.setP(ShooterConstants.kP);
-    // pidController.setI(ShooterConstants.kI);
-    // pidController.setD(ShooterConstants.kD);
+    //Setting PID values for the top shooting roller
+    pidController = topRollerNeo.getPIDController();
+    pidController.setP(ShooterConstants.kP);
+    pidController.setI(ShooterConstants.kI);
+    pidController.setD(ShooterConstants.kD);
+    pidController.setFF(ShooterConstants.kFF);
 
     // Making the bottom roller follow the top roller
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
