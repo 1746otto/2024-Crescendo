@@ -37,13 +37,12 @@ public class IntakeWristSubsystem extends SubsystemBase{
         // Initialization of motor controllers and PID controller
         turningMotor = new CANSparkMax(IntakeWristConstants.kIntakeTurnID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
-        pidController.setP(IntakeWristConstants.kP);
-        pidController.setOutputRange(-.2, .2);
+        pidController.setP(IntakeWristConstants.kP, 0);
+        pidController.setP(0.0, 1);
 
         // Setting the initial required position to the origin
         turningMotor.getEncoder().setPosition(IntakeWristConstants.kStow);
         turningMotor.setIdleMode(IdleMode.kBrake);
-        reqPosition = IntakeWristConstants.kStow;
         
 
     }
@@ -64,7 +63,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * @param req The target position for the turning motor.
      */
     public void intakeToReq(double req) {
-        pidController.setReference(req, ControlType.kPosition);
+        pidController.setReference(req, ControlType.kPosition, 0);
     }
 
     /**
@@ -83,6 +82,10 @@ public class IntakeWristSubsystem extends SubsystemBase{
      */
     public double getPosition() {
         return turningMotor.getEncoder().getPosition();
+    }
+
+    public void stopMotor() {
+        turningMotor.stopMotor();
     }
 
     /**
@@ -118,6 +121,9 @@ public class IntakeWristSubsystem extends SubsystemBase{
     }
     public Command intakePosCommand() {
         return run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(2).until(() -> isCurrentMax() == true);
+    }
+    public Command stopMotorCommand(){
+        return runOnce(this::stopMotor);
     }
 
     @Override
