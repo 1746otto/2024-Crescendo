@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -59,11 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setFF(ShooterConstants.kFF);
 
     // Making the bottom roller follow the top roller
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo.follow(topRollerNeo, true);
 
     // Initialization of analog input for beam break detection
-    beamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);    
+    topRollerNeo.setSmartCurrentLimit(40);
+    bottomRollerNeo.setSmartCurrentLimit(40);
 
   }
 

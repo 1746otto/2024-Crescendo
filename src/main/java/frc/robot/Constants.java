@@ -39,7 +39,7 @@ public final class Constants {
   {
     public static final int kIntakeTurnID = 11;
     // PID constants
-    public static final double kP = 0.2;
+    public static final double kP = 0.07;
     public static final double kFF = 0.1;
 
     // Positions
@@ -72,7 +72,7 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShoot = 0.2;//1.0
+    public static final double kShoot = 0.8;//0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kStop = 0.0;
 

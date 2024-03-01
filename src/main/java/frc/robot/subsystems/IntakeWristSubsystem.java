@@ -38,16 +38,17 @@ public class IntakeWristSubsystem extends SubsystemBase{
         turningMotor = new CANSparkMax(IntakeWristConstants.kIntakeTurnID, MotorType.kBrushless);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeWristConstants.kP, 0);
-        pidController.setP(0.0, 1);
+        pidController.setD(IntakeWristConstants.kFF,0);
 
         // Setting the initial required position to the origin
         turningMotor.getEncoder().setPosition(IntakeWristConstants.kStow);
         turningMotor.setIdleMode(IdleMode.kBrake);
-        
+        turningMotor.setSmartCurrentLimit(35);
 
+        pidController.setOutputRange(-0.5, 0.5);
     }
     public boolean isCurrentMax() {
-        if (turningMotor.getOutputCurrent() >= 40) {
+        if (turningMotor.getOutputCurrent() >= 35) {
             return true;
         }
         return false;
@@ -55,6 +56,10 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
     public void testIntake() {
         turningMotor.set(0.1);
+    }
+
+    public void stopIntake() {
+        turningMotor.set(0);
     }
     
     /**
@@ -117,10 +122,10 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * required position.
      */
     public Command indexPosCommand() {
-        return run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isCurrentMax() == true);
+        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kStow)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isCurrentMax() == true),stopMotorCommand());
     }
     public Command intakePosCommand() {
-        return run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(2).until(() -> isCurrentMax() == true);
+        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() -> isCurrentMax() == true),stopMotorCommand());
     }
     public Command stopMotorCommand(){
         return runOnce(this::stopMotor);

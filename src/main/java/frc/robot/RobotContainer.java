@@ -29,6 +29,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
@@ -52,7 +53,7 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
- // private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
   //private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
@@ -91,12 +92,12 @@ public class RobotContainer {
 
   private void configureBindings() {
     
-    // drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-    //     drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-    //                                                                                        // negative Y (forward)
-    //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-    //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-    //     ));
+    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ));
     //Testing intake, primer, and shooter
 
     // if (ampPosition == AmpPositionState.Normal)
@@ -115,13 +116,15 @@ public class RobotContainer {
     // joystick.leftBumper().onTrue(new subwooferPosition(pivot));
     // joystick.leftBumper().onFalse(new ShooterPosition(pivot));
 
-
-    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand(), shooter.ShootCommand()));
     
-    joystick.back().onTrue(intakeWrist.intakePosCommand().finallyDo(() -> intakeWrist.stopMotorCommand())
-    .alongWith(intakeRollers.intakeCommand(), primer.stopCommand(), indexer.stopCommand(), shooter.StopCommand())
-    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand(), shooter.ShootCommand())));
-    //joystick.start().onTrue(indexer.forwardCommand());
+    shooter.setSpeed(ShooterConstants.kShoot);
+    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
+    
+    joystick.b().onTrue(intakeWrist.intakePosCommand()
+    .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
+    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
+    joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.setSpeedCommand(0.5)));
+    joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
 
     // joystick.y().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand())
     // .until(null).andThen(intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand()))
