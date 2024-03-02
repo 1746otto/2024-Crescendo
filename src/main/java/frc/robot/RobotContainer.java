@@ -121,12 +121,16 @@ public class RobotContainer {
 
     
     joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()));
-    joystick.y().onTrue(intakeWrist.intakePosCommand()
-    .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
-    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
+    // joystick.y().onTrue(intakeWrist.intakePosCommand()
+    // .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
+    // .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
     joystick.start().whileTrue(pivot.Test());
-    //joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
 
+    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
+    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
+    //joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
+    
 
 
 

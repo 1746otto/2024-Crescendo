@@ -19,4 +19,5 @@ public class BeamBreak {
     public BooleanSupplier isPrimerBeamBreakBroken() {
         return () -> ((Math.floor(primerBeambreak.getVoltage()) > 0));
     }
+
 }

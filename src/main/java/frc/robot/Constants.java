@@ -31,7 +31,7 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 20;
+    public static final double kIntakeCurrentLimit = 35;
     
   }
 
@@ -47,7 +47,7 @@ public final class Constants {
     public static final double kStow = 0;
 
     // tolerance
-    public static final double kTolerance = 5;
+    public static final double kTolerance = 0.2;
 
   }
   
@@ -59,7 +59,7 @@ public final class Constants {
    */
   public static class IndexerConstants {
     public static final int kIndexerID = 41;
-    public static final double kForward = 0.2;
+    public static final double kForward = 1.0;
     public static final double kReverse = -kForward;
     public static final double kStop = 0.0;
     // Constant that sets motor inverted
