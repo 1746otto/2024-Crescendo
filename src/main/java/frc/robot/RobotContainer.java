@@ -55,7 +55,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   private final LEDSubsystemtest led = new LEDSubsystemtest();
-  //private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
+  private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
@@ -72,7 +72,7 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   private enum AmpPositionState {Amp, Normal};
-  private AmpPositionState ampPosition;
+  private AmpPositionState ampPosition = AmpPositionState.Normal;
   
  
   //pathplanner testing
@@ -100,43 +100,36 @@ public class RobotContainer {
         ));
     //Testing intake, primer, and shooter
 
-    // if (ampPosition == AmpPositionState.Normal)
-    // {
-    //   joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
-    //   ampPosition = AmpPositionState.Amp;
-    // }else if (ampPosition == AmpPositionState.Amp)
-    // {
-    //   joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
-    //   ampPosition = AmpPositionState.Normal;
-    // }
+    if (ampPosition == AmpPositionState.Normal)
+    {
+      joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose());
+      ampPosition = AmpPositionState.Amp;
+      joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.shootCommand()));
+      joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
+    }else if (ampPosition == AmpPositionState.Amp)
+    {
+      joystick.rightBumper().toggleOnTrue(pivot.goToNormalPos());
+      ampPosition = AmpPositionState.Normal;
+      joystick.rightTrigger().whileTrue(primer.ampCommand());
+    }
 
-    // joystick.leftTrigger().onTrue(new podiumPosition(pivot));
-    // joystick.leftTrigger().onFalse(new ShooterPosition(pivot));
+    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
+    joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
 
-    // joystick.leftBumper().onTrue(new subwooferPosition(pivot));
-    // joystick.leftBumper().onFalse(new ShooterPosition(pivot));
+    joystick.leftBumper().whileTrue(pivot.goToSubwooferPos());
+    joystick.leftBumper().whileFalse(pivot.goToNormalPos());
 
     
-    shooter.setSpeed(ShooterConstants.kShoot);
-    joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
-    
-    joystick.b().onTrue(intakeWrist.intakePosCommand()
+    joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()));
+    joystick.y().onTrue(intakeWrist.intakePosCommand()
     .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
     .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
-    joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.setSpeedCommand(0.5)));
-    joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
-
-    // joystick.y().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand())
-    // .until(null).andThen(intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand()))
-    // .andThen(null));
+    joystick.start().whileTrue(pivot.Test());
+    //joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
 
 
 
-    //joystick.a().onFalse(m_index.stopCommand());
 
-    // Basic Intaking/Shooting to test
-    //joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
-    //joystick.a().whileTrue(new RunCommand(() -> m_shooter.runShooterRollers(0.1), m_shooter));
 
 
 

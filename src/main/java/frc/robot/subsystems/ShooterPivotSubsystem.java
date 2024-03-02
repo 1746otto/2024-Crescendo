@@ -35,7 +35,6 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     private CANSparkMax slave;
   
     //Poses and tolerances
-    public static double ampPos = 40;//to change
     public static double tolerance = 0.3;//To change
     private double targetPose;
     private double limit = 5.52380952383 / ( 2 * Math.PI);
@@ -67,6 +66,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void testShooter() {
         master.set(0.1);
     }
+    public void testShooter2() {
+        master.set(-0.1);
+    }
 
     public void setRequest(double position) {
         m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
@@ -84,17 +86,28 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return runOnce(() -> setRequest(position));
+        return runOnce(() -> setRequest(position)).until(() -> atRequest(position));
+    }
+    public Command Test(){
+        return run(this::testShooter);
+    }
+    public Command TestBack(){
+        return run(this::testShooter2);
     }
 
     public Command goToAmpPose(){
-        return runPivot(ampPos);
+        return runPivot(ShooterWristConstants.ampPos).until(() -> atRequest(ShooterWristConstants.ampPos));
     }
 
     public Command goToNormalPos() {
-        return runPivot(ShooterWristConstants.normalPos);
+        return runPivot(ShooterWristConstants.normalPos).until(() -> atRequest(ShooterWristConstants.normalPos));
     }
-    
+    public Command goToSubwooferPos() {
+        return runPivot(ShooterWristConstants.subwooferPos).until(() -> atRequest(ShooterWristConstants.subwooferPos));
+    }
+    public Command goToPodiumPos() {
+        return runPivot(ShooterWristConstants.podiumPos).until(() -> atRequest(ShooterWristConstants.podiumPos));
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
