@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -84,8 +85,7 @@ public class RobotContainer {
       //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
       //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       configureBindings();
-      
-    
+      configureDefaultCommands();
   }
  
  
@@ -98,24 +98,6 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
-    //Testing intake, primer, and shooter
-
-    // if (ampPosition == AmpPositionState.Normal)
-    // {
-    //   joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
-    //   ampPosition = AmpPositionState.Amp;
-    // }else if (ampPosition == AmpPositionState.Amp)
-    // {
-    //   joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
-    //   ampPosition = AmpPositionState.Normal;
-    // }
-
-    // joystick.leftTrigger().onTrue(new podiumPosition(pivot));
-    // joystick.leftTrigger().onFalse(new ShooterPosition(pivot));
-
-    // joystick.leftBumper().onTrue(new subwooferPosition(pivot));
-    // joystick.leftBumper().onFalse(new ShooterPosition(pivot));
-
     
     shooter.setSpeed(ShooterConstants.kShoot);
     joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
@@ -130,17 +112,11 @@ public class RobotContainer {
     // .until(null).andThen(intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand()))
     // .andThen(null));
 
-
-
     //joystick.a().onFalse(m_index.stopCommand());
 
     // Basic Intaking/Shooting to test
     //joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
     //joystick.a().whileTrue(new RunCommand(() -> m_shooter.runShooterRollers(0.1), m_shooter));
-
-
-
-
 
     // Shooting
     // joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
@@ -149,11 +125,6 @@ public class RobotContainer {
     //   m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
     //  );
     // joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
-
-
-
-
-
 
     // joystick.x().whileTrue(new RunCommand(() -> pivot.testShooter(), pivot));
     // // reset the field-centric heading on left bumper press
@@ -164,7 +135,14 @@ public class RobotContainer {
     // }
     // drivetrain.registerTelemetry(logger::telemeterize);
   }
-
+  public void configureDefaultCommands() {
+      //Runs indexer when note is in wrist and wrist is in stow position.
+      indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && intakeRollers.objectOnHand()));
+      //Runs intake rollers when note is in wrist and wrist is in stow position.
+      intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && intakeRollers.objectOnHand()));
+      //Runs primer when note is in wrist and wrist is in stow position.
+      primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && intakeRollers.objectOnHand()));
+  }
   
 
   public Command getAutonomousCommand() {
