@@ -124,11 +124,11 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
     public Command indexPosCommand() {
         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kStow)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kStow))
-        .until(() -> isCurrentMax() && isAtReqPosition(IntakeWristConstants.kStow)),stopMotorCommand());
+        .until(() -> isCurrentMax() || isAtReqPosition(IntakeWristConstants.kStow)),stopMotorCommand());
     }
     public Command intakePosCommand() {
         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake))
-        .until(() -> isCurrentMax() && isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());
+        .until(() -> isCurrentMax() || isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());
     }
   
     public Command stopMotorCommand(){

@@ -103,10 +103,9 @@ public class RobotContainer {
     joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
     
     joystick.b().onTrue(intakeWrist.intakePosCommand()
-    .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
-    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
-    joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.setSpeedCommand(0.5)));
-    joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
+    .alongWith(intakeRollers.intakeCommand())
+    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand())));
+
 
     // joystick.y().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand())
     // .until(null).andThen(intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand()))
