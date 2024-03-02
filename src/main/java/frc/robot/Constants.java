@@ -140,4 +140,16 @@ public final class Constants {
     public static double maxVelocity = 1.75;
     public static double maxAcceleration = 0.75;
   }
+
+  public static class ClimberConstants {
+    public static final int kLimitSwitch = 0; // change later
+    public static final int kleaderCANid = 0; // find CANids
+    public static final int kfollowerCANid = 1; // find CANids
+    public static final int kForward = 1; // find later
+    public static final int kReverse = -1; // find later
+    public static final int kStop = 0; // find later
+    
+
+
+  }
 }
