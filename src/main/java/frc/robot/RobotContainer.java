@@ -29,6 +29,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
+import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
@@ -92,12 +93,12 @@ public class RobotContainer {
 
   private void configureBindings() {
     
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+    // drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+    //     drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+    //                                                                                        // negative Y (forward)
+    //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+    //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //     ));
     //Testing intake, primer, and shooter
 
     if (ampPosition == AmpPositionState.Normal)
@@ -113,27 +114,19 @@ public class RobotContainer {
       joystick.rightTrigger().whileTrue(primer.ampCommand());
     }
 
-    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
-    joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
+    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
+    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
 
-    joystick.leftBumper().whileTrue(pivot.goToSubwooferPos());
-    joystick.leftBumper().whileFalse(pivot.goToNormalPos());
-
-    joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(primer.intakeCommand()));
-    joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()));
-    joystick.y().onTrue(intakeWrist.intakePosCommand()
-    .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
-    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
-    joystick.start().whileTrue(pivot.Test());
-
-    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
-    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
-    //joystick.a().onTrue(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand(), primer.shootCommand()));
-    
+    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
+    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
 
 
 
+    //joystick.a().onFalse(m_index.stopCommand());
+
+    // Basic Intaking/Shooting to test
+    //joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
+    //joystick.a().whileTrue(new RunCommand(() -> m_shooter.runShooterRollers(0.1), m_shooter));
 
 
 

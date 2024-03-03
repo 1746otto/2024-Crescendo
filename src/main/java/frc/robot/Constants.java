@@ -126,15 +126,18 @@ public final class Constants {
   }
 
   public static class ShooterWristConstants {
-    public static int ShooterMasterID = 51;
-    public static int ShooterSlaveID = 52;
-    public static double podiumPos = 0; // To change
-    public static double subwooferPos = 0; // To change
-    public static double normalPos = 0; // To change
-    public static double ampPos = 0;// To change
+    public static int ShooterMasterID = 52;
+    public static int ShooterSlaveID = 51;
+    public static double startPos = 0.216;
+    public static double podiumPos = 0.799; // To change
+    public static double subwooferPos = 0.559; // To change
+    public static double intakePos = 0.516; // To change
+    public static double ampPos = 0.732;// To change
     public static double tolerance = 0;// To change
     public static double limit = 5.52380952383 / (2 * Math.PI);
     public static double kDt = 0.02;// To change
+
+    public static int kShooterBeambreak = 1;
 
     // Trapezoidal profiling
     public static double maxVelocity = 1.75;

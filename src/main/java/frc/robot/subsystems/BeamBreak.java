@@ -9,7 +9,7 @@ public class BeamBreak {
     /** Analog input for detecting beam breaks. */
   private AnalogInput primerBeambreak;
 
-    public BeamBreak() {
+    public BeamBreak() { //Helper class that needs to change 
         primerBeambreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     }
 

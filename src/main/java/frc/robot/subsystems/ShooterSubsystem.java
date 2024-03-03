@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterWristConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
@@ -65,6 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of analog input for beam break detection
     topRollerNeo.setSmartCurrentLimit(40);
     bottomRollerNeo.setSmartCurrentLimit(40);
+    beamBreak = new AnalogInput(ShooterWristConstants.kShooterBeambreak);    
 
   }
 
