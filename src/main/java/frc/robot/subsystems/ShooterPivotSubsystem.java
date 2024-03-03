@@ -37,11 +37,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
   
     //Poses and tolerances
     public static double tolerance = Math.toRadians(10) / ( 2 * Math.PI );//To change
-    private double targetPose;
     private double limit = 0.5 /**5.52380952383*/ / ( 2 * Math.PI);
     private static double kDt = 0.02;
 
-    private double tGoal;
+    private double tGoal = ShooterWristConstants.intakePos;
     private final TrapezoidProfile m_profile =
       new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
     private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
@@ -62,7 +61,6 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       m_pidController.setP(12.8);//6.4
       m_pidController.setD(5.0);
 
-      tGoal = encoder.getPosition();
       double max = encoder.getPosition() + limit;//Might need to be changed to be through sparkmax
       double min = encoder.getPosition() - limit;
       
@@ -85,7 +83,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public double getTargetPose(){
-        return targetPose;
+        return tGoal;
     }
 
     public void stop() {
@@ -102,6 +100,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public Command goToNormalPos() {
         return runPivot(ShooterWristConstants.intakePos);
+    }
+    public Command goToPodiumPos() {
+        return runPivot(ShooterWristConstants.podiumPos);
     }
     
     public Command stopCommand() {

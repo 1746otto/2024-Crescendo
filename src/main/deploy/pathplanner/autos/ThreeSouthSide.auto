@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.21,
-      "y": 2.58
+      "x": 0.6777856564972392,
+      "y": 4.489043288271762
     },
-    "rotation": -75.01999999999998
+    "rotation": -57.60798192800562
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Auton3"
+            "pathName": "newAuton3"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "primeShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "pivotSubwoofer"
+                }
+              }
+            ]
           }
         }
       ]

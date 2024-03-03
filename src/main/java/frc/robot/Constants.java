@@ -72,7 +72,7 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShoot = 0.8;//0.2 and 1.0
+    public static final double kShoot = 1.0;//0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kStop = 0.0;
 
@@ -104,8 +104,8 @@ public final class Constants {
     public static final double kIntake = 0.4;
     public static final double kOuttake = -0.4;
     public static final double kStop = 0.0;
-    public static final double kAmp = 0.2;
-    public static final double kShoot = 0.2;//1.0
+    public static final double kAmp = -1.0;
+    public static final double kShoot = 1.0;//1.0
     public static final double kPrimerCurrentLimit = 20;
 
     // PID values
@@ -129,10 +129,10 @@ public final class Constants {
     public static int ShooterMasterID = 52;
     public static int ShooterSlaveID = 51;
     public static double startPos = 0.216;
-    public static double podiumPos = 0.799; // To change
+    public static double podiumPos = 0.799382; // To change
     public static double subwooferPos = 0.559; // To change
     public static double intakePos = 0.516; // To change
-    public static double ampPos = 0.732;// To change
+    public static double ampPos = 0.757375;// To change
     public static double tolerance = 0;// To change
     public static double limit = 5.52380952383 / (2 * Math.PI);
     public static double kDt = 0.02;// To change
