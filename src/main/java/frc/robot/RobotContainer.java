@@ -29,6 +29,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
+import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
@@ -90,29 +91,32 @@ public class RobotContainer {
 
   private void configureBindings() {
     
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+    // drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+    //     drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+    //                                                                                        // negative Y (forward)
+    //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+    //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //     ));
     //Testing intake, primer, and shooter
 
-    if (ampPosition == AmpPositionState.Normal)
-    {
-      joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
-      ampPosition = AmpPositionState.Amp;
-    }else if (ampPosition == AmpPositionState.Amp)
-    {
-      joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
-      ampPosition = AmpPositionState.Normal;
-    }
+    // if (ampPosition == AmpPositionState.Normal)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(new AmpPosition(pivot));
+    //   ampPosition = AmpPositionState.Amp;
+    // }else if (ampPosition == AmpPositionState.Amp)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(new ShooterPosition(pivot));
+    //   ampPosition = AmpPositionState.Normal;
+    // }
 
-    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
-    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
+    //joystick.rightTrigger().whileTrue(pivot.testShooter());
+    joystick.a().onTrue(pivot.runPivot(ShooterWristConstants.podiumPos));
 
-    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
-    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
+    // joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
+    // joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
+
+    // joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
+    // joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
 
 
 

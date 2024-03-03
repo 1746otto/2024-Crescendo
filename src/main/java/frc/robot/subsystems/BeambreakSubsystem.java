@@ -10,7 +10,7 @@ public class BeambreakSubsystem {
   private AnalogInput primerBeambreak;
 
     public BeambreakSubsystem() {
-        primerBeambreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
+        //primerBeambreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     }
 
     /**
