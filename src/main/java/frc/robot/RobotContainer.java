@@ -119,11 +119,11 @@ public class RobotContainer {
     joystick.leftBumper().whileTrue(pivot.goToSubwooferPos());
     joystick.leftBumper().whileFalse(pivot.goToNormalPos());
 
-    
+    joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(primer.intakeCommand()));
     joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()));
-    // joystick.y().onTrue(intakeWrist.intakePosCommand()
-    // .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
-    // .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
+    joystick.y().onTrue(intakeWrist.intakePosCommand()
+    .alongWith(intakeRollers.intakeCommand(), indexer.stopCommand())
+    .andThen(intakeRollers.stopCommand().alongWith(intakeWrist.indexPosCommand(), indexer.forwardCommand())));
     joystick.start().whileTrue(pivot.Test());
 
     joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())

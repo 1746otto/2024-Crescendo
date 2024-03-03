@@ -31,7 +31,7 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 35;
+    public static final double kIntakeCurrentLimit = 30;
     
   }
 
