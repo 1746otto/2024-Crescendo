@@ -36,7 +36,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     private CANSparkMax slave;
   
     //Poses and tolerances
-    public static double tolerance = Math.toRadians(1) / ( 2 * Math.PI );//To change
+    public static double tolerance = Math.toRadians(10) / ( 2 * Math.PI );//To change
     private double targetPose;
     private double limit = 0.5 /**5.52380952383*/ / ( 2 * Math.PI);
     private static double kDt = 0.02;
@@ -73,9 +73,6 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void test() {
         master.set(0.1);
     }
-    public void testShooter2() {
-        master.set(-0.1);
-    }
 
     public void setRequest(double position) {
        // m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
@@ -96,13 +93,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return runOnce(() -> setRequest(position)).until(() -> atRequest(position));
-    }
-    public Command Test(){
-        return run(this::testShooter);
-    }
-    public Command TestBack(){
-        return run(this::testShooter2);
+        return run(() -> setRequest(position)).until(() -> atRequest(position));
     }
 
     public Command goToAmpPose(){
@@ -110,14 +101,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command goToNormalPos() {
-        return runPivot(ShooterWristConstants.podiumPos);
+        return runPivot(ShooterWristConstants.intakePos);
     }
-    public Command goToSubwooferPos() {
-        return runPivot(ShooterWristConstants.subwooferPos).until(() -> atRequest(ShooterWristConstants.subwooferPos));
-    }
-    public Command goToPodiumPos() {
-        return runPivot(ShooterWristConstants.podiumPos).until(() -> atRequest(ShooterWristConstants.podiumPos));
-    }
+    
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
@@ -131,11 +117,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
         //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
         
-        // if (atRequest(tGoal)) {
-        //     master.stopMotor();
-        // } else {
-        m_pidController.setReference(tGoal, CANSparkMax.ControlType.kPosition);
-      //  }
+        if (atRequest(tGoal)) {
+             master.stopMotor();
+        } else {   //Commented out to NOT consider tolerances.
+             m_pidController.setReference(tGoal, CANSparkMax.ControlType.kPosition);
+        }
         
     }    
 }

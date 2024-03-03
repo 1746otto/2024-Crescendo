@@ -84,7 +84,12 @@ public class RobotContainer {
       //Change timeout
       //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
       //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
+      NamedCommands.registerCommand("Intake", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(2)
+      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
+
       configureBindings();
+      configureDefaultCommands();
       
     
   }
@@ -101,25 +106,27 @@ public class RobotContainer {
     //     ));
     //Testing intake, primer, and shooter
 
-    if (ampPosition == AmpPositionState.Normal)
-    {
-      joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose());
-      ampPosition = AmpPositionState.Amp;
-      joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.shootCommand()));
-      joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
-    }else if (ampPosition == AmpPositionState.Amp)
-    {
-      joystick.rightBumper().toggleOnTrue(pivot.goToNormalPos());
-      ampPosition = AmpPositionState.Normal;
-      joystick.rightTrigger().whileTrue(primer.ampCommand());
-    }
+    // if (ampPosition == AmpPositionState.Normal)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose());
+    //   ampPosition = AmpPositionState.Amp;
+    //   joystick.rightTrigger().whileTrue(indexer.forwardCommand().alongWith(primer.shootCommand()));
+    //   joystick.rightTrigger().whileFalse(indexer.stopCommand().alongWith(primer.stopCommand()));
+    // }else if (ampPosition == AmpPositionState.Amp)
+    // {
+    //   joystick.rightBumper().toggleOnTrue(pivot.goToNormalPos());
+    //   ampPosition = AmpPositionState.Normal;
+    //   joystick.rightTrigger().whileTrue(primer.ampCommand());
+    // }
 
-    joystick.leftTrigger().whileTrue(new podiumPosition(pivot));
-    joystick.leftTrigger().whileFalse(new ShooterPosition(pivot));
 
-    joystick.leftBumper().whileTrue(new subwooferPosition(pivot));
-    joystick.leftBumper().whileFalse(new ShooterPosition(pivot));
+    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
+    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
 
+    joystick.rightTrigger().onTrue(pivot.runPivot(ShooterWristConstants.podiumPos));
+
+    joystick.leftTrigger().onTrue(primer.shootCommand());
 
 
     //joystick.a().onFalse(m_index.stopCommand());
@@ -154,7 +161,9 @@ public class RobotContainer {
     // }
     // drivetrain.registerTelemetry(logger::telemeterize);
   }
-
+  public void configureDefaultCommands() {
+    shooter.setDefaultCommand(shooter.ShootCommand());
+  }
   
 
   public Command getAutonomousCommand() {

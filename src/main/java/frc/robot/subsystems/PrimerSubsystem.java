@@ -101,7 +101,7 @@ public class PrimerSubsystem extends SubsystemBase{
     return setSpeedCommand(PrimerConstants.kOuttake);
   }
   public Command shootCommand() {
-    return setSpeedCommand(PrimerConstants.kShoot);
+    return setSpeedCommand(PrimerConstants.kShoot).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
   }
   public Command stopCommand() {
     return setSpeedCommand(PrimerConstants.kStop);
