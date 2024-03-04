@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -37,22 +39,13 @@ public class IntakeWristBackupSubsystem extends SubsystemBase{
 
         // Initialization of motor controllers and PID controller
         turningMotor = new TalonFX(IntakeWristConstants.kIntakeTurnID);
-        pidController = turningMotor.getPIDController();
-        pidController.setP(IntakeWristConstants.kP, 0);
-        pidController.setD(IntakeWristConstants.kFF,0);
+        Slot0Configs pidController = new Slot0Configs();
+        pidController.kP = IntakeWristConstants.kP;
+        pidController.kD = IntakeWristConstants.kFF;
 
         // Setting the initial required position to the origin
-        turningMotor.getEncoder().setPosition(IntakeWristConstants.kStow);
-        turningMotor.setIdleMode(IdleMode.kBrake);
-        turningMotor.setSmartCurrentLimit(35);
+        turningMotor.setPosition(IntakeWristConstants.kStow);
 
-        pidController.setOutputRange(-0.5, 0.5);
-    }
-    public boolean isCurrentMax() {
-        if (turningMotor.getOutputCurrent() >= 35) {
-            return true;
-        }
-        return false;
     }
 
     public void testIntake() {
@@ -85,9 +78,10 @@ public class IntakeWristBackupSubsystem extends SubsystemBase{
      * Gets the current position of the turning motor.
      *
      * @return The current position of the turning motor.
-     */
+     */dy65
     public double getPosition() {
-        return turningMotor.getEncoder().getPosition();
+        double x = turningMotor.getPosition();
+        return x;
     }
 
     public void stopMotor() {
