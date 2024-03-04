@@ -11,6 +11,8 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
@@ -60,6 +62,12 @@ public class ShooterSubsystem extends SubsystemBase {
     topRollerNeo.enableVoltageCompensation(12);
     topRollerNeo.enableVoltageCompensation(12);
 
+    topRollerNeo.setIdleMode(IdleMode.kCoast);
+    bottomRollerNeo.setIdleMode(IdleMode.kCoast);
+
+    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
+    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
+
     //Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
     pidController.setP(ShooterConstants.kP);
@@ -68,7 +76,8 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setFF(ShooterConstants.kV);
 
     // Making the bottom roller follow the top roller
-    bottomRollerNeo.follow(topRollerNeo);    
+    bottomRollerNeo.follow(topRollerNeo);
+    setReference(4000);
   }
 
   /**
@@ -83,6 +92,10 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public BooleanSupplier isBeamBreakBroken() {
     return beamBreakLastState;
+  }
+
+  public void setReference(double RPM) {
+    pidController.setReference(RPM, ControlType.kVelocity, 0, Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
   /**

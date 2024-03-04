@@ -86,6 +86,8 @@ public final class Constants {
     public static final double kD = 0.0002500000118743628;
     public static final double kS = 0.17;
     public static final double kV = 0.0001654583333333333;
+
+    public static final int kCurrentLimit = 60;
     // public static final double kFF = 0.0001654579973546788;
 
 
