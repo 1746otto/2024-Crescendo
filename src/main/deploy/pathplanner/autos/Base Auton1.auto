@@ -18,9 +18,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "shootCommand"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "pivotSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "primeShooter"
+                }
+              }
+            ]
           }
         }
       ]
