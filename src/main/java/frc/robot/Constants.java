@@ -90,9 +90,13 @@ public final class Constants {
     public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)
-    public static final double topRollerKP = 0.1;
-    public static final double topRollerKI = 0;
-    public static final double topRollerKD = 0;
+    public static final double kP = 0.0011200000118743628;
+    public static final double kI = 0;
+    public static final double kD = 0.0002500000118743628;
+    public static final double kS = 0.17;
+    public static final double kV = 0.0001654583333333333;
+    // public static final double kFF = 0.0001654579973546788;
+
 
   }
 
