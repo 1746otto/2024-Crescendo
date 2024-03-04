@@ -167,13 +167,19 @@
       "name": "New Event Marker",
       "waypointRelativePos": 0,
       "command": {
-        "type": "sequential",
+        "type": "deadline",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "shootCommand"
+                "name": "primeShooter"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "pivotSubwoofer"
               }
             }
           ]

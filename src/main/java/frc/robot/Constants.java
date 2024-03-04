@@ -24,43 +24,34 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  /**
-   * Constants for IntakeSubsytem.
-   * IDs, speeds, current limits, output range, positions, position tolerance, and
-   * PID values are included
-   */
-  public static class IntakeConstants {
-    // IDs
-    public static final int kCanancoderID = 0;
-    public static final int kIntakeWristID = 11;
+  public static class IntakeRollerConstants
+  {
     public static final int kIntakeID = 12;
-    // Speeds
-    public static final double kIntakeSpeed = 0.8;
-    public static final double kIntakeRevSpeed = -0.6;
-    public static final double kIntakeStowSpeed = 0.1;
-    public static final double kIntakeStopSpeed = 0.0;
-    public static final boolean kIntakeState = true;
-    // Current limit
-    public static final double kIntakeCurrentLimit = 50;
-    // Output ranges
-    public static final double kTestingOutputMax = 0.1;
-    public static final double kTestingOutputMin = -0.1;
+    public static final double kIntake = 0.8;
+    public static final double kOuttake = -kIntake;
+    public static final double kHold = 0.1;
+    public static final double kStop = 0;
+    public static final double kIntakeCurrentLimit = 30;
+    
+  }
 
+  public static class IntakeWristConstants
+  {
+    public static final int kIntakeTurnID = 11;
     // PID constants
-    public static final double kP = 0.2;
+    public static final double kP = 0.07;
     public static final double kFF = 0.1;
 
     // Positions
-    public static final double kOutakePosition = 17;
-    public static final double kOriginPosition = 0;
+    public static final double kIntake = 17.5;
+    public static final double kStow = 0;
 
     // tolerance
-    public static final double kTolerance = 5;
+    public static final double kTolerance = 0.2;
 
-    // SmartDashboard Labels
-    public static final String kIntakePosLabel = "Intake Position";
-    public static final String kIntakeCanNCoderAbsPosLabel = "Canancoder Absolute Position";
   }
+  
+  
 
   /**
    * Constants for the IndexerSubsystem.
@@ -68,9 +59,9 @@ public final class Constants {
    */
   public static class IndexerConstants {
     public static final int kIndexerID = 41;
-    public static final double kIndexerSpeed = 0.2;
-    public static final double kIndexerRevSpeed = -kIndexerSpeed;
-    public static final double kIndexerStopSpeed = 0.0;
+    public static final double kForward = 1.0;
+    public static final double kReverse = -kForward;
+    public static final double kStop = 0.0;
     // Constant that sets motor inverted
     public static final boolean kMotorInvert = true;
   }
@@ -81,18 +72,23 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShooterRollerSpeed = 1;
-    public static final double kShooterStopSpeed = 0.0;
+    public static final double kShoot = 1.0;//0.2 and 1.0
+    public static final double kReverse = -kShoot;
+    public static final double kStop = 0.0;
 
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
     public static final int kShooterBottomRollerMotorID = 22;
-    public static final int kShooterAnalogInputChannel = 0;
 
     // PID constants (top shooting roller)
-    public static final double topRollerKP = 0.1;
-    public static final double topRollerKI = 0;
-    public static final double topRollerKD = 0;
+    public static final double kP = 0.0011200000118743628;
+    public static final double kI = 0;
+    public static final double kD = 0.0002500000118743628;
+    public static final double kS = 0.17;
+    public static final double kV = 0.0001654583333333333;
+    public static final double kFF = 0.0001654579973546788;
+    public static final int kShooterAnalogInputChannel = 0;
+
 
   }
 
@@ -105,11 +101,13 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kPrimerRollerSpeed = 0.4;
-    public static final double kPrimerReverseSpeed = -0.1;
-    public static final double kPrimerStopSpeed = 0.0;
+    public static final double kIntake = 0.4;
+    public static final double kOuttake = -0.4;
+    public static final double kStop = 0.0;
+    public static final double kAmp = -1.0;
+    public static final double kShoot = 1.0;//1.0
     public static final double kPrimerCurrentLimit = 20;
-    public static final double kPrimerPlaceholderSpeed = 0.2;
+
     // PID values
     public static final double kP = 0.1;
     public static final double kI = 0.0;
@@ -128,13 +126,18 @@ public final class Constants {
   }
 
   public static class ShooterWristConstants {
-    public static int ShooterMasterID = 51;
-    public static int ShooterSlaveID = 52;
-
-    public static double ampPos = 0;// To change
-    public static double tolerance = 0;// To change
-    public static double limit = 5.52380952383 / (2 * Math.PI);
+    public static int ShooterMasterID = 52;
+    public static int ShooterSlaveID = 51;
+    public static double kstartPos = 0.216;
+    public static double kpodiumPos = 0.799382; // To change
+    public static double ksubwooferPos = 0.559; // To change
+    public static double kintakePos = 0.516; // To change
+    public static double kampPos = 0.757375;// To change
+    public static double ktolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
+    public static double klimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
+
+    public static int kShooterBeambreak = 1;
 
     // Trapezoidal profiling
     public static double maxVelocity = 1.75;

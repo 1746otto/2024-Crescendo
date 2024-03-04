@@ -18,45 +18,27 @@ public class IndexerSubsystem extends SubsystemBase {
     public IndexerSubsystem() {
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
         indexerMotor.setInverted(IndexerConstants.kMotorInvert);
+        indexerMotor.setSmartCurrentLimit(40);
     }
 
-    /**
-     * Indexer is set to run at the value of kIndexerSpeed.
-     */
-    public void startIndexing() {
-        indexerMotor.set(IndexerConstants.kIndexerSpeed);
-    }
-
-    /**
-     * Indexer is set to stop running.
-     */
-    public void stopIndexing() {
-        indexerMotor.set(IndexerConstants.kIndexerStopSpeed);
-    }
-
-    /**
-     * Indexer run back at the value of kIndexerSpeed.
-     */
-    public void indexBackwards() {
-        indexerMotor.set(IndexerConstants.kIndexerRevSpeed);
+   
+    public void setSpeed(double speed) {
+        indexerMotor.set(speed);
     }
 
 
-
-    
-    /**
-     * Command to start running the indexer using startIndexing().
-     * @return A command that starts runs the indexer
-     */
-    public Command indexCommand() {
-        return runOnce(() -> startIndexing());
+    public Command forwardCommand() {
+        return setSpeedCommand(IndexerConstants.kForward).finallyDo(() -> setSpeed(0));
     }
-
-    /**
-     * Command to stop the indexer using stopIndexing().
-     * @return A command to stop the indexer
-     */
+    public Command reverseCommand() {
+        return setSpeedCommand(IndexerConstants.kReverse);
+    }
     public Command stopCommand() {
-        return runOnce(() -> stopIndexing());
+        return setSpeedCommand(IndexerConstants.kStop);
+    }
+    
+
+    public Command setSpeedCommand(double speed) {
+        return run(() -> setSpeed(speed));
     }
 }

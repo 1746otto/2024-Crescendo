@@ -63,7 +63,13 @@
             {
               "type": "named",
               "data": {
-                "name": "shootCommand"
+                "name": "pivotSubwoofer"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "primeShooter"
               }
             }
           ]
@@ -89,8 +95,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.72,
-    "maxAcceleration": 3.048,
+    "maxVelocity": 2.36,
+    "maxAcceleration": 3.05,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 360.0
   },
