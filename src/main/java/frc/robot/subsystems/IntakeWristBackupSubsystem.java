@@ -78,10 +78,9 @@ public class IntakeWristBackupSubsystem extends SubsystemBase{
      * Gets the current position of the turning motor.
      *
      * @return The current position of the turning motor.
-     */dy65
+     */
     public double getPosition() {
-        double x = turningMotor.getPosition();
-        return x;
+        return turningMotor.getPosition().getValueAsDouble();
     }
 
     public void stopMotor() {
@@ -131,10 +130,7 @@ public class IntakeWristBackupSubsystem extends SubsystemBase{
         // This method will be called once per scheduler run
         //System.out.println(getPosition());
         // intakeToReq(reqPosition);
-        current = turningMotor.getOutputCurrent();
-        if (current > 0) {
-            System.out.println(current);
-        }
+       
         SmartDashboard.putNumber("Pose", getPosition());
         SmartDashboard.putNumber("Current", current);
         
