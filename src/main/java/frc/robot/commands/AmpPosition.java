@@ -41,7 +41,7 @@ public class AmpPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_shooterPivot.atRequest(ShooterWristConstants.ampPos);
+    return m_shooterPivot.atRequest(ShooterWristConstants.kampPos);
   }
 }
 

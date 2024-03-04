@@ -37,10 +37,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
   
     //Poses and tolerances
     public static double tolerance = Math.toRadians(10) / ( 2 * Math.PI );//To change
-    private double limit = 0.5 /**5.52380952383*/ / ( 2 * Math.PI);
+    private double limit = 0.5 / ( 2 * Math.PI);
     private static double kDt = 0.02;
 
-    private double tGoal = ShooterWristConstants.intakePos;
+    private double targetPose = ShooterWristConstants.kintakePos;
     private final TrapezoidProfile m_profile =
       new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
     private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
@@ -61,8 +61,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       m_pidController.setP(12.8);//6.4
       m_pidController.setD(5.0);
 
-      double max = encoder.getPosition() + limit;//Might need to be changed to be through sparkmax
-      double min = encoder.getPosition() - limit;
+      double max = ShooterWristConstants.kintakePos + ShooterWristConstants.klimit;//Might need to be changed to be through sparkmax
+      double min = ShooterWristConstants.kintakePos - ShooterWristConstants.klimit;
       
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
@@ -74,16 +74,16 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public void setRequest(double position) {
        // m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
-       tGoal = position;
+       targetPose = position;
        
 
     }
     public boolean atRequest(double position) {
-        return (Math.abs(encoder.getPosition() - position) < tolerance);
+        return (Math.abs(encoder.getPosition() - position) < ShooterWristConstants.ktolerance);
     }
 
     public double getTargetPose(){
-        return tGoal;
+        return targetPose;
     }
 
     public void stop() {
@@ -95,14 +95,14 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command goToAmpPose(){
-        return runPivot(ShooterWristConstants.ampPos);
+        return runPivot(ShooterWristConstants.kampPos);
     }
 
     public Command goToNormalPos() {
-        return runPivot(ShooterWristConstants.intakePos);
+        return runPivot(ShooterWristConstants.kintakePos);
     }
     public Command goToPodiumPos() {
-        return runPivot(ShooterWristConstants.podiumPos);
+        return runPivot(ShooterWristConstants.kpodiumPos);
     }
     
     public Command stopCommand() {
@@ -113,15 +113,15 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("TargetPose", tGoal);
+        SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
         //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
         //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
         
-        if (atRequest(tGoal)) {
+        if (atRequest(targetPose)) {
              master.stopMotor();
         } else {   //Commented out to NOT consider tolerances.
-             m_pidController.setReference(tGoal, CANSparkMax.ControlType.kPosition);
+             m_pidController.setReference(targetPose, CANSparkMax.ControlType.kPosition);
         }
         
     }    

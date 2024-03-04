@@ -128,13 +128,13 @@ public final class Constants {
   public static class ShooterWristConstants {
     public static int ShooterMasterID = 52;
     public static int ShooterSlaveID = 51;
-    public static double startPos = 0.216;
-    public static double podiumPos = 0.799382; // To change
-    public static double subwooferPos = 0.559; // To change
-    public static double intakePos = 0.516; // To change
-    public static double ampPos = 0.757375;// To change
-    public static double tolerance = 0;// To change
-    public static double limit = 5.52380952383 / (2 * Math.PI);
+    public static double kstartPos = 0.216;
+    public static double kpodiumPos = 0.799382; // To change
+    public static double ksubwooferPos = 0.559; // To change
+    public static double kintakePos = 0.516; // To change
+    public static double kampPos = 0.757375;// To change
+    public static double ktolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
+    public static double klimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
 
     public static int kShooterBeambreak = 1;

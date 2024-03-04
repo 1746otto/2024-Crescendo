@@ -23,7 +23,7 @@ public class ShooterPosition extends Command {
     // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterPivot.runPivot(ShooterWristConstants.intakePos);
+    m_shooterPivot.runPivot(ShooterWristConstants.kintakePos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,7 +41,7 @@ public class ShooterPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_shooterPivot.atRequest(ShooterWristConstants.intakePos);
+    return m_shooterPivot.atRequest(ShooterWristConstants.kintakePos);
   }
 }
 

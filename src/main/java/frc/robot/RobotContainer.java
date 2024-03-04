@@ -80,19 +80,13 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-    //Don't initialize any commands before this, it breaks named commands 
-      //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
-      //NamedCommands.registerCommand("pivotShooterCommand", pivot.runPivot(Math.PI));
-      //Change timeout
-      //NamedCommands.registerCommand("shootCommand", m_intake.outtakeCommand().withTimeout(2.5));
-      //NamedCommands.registerCommand("drivetrainCommand",drivetrain.applyRequest(() -> brake));
       NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
       new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
-      NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.podiumPos));
-      NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.ampPos));
-      NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.intakePos));
-      NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.subwooferPos));
+      NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kpodiumPos));
+      NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kampPos));
+      NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kintakePos));
+      NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.ksubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
       configureBindings();
       configureDefaultCommands();
@@ -110,9 +104,6 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
-    //Testing intake, primer, and shooter
-
-
 
     joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
     .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
@@ -122,33 +113,6 @@ public class RobotContainer {
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
     joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
     joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
-
-    //joystick.a().onFalse(m_index.stopCommand());
-
-    // Basic Intaking/Shooting to test
-    //joystick.a().whileTrue(new RunCommand(() -> m_intakeWristSubsystem.testIntake(), m_intakeWristSubsystem));
-    //joystick.a().whileTrue(new RunCommand(() -> m_shooter.runShooterRollers(0.1), m_shooter));
-
-
-
-
-
-    // Shooting
-    // joystick.x().onTrue(new ParallelCommandGroup(m_shooter.shootCommand(),
-    //  new SequentialCommandGroup(
-    //   new WaitCommand(2.0),
-    //   m_primer.PrimeCommand(PrimerConstants.kPrimerPlaceholderSpeed)))
-    //  );
-    // joystick.x().onFalse(new ParallelCommandGroup(m_shooter.stopCommand(), m_primer.StopCommand()));
-
-
-
-
-
-
-    // joystick.x().whileTrue(new RunCommand(() -> pivot.testShooter(), pivot));
-    // // reset the field-centric heading on left bumper press
-    // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
