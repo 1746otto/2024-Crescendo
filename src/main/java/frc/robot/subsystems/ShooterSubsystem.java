@@ -39,16 +39,26 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
+    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
+
+    topRollerNeo.getEncoder().setAverageDepth(3);
+    topRollerNeo.getEncoder().setMeasurementPeriod(16);
     
+    // Likely unneccessary
+    bottomRollerNeo.getEncoder().setAverageDepth(3);
+    bottomRollerNeo.getEncoder().setMeasurementPeriod(16);
+
+    topRollerNeo.enableVoltageCompensation(12);
+    topRollerNeo.enableVoltageCompensation(12);
 
     // Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.topRollerKP);
-    pidController.setI(ShooterConstants.topRollerKI);
-    pidController.setD(ShooterConstants.topRollerKD);
+    pidController.setP(ShooterConstants.kP);
+    pidController.setI(ShooterConstants.kI);
+    pidController.setD(ShooterConstants.kD);
+    pidController.setFF(ShooterConstants.kV);
 
     // Making the bottom roller follow the top roller
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo.follow(topRollerNeo);    
   }
 
@@ -88,6 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
+    
   }
 
 }
