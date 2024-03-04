@@ -109,7 +109,8 @@ public class RobotContainer {
     .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
     new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
 
-    joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
+    joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose()
+    .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp).andThen(primer.ampReadyCommand())));
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
     joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
     joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));

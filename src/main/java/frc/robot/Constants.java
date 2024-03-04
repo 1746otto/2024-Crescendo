@@ -87,9 +87,6 @@ public final class Constants {
     public static final double kS = 0.17;
     public static final double kV = 0.0001654583333333333;
     public static final double kFF = 0.0001654579973546788;
-    public static final int kShooterAnalogInputChannel = 0;
-
-
   }
 
   /**
@@ -100,6 +97,8 @@ public final class Constants {
     // IDs
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
+    public static final int kPrimerSpeakerBeamBreakID = 0;
+    public static final int kPrimerAmpBeamBreakID = 1;
     // Speeds
     public static final double kIntake = 0.4;
     public static final double kOuttake = -0.4;
@@ -137,7 +136,6 @@ public final class Constants {
     public static double klimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
 
-    public static int kShooterBeambreak = 1;
 
     // Trapezoidal profiling
     public static double maxVelocity = 1.75;

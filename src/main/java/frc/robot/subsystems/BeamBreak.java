@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class BeamBreak {
@@ -10,7 +10,7 @@ public class BeamBreak {
   private AnalogInput primerBeambreak;
 
     public BeamBreak() { //Helper class that needs to change 
-        primerBeambreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
+        primerBeambreak = new AnalogInput(PrimerConstants.kPrimerSpeakerBeamBreakID);
     }
 
     /**

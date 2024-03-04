@@ -30,17 +30,11 @@ public class ShooterSubsystem extends SubsystemBase {
   /** CANSparkMax motor controller for the bottom shooting roller (follows top roller). */
   private CANSparkMax bottomRollerNeo;
   
-  /** Analog input for detecting beam breaks. */
-  private AnalogInput beamBreak;
-  
   /** PID controller for the top shooting roller. */
   private SparkPIDController pidController;
 
   /** Speed settings for various roller movements. */
   private double topShootingSpeed = frc.robot.Constants.ShooterConstants.kShoot;
-
-  /** Supplier for maintaining the state of the beam break. */
-  private BooleanSupplier beamBreakLastState;
 
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
@@ -66,7 +60,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of analog input for beam break detection
     topRollerNeo.setSmartCurrentLimit(40);
     bottomRollerNeo.setSmartCurrentLimit(40);
-    beamBreak = new AnalogInput(ShooterWristConstants.kShooterBeambreak);    
 
   }
 
@@ -75,13 +68,6 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void setSpeed(double speed) {
     topRollerNeo.set(speed);
-  }
-
-  /**
-   * Returns a BooleanSupplier representing the state of the beam break.
-   */
-  public BooleanSupplier isBeamBreakBroken() {
-    return beamBreakLastState;
   }
 
   /**
@@ -106,7 +92,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
+
   }
 
 }

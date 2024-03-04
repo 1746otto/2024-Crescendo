@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.PrimerConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +30,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
   private TalonSRX primerNeo;
   private AnalogInput speakerBeamBreak;
+  private AnalogInput ampBeamBreak;
 
   /** CANSparkMan pid controller */
   //private SparkPIDController pidController;
@@ -42,10 +42,11 @@ public class PrimerSubsystem extends SubsystemBase{
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
     primerNeo.setInverted(true);
     primerNeo.setNeutralMode(NeutralMode.Brake);
-    speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
+    speakerBeamBreak = new AnalogInput(PrimerConstants.kPrimerSpeakerBeamBreakID);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
     // pidController.setFF(PrimerConstants.kFF);
+    ampBeamBreak = new AnalogInput(PrimerConstants.kPrimerAmpBeamBreakID);
 
   }
 
@@ -81,7 +82,10 @@ public class PrimerSubsystem extends SubsystemBase{
    * @return true or false if game piece is held well in primer.
    */
   public boolean isObjectPinchedInPrimer() {
-    return (isPrimerBeamBreakBroken());
+    return (Math.floor(speakerBeamBreak.getVoltage()) == 0);
+  }
+  public boolean isObjectReadyToAmp() {
+    return (Math.floor(ampBeamBreak.getVoltage()) == 0);
   }
 
   /** Returns the velocity of the motor */
@@ -91,17 +95,20 @@ public class PrimerSubsystem extends SubsystemBase{
 
 
 
+  public Command ampReadyCommand() {
+    return setSpeedCommand(PrimerConstants.kOuttake).until(() -> isObjectReadyToAmp()).finallyDo(() -> setSpeedCommand(0));
+  }
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
   }
   public Command intakeCommand() {
-    return setSpeedCommand(PrimerConstants.kIntake).until(() -> isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kIntake).until(() -> isObjectPinchedInPrimer()).finallyDo(() -> setSpeedCommand(0));
   }
   public Command outtakeCommand() {
-    return setSpeedCommand(PrimerConstants.kOuttake).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kOuttake).until(() -> !isObjectPinchedInPrimer()).finallyDo(() -> setSpeedCommand(0));
   }
   public Command shootCommand() {
-    return setSpeedCommand(PrimerConstants.kShoot).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kShoot).until(() -> !isObjectPinchedInPrimer()).finallyDo(() -> setSpeedCommand(0));
   }
   public Command stopCommand() {
     return setSpeedCommand(PrimerConstants.kStop);
@@ -110,9 +117,6 @@ public class PrimerSubsystem extends SubsystemBase{
   public Command setSpeedCommand(double speed) {
     return run(() -> setSpeed(speed));
   }
-  public boolean isPrimerBeamBreakBroken() { //To change 
-    return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
-}
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
