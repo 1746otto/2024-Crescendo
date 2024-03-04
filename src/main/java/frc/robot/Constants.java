@@ -89,6 +89,7 @@ public final class Constants {
 
     public static final int kCurrentLimit = 60;
     // public static final double kFF = 0.0001654579973546788;
+    public static final int kShooterAnalogInputChannel = 0;
 
 
   }
