@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 
-public class IntakeWristSubsystem extends SubsystemBase{
+public class IntakeWristBackupSubsystem extends SubsystemBase{
     /** Motor controller for turning the intake mechanism. */
-    CANSparkMax turningMotor;
+    TalonFX turningMotor;
 
     /** PID controller for maintaining the turning motor position. */
     SparkPIDController pidController;
@@ -33,10 +33,10 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
      * controller.
      */
-    public IntakeWristSubsystem() {
+    public IntakeWristBackupSubsystem() {
 
         // Initialization of motor controllers and PID controller
-        turningMotor = new CANSparkMax(IntakeWristConstants.kIntakeTurnID, MotorType.kBrushless);
+        turningMotor = new TalonFX(IntakeWristConstants.kIntakeTurnID);
         pidController = turningMotor.getPIDController();
         pidController.setP(IntakeWristConstants.kP, 0);
         pidController.setD(IntakeWristConstants.kFF,0);
