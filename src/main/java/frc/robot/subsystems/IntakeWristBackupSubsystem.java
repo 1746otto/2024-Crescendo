@@ -4,7 +4,9 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class IntakeWristBackupSubsystem extends SubsystemBase{
     /** Motor controller for turning the intake mechanism. */
@@ -39,9 +42,20 @@ public class IntakeWristBackupSubsystem extends SubsystemBase{
 
         // Initialization of motor controllers and PID controller
         turningMotor = new TalonFX(IntakeWristConstants.kIntakeTurnID);
-        Slot0Configs pidController = new Slot0Configs();
+        
+        TalonFXConfiguration talonFxConfig = new TalonFXConfiguration();
+
+        Slot0Configs pidController = talonFxConfig.Slot0;
         pidController.kP = IntakeWristConstants.kP;
         pidController.kD = IntakeWristConstants.kFF;
+
+        MotionMagicConfigs motionMagic = talonFxConfig.MotionMagic; // tune all of this
+        motionMagic.MotionMagicCruiseVelocity = ShooterConstants.kMotionMagicCruiseVelocity;
+        motionMagic.MotionMagicAcceleration = ShooterConstants.kMotionMagicCruiseAcceleration;
+        motionMagic.MotionMagicJerk = ShooterConstants.kMotionMagicJerk;
+
+        turningMotor.getConfigurator().apply(talonFxConfig);
+        
 
         // Setting the initial required position to the origin
         turningMotor.setPosition(IntakeWristConstants.kStow);
