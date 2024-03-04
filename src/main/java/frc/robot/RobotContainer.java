@@ -34,6 +34,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpPosition;
 import frc.robot.commands.ShooterPosition;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
+import frc.robot.commands.checkPrimerPiece;
 import frc.robot.commands.handlePrimerShooter;
 import frc.robot.commands.podiumPosition;
 import frc.robot.commands.subwooferPosition;
@@ -103,11 +104,13 @@ public class RobotContainer {
                                                                                            // negative Y (forward)
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+         ));
 
-    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
+    // joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
+    // .andThen((new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+    // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))))
+    // .alongWith(new checkPrimerPiece(primer, intakeRollers, indexer)));
+    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).andThen(new ParallelDeadlineGroup(intakeWrist.indexPosCommand())));
 
     joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
@@ -121,7 +124,9 @@ public class RobotContainer {
   }
   public void configureDefaultCommands() {
     shooter.setDefaultCommand(shooter.ShootCommand());
+    indexer.setDefaultCommand(indexer.forwardCommand().until(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && primer.isPrimerBeamBreakBroken())).finallyDo(() -> indexer.setSpeed(0.0))); // check wrist up and intake roller beambreak is triggered
   }
+
   
 
   public Command getAutonomousCommand() {
