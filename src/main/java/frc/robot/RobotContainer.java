@@ -83,10 +83,10 @@ public class RobotContainer {
       NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
       new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
-      NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kpodiumPos));
-      NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kampPos));
-      NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kintakePos));
-      NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.ksubwooferPos));
+      NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
+      NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
+      NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
+      NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
       configureBindings();
       configureDefaultCommands();

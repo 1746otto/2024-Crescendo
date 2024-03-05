@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,6 +44,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
+  
+  private double setpoint = 0;
+  private double temp = 0; // Use in various intermediary steps.
 
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
@@ -52,11 +56,11 @@ public class ShooterSubsystem extends SubsystemBase {
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
 
-    topRollerNeo.getEncoder().setAverageDepth(3);
+    topRollerNeo.getEncoder().setAverageDepth(2);
     topRollerNeo.getEncoder().setMeasurementPeriod(16);
     
     // Likely unneccessary
-    bottomRollerNeo.getEncoder().setAverageDepth(3);
+    bottomRollerNeo.getEncoder().setAverageDepth(2);
     bottomRollerNeo.getEncoder().setMeasurementPeriod(16);
 
     topRollerNeo.enableVoltageCompensation(12);
@@ -75,9 +79,14 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setD(ShooterConstants.kD);
     pidController.setFF(ShooterConstants.kV);
 
+    topRollerNeo.setInverted(true);
     // Making the bottom roller follow the top roller
-    bottomRollerNeo.follow(topRollerNeo);
-    setReference(4000);
+    bottomRollerNeo.follow(topRollerNeo, true);
+    setRequest(4000);
+    
+    //topRollerNeo.set(.02);
+
+    CANSparkMax.enableExternalUSBControl(true);
   }
 
   /**
@@ -94,7 +103,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return beamBreakLastState;
   }
 
-  public void setReference(double RPM) {
+  public void setRequest(double RPM) {
+    setpoint = RPM;
     pidController.setReference(RPM, ControlType.kVelocity, 0, Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
@@ -120,6 +130,12 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
+    SmartDashboard.putNumber("Velocity", topRollerNeo.getEncoder().getVelocity());
+    temp = SmartDashboard.getNumber("Request velocity", setpoint);
+    if (temp != setpoint) {
+      setRequest(temp);
+    }
+
     beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 

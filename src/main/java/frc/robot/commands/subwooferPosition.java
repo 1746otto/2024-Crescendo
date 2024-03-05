@@ -21,7 +21,7 @@ public class subwooferPosition extends Command {
     // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_PivotSubsystem.runPivot(ShooterWristConstants.ksubwooferPos);
+    m_PivotSubsystem.runPivot(ShooterWristConstants.kSubwooferPos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +39,7 @@ public class subwooferPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_PivotSubsystem.atRequest(ShooterWristConstants.ksubwooferPos);
+    return m_PivotSubsystem.atPosition(ShooterWristConstants.kSubwooferPos);
   }
 }
 
