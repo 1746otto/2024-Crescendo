@@ -81,9 +81,9 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShoot = 4000;//0.2 and 1.0
+    public static final double kShoot = 1.0;//0.2 and 1.0
     public static final double kReverse = -kShoot;
-    public static final double kSubwooferShot = 2000;
+    public static final double kSubwooferShot = 0.8;
     public static final double kStop = 0.0;
 
     // device IDs
@@ -113,8 +113,8 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.4;
-    public static final double kOuttake = -0.4;
+    public static final double kIntake = 0.2;
+    public static final double kOuttake = -0.2;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
