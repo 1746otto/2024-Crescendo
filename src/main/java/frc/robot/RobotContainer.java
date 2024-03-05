@@ -44,6 +44,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.BooleanSupplier;
+
+import javax.swing.GroupLayout.ParallelGroup;
+
 import frc.robot.subsystems.ArmRollerSubsystem;
 import frc.robot.subsystems.LEDSubsystemtest;
 import frc.robot.subsystems.ShooterPivotSubsystem;
@@ -77,6 +80,9 @@ public class RobotContainer {
 
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
+
+  public BooleanSupplier inIntake = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   
  
   //pathplanner testing
@@ -106,12 +112,14 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    joystick.y().toggleOnTrue(intakeWrist.intakePosCommand().withTimeout(2).andThen(intakeWrist.indexPosCommand()));
+    joystick.y().onTrue(new ParallelDeadlineGroup(new WaitCommand(2),intakeRollers.intakeCommand(),intakeWrist.intakePosCommand(), pivot.goToNormalPos()).andThen(intakeWrist.indexPosCommand().alongWith(intakeRollers.holdCommand())));
 
     joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
-    joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
-    joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(new WaitCommand(1).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp))));
+    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
+    joystick.leftTrigger().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.leftBumper().whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)));
+    joystick.leftBumper().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
@@ -119,9 +127,9 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
-    intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
-    primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken()))); // check wrist up and intake roller beambreak is triggered
+    indexer.setDefaultCommand(indexer.forwardCommand().onlyIf((() -> inIntake.getAsBoolean() && !inShooter.getAsBoolean())));
+    intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> inIntake.getAsBoolean()));
+    primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (!inShooter.getAsBoolean()))); // check wrist up and intake roller beambreak is triggered
   }
 
   

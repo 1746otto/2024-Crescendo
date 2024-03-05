@@ -40,8 +40,8 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 30;
-    public static final int kIntakeAnalogInputChannel = 0; // To Change
+    public static final double kIntakeCurrentLimit = 20;
+    public static final int kIntakeAnalogInputChannel = 1; // To Change
   }
 
   public static class IntakeWristConstants
@@ -81,8 +81,9 @@ public final class Constants {
    */
   public static class ShooterConstants {
     // speed constants
-    public static final double kShoot = 1.0;//0.2 and 1.0
+    public static final double kShoot = 4000;//0.2 and 1.0
     public static final double kReverse = -kShoot;
+    public static final double kSubwooferShot = 2000;
     public static final double kStop = 0.0;
 
     // device IDs

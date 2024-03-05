@@ -105,8 +105,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return run(() -> setRequest(position)).until(() -> atPosition(position));
     }
 
-    public Command goToAmpPose(){
+    public Command goToAmpPose() {
         return runPivot(ShooterWristConstants.kAmpPos);
+    }
+    public Command goToSubCommand() {
+        return runPivot(ShooterWristConstants.kSubwooferPos);
     }
 
     public Command goToNormalPos() {

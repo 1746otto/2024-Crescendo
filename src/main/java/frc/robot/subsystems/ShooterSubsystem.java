@@ -55,6 +55,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
+  
+    // Making the bottom roller follow the top roller
+    //bottomRollerNeo.follow(topRollerNeo, true);
 
     topRollerNeo.getEncoder().setAverageDepth(2);
     topRollerNeo.getEncoder().setMeasurementPeriod(16);
@@ -79,14 +82,9 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.setD(ShooterConstants.kD);
     pidController.setFF(ShooterConstants.kV);
 
-    topRollerNeo.setInverted(true);
-    // Making the bottom roller follow the top roller
-    bottomRollerNeo.follow(topRollerNeo, true);
-    setRequest(4000);
     
-    //topRollerNeo.set(.02);
 
-    CANSparkMax.enableExternalUSBControl(true);
+    
   }
 
   /**
@@ -112,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return setSpeedCommand(ShooterConstants.kShoot).andThen(StopCommand());
+    return setSpeedCommand(ShooterConstants.kShoot);
   }
   
   public Command ReverseCommand(){
@@ -123,7 +121,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command setSpeedCommand(double speed) {
-    return runOnce(() -> setSpeed(speed));
+    return run(() -> setRequest(speed));
   }
 
   /**
@@ -132,11 +130,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Velocity", topRollerNeo.getEncoder().getVelocity());
     temp = SmartDashboard.getNumber("Request velocity", setpoint);
-    if (temp != setpoint) {
-      setRequest(temp);
-    }
+   
 
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
   }
 
 }
