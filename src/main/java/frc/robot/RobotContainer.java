@@ -88,7 +88,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kampPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kintakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.ksubwooferPos));
-      NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
+      NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer,  () -> ampPosition == AmpPositionState.Amp));
       configureBindings();
       configureDefaultCommands();
       
@@ -111,7 +111,7 @@ public class RobotContainer {
     joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
     joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
-    joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
+    joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(new WaitCommand(1).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp))));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
