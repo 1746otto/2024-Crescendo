@@ -80,7 +80,7 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-      NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
+      NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(0.75)
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
       new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kpodiumPos));
