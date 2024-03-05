@@ -106,11 +106,7 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    // joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-    // .andThen((new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))))
-    // .alongWith(new checkPrimerPiece(primer, intakeRollers, indexer)));
-    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).andThen(new ParallelDeadlineGroup(intakeWrist.indexPosCommand())));
+    joystick.y().toggleOnTrue(intakeWrist.intakePosCommand().withTimeout(2).andThen(intakeWrist.indexPosCommand()));
 
     joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
@@ -123,8 +119,9 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    shooter.setDefaultCommand(shooter.ShootCommand());
-    indexer.setDefaultCommand(indexer.forwardCommand().until(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && primer.isPrimerBeamBreakBroken())).finallyDo(() -> indexer.setSpeed(0.0))); // check wrist up and intake roller beambreak is triggered
+    indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
+    intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
+    primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken()))); // check wrist up and intake roller beambreak is triggered
   }
 
   
