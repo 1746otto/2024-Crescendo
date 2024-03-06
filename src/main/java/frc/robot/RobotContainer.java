@@ -28,6 +28,7 @@ import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
@@ -78,7 +79,8 @@ public class RobotContainer {
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
 
-  public BooleanSupplier inIntake = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inIntakeUp = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inIntakeDown = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeRollerConstants.kHold));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   
  
@@ -113,13 +115,15 @@ public class RobotContainer {
     joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
     .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
     new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
+    //Fixed controls
+    
 
-
-    joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
-    joystick.leftTrigger().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.leftBumper().whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
-    joystick.leftBumper().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    //pivot
+    joystick.rightBumper().and(inShooter).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
+    joystick.leftTrigger().and(inShooter).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
+    joystick.leftTrigger().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.leftBumper().and(inShooter).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
+    joystick.leftBumper().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
     joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
 
     if (Utils.isSimulation()) {

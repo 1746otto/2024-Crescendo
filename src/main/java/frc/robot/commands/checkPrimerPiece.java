@@ -43,7 +43,7 @@ public class checkPrimerPiece extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (m_PrimerSubsystem.isPrimerBeamBreakBroken() && !m_IntakeRollerSubsystem.isIntakeBeamBreakBroken());
+    return (m_PrimerSubsystem.isPrimerBeamBreakBroken() && !m_IntakeRollerSubsystem.objectOnHand());
   }
 }
 
