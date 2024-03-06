@@ -27,6 +27,7 @@ import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
@@ -85,7 +86,7 @@ public class RobotContainer {
   public RobotContainer() {
       NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(1.5)
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      new SequentialCommandGroup(intakeWrist.indexPosCommand(),indexer.forwardCommand().alongWith(intakeRollers.outtakeCommand())))));
+      intakeWrist.indexPosCommand().andThen(indexer.setSpeedCommand(IndexerConstants.kForward),intakeRollers.outtakeCommand()))));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
