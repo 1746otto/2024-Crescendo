@@ -143,7 +143,7 @@ public final class Constants {
     public static double kPivotReduction = 60;
     public static double kStartPos = 0.216;
     public static double kPodiumPos = 0.799382; // To change
-    public static double kSubwooferPos = 0.559; // To change
+    public static double kSubwooferPos = 0.55; // To change
     public static double kIntakePos = 0.516; // To change
     public static double kAmpPos = 0.757375;// To change
     public static double kTolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change

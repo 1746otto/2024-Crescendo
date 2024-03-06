@@ -31,13 +31,9 @@ import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.AmpPosition;
-import frc.robot.commands.ShooterPosition;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
 import frc.robot.commands.checkPrimerPiece;
 import frc.robot.commands.handlePrimerShooter;
-import frc.robot.commands.podiumPosition;
-import frc.robot.commands.subwooferPosition;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -87,14 +83,15 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-      NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
+      NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(1.5)
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
+      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand(),intakeRollers.outtakeCommand())))));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
-      NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
+      NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(1));
+      NamedCommands.registerCommand("ShootSubWoofer", shooter.setSpeedCommand(ShooterConstants.kSubwooferShot));
       configureBindings();
       configureDefaultCommands();
       
@@ -112,12 +109,14 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    joystick.y().onTrue(new ParallelDeadlineGroup(new WaitCommand(2),intakeRollers.intakeCommand(),intakeWrist.intakePosCommand(), pivot.goToNormalPos()).andThen(intakeWrist.indexPosCommand().alongWith(intakeRollers.holdCommand())));
+    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
+      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
 
     joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
     joystick.leftTrigger().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.leftBumper().whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)));
+    joystick.leftBumper().whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
     joystick.leftBumper().whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
     joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
 
@@ -127,22 +126,20 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    indexer.setDefaultCommand(indexer.forwardCommand().onlyIf((() -> inIntake.getAsBoolean() && !inShooter.getAsBoolean())));
-    intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> inIntake.getAsBoolean()));
-    primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (!inShooter.getAsBoolean()))); // check wrist up and intake roller beambreak is triggered
+     // check wrist up and intake roller beambreak is triggered
   }
 
   
 
   public Command getAutonomousCommand() {
     // Command auton = drivetrain.getAutoPath("5Piece");
-    // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
+    Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     // Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
     Command theory = drivetrain.getAutoPath("ThreeSouthSide");
     //return theory;
     Command tune = drivetrain.getAutoPath("PathPlanTest");
     Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-    return theory;
+    return baseAuton1;
   }
 }
