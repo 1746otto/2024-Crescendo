@@ -85,7 +85,7 @@ public class RobotContainer {
   public RobotContainer() {
       NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(1.5)
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand(),intakeRollers.outtakeCommand())))));
+      new SequentialCommandGroup(intakeWrist.indexPosCommand(),indexer.forwardCommand().alongWith(intakeRollers.outtakeCommand())))));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
