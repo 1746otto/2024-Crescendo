@@ -127,6 +127,9 @@ public class IntakeWristSubsystem extends SubsystemBase{
     public Command intakePosCommand() {
         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() ->  isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());
     }
+    public Command halfWayPosCommand() {
+         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kHalf)).until(() ->  isAtReqPosition(IntakeWristConstants.kHalf)),stopMotorCommand());
+    }
     public Command stopMotorCommand(){
         return runOnce(this::stopMotor);
     }
@@ -142,7 +145,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
         }
         // if(isAtReqPosition(reqPosition)){
         //     stopIntake();
-        // } Add here to test later
+        // } // Add here to test later
         SmartDashboard.putNumber("Pose", getPosition());
         SmartDashboard.putNumber("Current", current);
         

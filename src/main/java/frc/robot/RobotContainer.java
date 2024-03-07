@@ -79,8 +79,9 @@ public class RobotContainer {
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
 
-  public BooleanSupplier inIntakeUp = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
-  public BooleanSupplier inIntakeDown = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeRollerConstants.kHold));
+  public BooleanSupplier inIntakeUp = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
+  public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   
  
@@ -111,14 +112,20 @@ public class RobotContainer {
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
-
-    joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-      .until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake) && intakeRollers.intakeHasPiece())
-      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
     //Fixed controls
-    
+    //This button relies on if the rollers run forever.
+    joystick.y().onTrue(new ParallelCommandGroup(intakeRollers.dumbIntakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().onlyIf(notInIntake).until(inIntakeDown)
+    .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
+    .andThen(intakeWrist.indexPosCommand())
+    .andThen(new ParallelCommandGroup(intakeRollers.outtakeCommand(), indexer.forwardCommand(), primer.intakeCommand()).onlyIf(inIntakeUp).until(inShooter)));
 
+      // new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+      // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
+    
+    //Parker's new controls
+    joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand(), indexer.stopCommand(), primer.stopCommand()));
+    //joystick.b().whileTrue(intakeWrist.halfWayPosCommand().andThen(intakeRollers.outtakeCommand())) ask about lol
+   
     //pivot
     joystick.rightBumper().and(inShooter).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().and(inShooter).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));

@@ -54,6 +54,7 @@ public final class Constants {
     // Positions
     public static final double kIntake = 17.5;
     public static final double kStow = 0;
+    public static final double kHalf = kIntake / 2;
 
     // tolerance
     public static final double kTolerance = 0.3;
