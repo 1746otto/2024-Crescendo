@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,6 +26,8 @@ import frc.robot.Constants.ShooterWristConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 
 
@@ -34,19 +37,21 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public CANSparkMax master;
     private CANSparkMax slave;
-  
-    //Poses and tolerances
-    public static double tolerance = Math.toRadians(10) / ( 2 * Math.PI );//To change
-    private double limit = 0.5 / ( 2 * Math.PI);
-    private static double kDt = 0.02;
 
     private double targetPose = ShooterWristConstants.kIntakePos;
     private final TrapezoidProfile m_profile =
       new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
+
     private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+    private TrapezoidProfile.State m_temporaryState = new TrapezoidProfile.State();
 
-    public ShooterPivotSubsystem(){
+    private double lastTime = 0;
+    private double deltaTime = 0;
+    private double startTime = 0;
+
+    public ShooterPivotSubsystem() {
+
       master = new CANSparkMax(ShooterWristConstants.kShooterMasterID,MotorType.kBrushless);
       slave = new CANSparkMax(ShooterWristConstants.kShooterSlaveID,MotorType.kBrushless);
       slave.follow(master, true);//Might need to have a workaround//Might need to change
@@ -55,10 +60,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       master.setIdleMode(IdleMode.kBrake);
       slave.setIdleMode(IdleMode.kBrake);
       master.setSmartCurrentLimit(50);
+      slave.setSmartCurrentLimit(50);
       m_pidController = master.getPIDController();
-      encoder.setAverageDepth(8); //To change 
       m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(12.8);//6.4
+      m_pidController.setP(12.8); // 6.4
       m_pidController.setD(5.0);
 
       double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
@@ -73,17 +78,22 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public void setRequest(double position) {
-       // m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
-       targetPose = position;
-       
+        m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
+        m_setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        m_profile.calculate(0, m_setpoint, m_goal);
+        startTime = Timer.getFPGATimestamp();
 
     }
-    public boolean atRequest(double position) {
+    public boolean atPosition(double position) {
         return (Math.abs(encoder.getPosition() - position) < ShooterWristConstants.kTolerance);
     }
 
+    public boolean atSetpoint() {
+        return (Math.abs(encoder.getPosition() - m_goal.position) < ShooterWristConstants.kTolerance); 
+    }
+
     public double getTargetPose(){
-        return targetPose;
+        return m_goal.position;
     }
 
     public void stop() {
@@ -91,7 +101,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return run(() -> setRequest(position)).until(() -> atRequest(position));
+        return run(() -> setRequest(position)).until(() -> atPosition(position));
     }
 
     public Command goToAmpPose(){
@@ -104,9 +114,6 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToPodiumPos() {
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
-    public Command goToSubCommand() {
-        return runPivot (ShooterWristConstants.kSubwooferPos);
-    }
     
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
@@ -116,17 +123,27 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("TargetPose", targetPose);
+        deltaTime = Timer.getFPGATimestamp() - lastTime;
+        SmartDashboard.putNumber("TargetPose", m_goal.position);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
+        targetPose = SmartDashboard.getNumber("Setpoint", m_goal.position);
+        if (targetPose != m_goal.position) {
+            setRequest(targetPose);
+        }
         //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
         //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
         
-        if (atRequest(targetPose)) {
-             master.stopMotor();
-        } else {   //Commented out to NOT consider tolerances.
-             m_pidController.setReference(targetPose, CANSparkMax.ControlType.kPosition);
-        }
+        m_setpoint = m_profile.calculate(deltaTime, m_setpoint, m_goal);
         
+        if (m_profile.isFinished(Timer.getFPGATimestamp() - startTime)) {
+            master.getPIDController().setReference(m_setpoint.position, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, m_temporaryState.velocity), ArbFFUnits.kVoltage);
+        }
+        else if (Math.abs(encoder.getPosition() - m_goal.position) > ShooterWristConstants.kTolerance){
+            master.getPIDController().setReference(m_goal.position, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, m_temporaryState.velocity), ArbFFUnits.kVoltage);
+        }
+        else {
+            master.set(0);
+        }
     }    
 }
     
