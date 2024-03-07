@@ -80,6 +80,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void setRequest(double position) {
         m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
         m_setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        // Must call calculat to update the internally stored setpoints. Kinda jank if you ask me.
         m_profile.calculate(0, m_setpoint, m_goal);
         startTime = Timer.getFPGATimestamp();
 
