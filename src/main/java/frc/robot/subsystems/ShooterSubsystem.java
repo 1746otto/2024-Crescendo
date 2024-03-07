@@ -79,7 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Returns a BooleanSupplier representing the state of the beam break.
-   */
+   */ 
   public BooleanSupplier isBeamBreakBroken() {
     return beamBreakLastState;
   }

@@ -50,7 +50,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(true);
         rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
-        rollerBeamBreak2 =  new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
     }
 
     

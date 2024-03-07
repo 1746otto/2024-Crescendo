@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import javax.management.openmbean.TabularType;
+
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -72,6 +74,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
       
+      setRequest(encoder.getPosition());
     }
     public void test() {
         master.set(0.1);
@@ -127,6 +130,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         deltaTime = Timer.getFPGATimestamp() - lastTime;
+        lastTime = Timer.getFPGATimestamp();
         SmartDashboard.putNumber("TargetPose", m_goal.position);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
         targetPose = SmartDashboard.getNumber("Setpoint", m_goal.position);
