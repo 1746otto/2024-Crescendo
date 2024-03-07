@@ -7,11 +7,15 @@ package frc.robot;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -20,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.AutoConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -117,6 +123,8 @@ public class RobotContainer {
     joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
     joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
     joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(new WaitCommand(1).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp))));
+
+    joystick.povCenter().onTrue(new ParallelDeadlineGroup(AutoBuilder.pathfindToPose((DriverStation.getAlliance().get() == Alliance.Blue) ? FieldConstants.blueAmpPose : FieldConstants.redAmpPose, AutoConstants.dynamicPlanningPathConstraints), pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));

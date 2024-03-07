@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.constants.VisionConstants;
+import frc.robot.constants.AutoConstants;
 import frc.robot.constants.TunerConstants;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -69,12 +70,12 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             this::seedFieldRelative,  // Consumer for seeding pose against auto
             this::getCurrentRobotChassisSpeeds,
             (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-            new HolonomicPathFollowerConfig(new PIDConstants(2.8, 0, 0),
-                                            new PIDConstants( 2.8, 0, 0),
+            new HolonomicPathFollowerConfig(AutoConstants.translationConstants,
+                                            AutoConstants.rotationalConstants,
                                             TunerConstants.kSpeedAt12VoltsMps,
                                             driveBaseRadius,
                                             new ReplanningConfig()),
-            ()->(DriverStation.getAlliance().get() == Alliance.Red), // Change this if the path needs to be flipped on red vs blue
+            ()->(DriverStation.getAlliance().get() == Alliance.Red), // Change this if the path needs to be flipped on red vs blue I think this is wrong rn.
             this); // Subsystem for requirements
     }
 
