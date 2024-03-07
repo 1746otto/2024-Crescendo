@@ -88,7 +88,7 @@ public class RobotContainer {
   public RobotContainer() {
       NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(1.5)
       .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      intakeWrist.indexPosCommand().andThen(indexer.setSpeedCommand(IndexerConstants.kForward),intakeRollers.outtakeCommand()))));
+      intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand(),intakeRollers.outtakeCommand())))); //Change to andThen if broken
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
@@ -104,7 +104,7 @@ public class RobotContainer {
  
 
   private void configureBindings() {
-    
+  
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)

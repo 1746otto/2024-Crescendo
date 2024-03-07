@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -79,7 +80,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return setSpeedCommand(IntakeRollerConstants.kStop);
     }
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(2).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).until(() -> objectOnHand()).withTimeout(2).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
         return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(0.1);
