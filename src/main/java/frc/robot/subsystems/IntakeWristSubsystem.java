@@ -103,8 +103,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      */
     public boolean isAtReqPosition(double reqPos) {
 
-        if ((getPosition() >= (reqPos - IntakeWristConstants.kTolerance))
-                && (getPosition() <= (reqPos + IntakeWristConstants.kTolerance))) {
+        if (Math.abs(getPosition() - reqPos) < IntakeWristConstants.kTolerance) {
             return true;
         }
         return false;
@@ -113,6 +112,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
     /**
      * COMMANDS
      */
+    // Change name
     public Command IntakePositionCheck(double requestedPos) {
         return run(() -> isAtReqPosition(requestedPos)).until(() -> isAtReqPosition(requestedPos) == true);
     }

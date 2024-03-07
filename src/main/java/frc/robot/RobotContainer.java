@@ -79,8 +79,8 @@ public class RobotContainer {
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
 
-  public BooleanSupplier inIntakeUp = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
-  public BooleanSupplier inIntakeDown = (() -> intakeRollers.objectOnHand() && intakeWrist.isAtReqPosition(IntakeRollerConstants.kHold));
+  public BooleanSupplier inIntakeUp = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inIntakeDown = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeRollerConstants.kHold));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   
  
@@ -112,9 +112,10 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    joystick.y().onTrue(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))));
+    joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
+      .until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake) && intakeRollers.intakeHasPiece())
+      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
     //Fixed controls
     
 

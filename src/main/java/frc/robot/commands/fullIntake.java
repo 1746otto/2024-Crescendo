@@ -28,7 +28,7 @@ public class fullIntake extends Command{
 
     @Override
     public boolean isFinished() {
-        return intakeRollerSubsystem.objectOnHand() && intakeWristSubsystem.isAtReqPosition(IntakeWristConstants.kIntake); //shouldn't do anything ideally;
+        return intakeRollerSubsystem.isBeamBreakTriggered() && intakeWristSubsystem.isAtReqPosition(IntakeWristConstants.kIntake); //shouldn't do anything ideally;
     }
 
     

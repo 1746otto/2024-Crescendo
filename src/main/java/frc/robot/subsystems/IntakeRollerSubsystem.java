@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +42,8 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     private AnalogInput rollerBeamBreak1;
     private AnalogInput rollerBeamBreak2;
 
+    double beamBreakLastTrigger = 0;
+
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
      * controller.
@@ -50,6 +54,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(true);
         rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
+        beamBreakLastTrigger = Timer.getFPGATimestamp();
     }
 
     
@@ -78,8 +83,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public Command stopCommand() {
         return setSpeedCommand(IntakeRollerConstants.kStop);
     }
+    // Needs to go but idk if it can be replaced with out breaking stuff.
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).until(() -> objectOnHand()).withTimeout(2).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).until(() -> isBeamBreakTriggered()).withTimeout(2).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
         return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(0.1);
@@ -94,9 +100,21 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return setSpeedCommand(IntakeRollerConstants.kHold);
     }
     public Command setSpeedCommand(double speed){
-        return run(() -> setSpeed(speed));
+        return run(() -> setSpeed(speed)); // needs to be an instant command. MUST FIX AFTER COMP
     }
-    public boolean objectOnHand(){
-        return ((Math.floor(rollerBeamBreak1.getVoltage()) == 0) || (Math.floor(rollerBeamBreak2.getVoltage()) == 0));
+
+    public boolean intakeHasPiece() {
+        return Timer.getFPGATimestamp() - beamBreakLastTrigger > 0.25;
+    }
+
+    public boolean isBeamBreakTriggered(){
+        return ((rollerBeamBreak1.getVoltage() >= 1));
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("roller Voltage", rollerBeamBreak1.getVoltage());
+        if (!isBeamBreakTriggered())
+            beamBreakLastTrigger = Timer.getFPGATimestamp();
     }
 }
