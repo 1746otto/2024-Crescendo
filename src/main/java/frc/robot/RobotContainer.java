@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -55,14 +56,14 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  private final Vision vision = new Vision(drivetrain);
-  private final LEDSubsystem led = new LEDSubsystem();
-  private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
-  private final ShooterSubsystem shooter = new ShooterSubsystem();
-  private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
-  private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
-  private final PrimerSubsystem primer = new PrimerSubsystem();
-  private final IndexerSubsystem indexer = new IndexerSubsystem();
+  // private final Vision vision = new Vision(drivetrain);
+  // private final LEDSubsystem led = new LEDSubsystem();
+  // private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
+  // private final ShooterSubsystem shooter = new ShooterSubsystem();
+  // private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
+  // private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
+  // private final PrimerSubsystem primer = new PrimerSubsystem();
+  // private final IndexerSubsystem indexer = new IndexerSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -75,24 +76,13 @@ public class RobotContainer {
 
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
+  private Direction runDirection = Direction.kForward;
   
  
   //pathplanner testing
   public RobotContainer() {
 
     //Don't initialize any commands before this, it breaks named commands
-    
-    NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand())
-    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).withTimeout(2));
-    NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
-    NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
-    NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
-    NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
-    NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
-    
-    // Just make sure this doesn't get optimized away.
-    vision.toString();
 
     configureBindings();
     configureDefaultCommands();
@@ -103,30 +93,26 @@ public class RobotContainer {
  
 
   private void configureBindings() {
-    
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-         ));
 
-    joystick.y().toggleOnTrue(intakeWrist.intakePosCommand().withTimeout(2).andThen(intakeWrist.indexPosCommand()));
-
-    joystick.rightBumper().toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().whileTrue(pivot.goToPodiumPos());
-    joystick.leftTrigger().whileFalse(pivot.goToNormalPos());
-    joystick.rightTrigger().whileTrue(shooter.ShootCommand().alongWith(new WaitCommand(1).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp))));
+    joystick.a().whileTrue(drivetrain.sysIdSteerQuasistatic(runDirection));
+    joystick.b().whileTrue(drivetrain.sysIdSteerDynamic(runDirection));
+    joystick.x().whileTrue(drivetrain.sysIdTranslationQuasistatic(runDirection));
+    joystick.y().whileTrue(drivetrain.sysIdTranslationDynamic(runDirection));
+    joystick.leftBumper().whileTrue(drivetrain.sysIdRotationQuasistatic(runDirection));
+    joystick.rightBumper().whileTrue(drivetrain.sysIdTranslationDynamic(runDirection));
+    joystick.povUp().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
+    joystick.povDown().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
-    drivetrain.registerTelemetry(logger::telemeterize);
+    // drivetrain.registerTelemetry(logger::telemeterize);
   }
+
   public void configureDefaultCommands() {
-    indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
-    intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
-    primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken()))); // check wrist up and intake roller beambreak is triggered
+    // indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
+    // intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
+    // primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken()))); // check wrist up and intake roller beambreak is triggered
   }
 
   

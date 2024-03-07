@@ -2,14 +2,20 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveTranslation;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -17,12 +23,15 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 //import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 
@@ -38,6 +47,48 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     Alliance alliance;
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    boolean enableSignalLogging = true;
+    private final VoltageOut m_sysidControl = new VoltageOut(0);
+    SwerveRequest.SysIdSwerveSteerGains sysidSteerRequest = new SwerveRequest.SysIdSwerveSteerGains();
+    SwerveRequest.SysIdSwerveTranslation sysidTranslationRequest = new SwerveRequest.SysIdSwerveTranslation();
+    SwerveRequest.SysIdSwerveRotation sysidRotationRequest = new SwerveRequest.SysIdSwerveRotation();
+
+    private SysIdRoutine steerRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,         // Default ramp rate is acceptable
+                Volts.of(4), // Reduce dynamic voltage to 4 to prevent motor brownout
+                null,          // Default timeout is acceptable
+                                       // Log state with Phoenix SignalLogger class
+                (state)->SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts)-> sysidSteerRequest.withVolts(volts),
+                null,
+                this));
+    private SysIdRoutine translationRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,         // Default ramp rate is acceptable
+                Volts.of(4), // Reduce dynamic voltage to 4 to prevent motor brownout
+                null,          // Default timeout is acceptable
+                                       // Log state with Phoenix SignalLogger class
+                (state)->SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts)-> sysidTranslationRequest.withVolts(volts),
+                null,
+                this));
+    private SysIdRoutine rotationRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,         // Default ramp rate is acceptable
+                Volts.of(4), // Reduce dynamic voltage to 4 to prevent motor brownout
+                null,          // Default timeout is acceptable
+                                       // Log state with Phoenix SignalLogger class
+                (state)->SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts)-> sysidRotationRequest.withVolts(volts),
+                null,
+                this));
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
@@ -45,6 +96,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         setVisionMeasurementStdDevs(VisionConstants.kVisionStdDeviations);
 
         configurePathPlanner();
+
+        if (enableSignalLogging)
+            configSignalLogger();
         
         if (Utils.isSimulation()) {
             startSimThread();
@@ -52,7 +106,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
+
+        setVisionMeasurementStdDevs(VisionConstants.kVisionStdDeviations);
+
         configurePathPlanner();
+
+        if (enableSignalLogging)
+            configSignalLogger();
+        
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -86,6 +147,70 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return new PathPlannerAuto(pathName);
     }
          
+    private void configSignalLogger() {
+        SignalLogger.setPath("/media/sda1/ctre-logs/");
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+        250,
+        Modules[0].getDriveMotor().getPosition(),
+        Modules[0].getDriveMotor().getVelocity(),
+        Modules[0].getDriveMotor().getMotorVoltage(),
+        Modules[0].getSteerMotor().getPosition(),
+        Modules[0].getSteerMotor().getVelocity(),
+        Modules[0].getSteerMotor().getMotorVoltage(),
+        Modules[1].getDriveMotor().getPosition(),
+        Modules[1].getDriveMotor().getVelocity(),
+        Modules[1].getDriveMotor().getMotorVoltage(),
+        Modules[1].getSteerMotor().getPosition(),
+        Modules[1].getSteerMotor().getVelocity(),
+        Modules[1].getSteerMotor().getMotorVoltage(),
+        Modules[2].getDriveMotor().getPosition(),
+        Modules[2].getDriveMotor().getVelocity(),
+        Modules[2].getDriveMotor().getMotorVoltage(),
+        Modules[2].getSteerMotor().getPosition(),
+        Modules[2].getSteerMotor().getVelocity(),
+        Modules[2].getSteerMotor().getMotorVoltage(),
+        Modules[3].getDriveMotor().getPosition(),
+        Modules[3].getDriveMotor().getVelocity(),
+        Modules[3].getDriveMotor().getMotorVoltage(),
+        Modules[3].getSteerMotor().getPosition(),
+        Modules[3].getSteerMotor().getVelocity(),
+        Modules[3].getSteerMotor().getMotorVoltage());
+
+        // Might be able to use optimize all but kinda time crunch rn
+        for (SwerveModule module : Modules) {
+            module.getSteerMotor().optimizeBusUtilization();
+            module.getDriveMotor().optimizeBusUtilization();
+        }
+
+        SignalLogger.start();
+         
+        
+    }
+
+    public Command sysIdSteerQuasistatic(SysIdRoutine.Direction direction) {
+        return steerRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdSteerDynamic(SysIdRoutine.Direction direction) {
+        return steerRoutine.dynamic(direction);
+    }
+
+    public Command sysIdTranslationQuasistatic(SysIdRoutine.Direction direction) {
+        return translationRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdTranslationDynamic(SysIdRoutine.Direction direction) {
+        return translationRoutine.dynamic(direction);
+    }
+
+    public Command sysIdRotationQuasistatic(SysIdRoutine.Direction direction) {
+        return rotationRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdRotationDynamic(SysIdRoutine.Direction direction) {
+        return rotationRoutine.dynamic(direction);
+    }
 
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
