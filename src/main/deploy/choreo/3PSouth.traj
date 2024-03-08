@@ -1384,7 +1384,16 @@
       "command": {
         "type": "named",
         "data": {
-          "name": ""
+          "name": "intakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 2.5482993096857123,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "indexCommand"
         }
       }
     }

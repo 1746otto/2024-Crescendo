@@ -1661,7 +1661,19 @@
                     "command": {
                         "type": "named",
                         "data": {
-                            "name": ""
+                            "name": "intakeCommand"
+                        }
+                    }
+                },
+                {
+                    "name": "Index piece",
+                    "target": 2,
+                    "targetTimestamp": 2.2982993096857123,
+                    "offset": 0.25,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "indexCommand"
                         }
                     }
                 }
