@@ -88,6 +88,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kintakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.ksubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
+      NamedCommands.registerCommand("shootCommand", shooter.ShootCommand());
       configureBindings();
       configureDefaultCommands();
       
@@ -129,10 +130,11 @@ public class RobotContainer {
     // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     // Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
+    Command bottom2Piece = drivetrain.getAutoPath("Bottom2P");
     Command theory = drivetrain.getAutoPath("ThreeSouthSide");
     //return theory;
     Command tune = drivetrain.getAutoPath("PathPlanTest");
     Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-    return theory;
+    return bottom2Piece;
   }
 }
