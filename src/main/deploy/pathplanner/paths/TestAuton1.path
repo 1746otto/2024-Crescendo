@@ -48,25 +48,12 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "index piece",
-      "waypointRelativePos": 1.1,
+      "name": "intake",
+      "waypointRelativePos": 0.0,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "indexCommand"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "pivotSubwoofer"
-              }
-            }
-          ]
+          "commands": []
         }
       }
     }
