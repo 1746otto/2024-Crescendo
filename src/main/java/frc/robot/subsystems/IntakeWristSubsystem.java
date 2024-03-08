@@ -122,7 +122,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * required position.
      */
     public Command indexPosCommand() {
-        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kStow)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isAtReqPosition(IntakeWristConstants.kStow)),stopMotorCommand());
+        return run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isAtReqPosition(IntakeWristConstants.kStow)).andThen(stopMotorCommand());
     }
     public Command intakePosCommand() {
         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() ->  isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());

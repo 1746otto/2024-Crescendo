@@ -114,8 +114,8 @@ public class RobotContainer {
 
     joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
       .until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake) && intakeRollers.intakeHasPiece())
-      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
+      .andThen(new ParallelDeadlineGroup(intakeWrist.indexPosCommand(), indexer.setSpeedCommand(IndexerConstants.kForward)))
+      .andThen(primer.intakeCommand().deadlineWith(intakeRollers.outtakeCommand())).andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
     //Fixed controls
     
 

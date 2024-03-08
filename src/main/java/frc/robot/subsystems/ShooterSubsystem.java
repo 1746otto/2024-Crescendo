@@ -52,6 +52,8 @@ public class ShooterSubsystem extends SubsystemBase {
     topRollerNeo.setIdleMode(IdleMode.kCoast);
     bottomRollerNeo.setIdleMode(IdleMode.kCoast);
     topRollerNeo.setInverted(true);
+    bottomRollerNeo.follow(topRollerNeo, true);
+    
 
     //Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
@@ -61,7 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
     
 
     // Making the bottom roller follow the top roller
-    bottomRollerNeo.follow(topRollerNeo, true);
+    
 
     // Initialization of analog input for beam break detection
     topRollerNeo.setSmartCurrentLimit(40);

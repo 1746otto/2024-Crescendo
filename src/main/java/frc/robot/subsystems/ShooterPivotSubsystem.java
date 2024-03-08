@@ -142,7 +142,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         
         m_setpoint = m_profile.calculate(deltaTime, m_setpoint, m_goal);
         
-        if (m_profile.isFinished(Timer.getFPGATimestamp() - startTime)) {
+        if (!m_profile.isFinished(Timer.getFPGATimestamp() - startTime)) {
             master.getPIDController().setReference(m_setpoint.position, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, m_temporaryState.velocity), ArbFFUnits.kVoltage);
         }
         else if (Math.abs(encoder.getPosition() - m_goal.position) > ShooterWristConstants.kTolerance){
