@@ -79,8 +79,9 @@ public class RobotContainer {
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
 
-  public BooleanSupplier inIntakeUp = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
-  public BooleanSupplier inIntakeDown = (() -> intakeRollers.isBeamBreakTriggered() && intakeWrist.isAtReqPosition(IntakeRollerConstants.kHold));
+  public BooleanSupplier inIntakeUp = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
+  public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   
  
@@ -128,6 +129,13 @@ public class RobotContainer {
       .andThen(primer.intakeCommand())
       .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
 
+      // new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+      // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
+    
+    //Parker's new controls
+    joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand(), indexer.stopCommand(), primer.stopCommand()));
+    //joystick.b().whileTrue(intakeWrist.halfWayPosCommand().andThen(intakeRollers.outtakeCommand())) ask about lol
+   
     //pivot
     joystick.rightBumper().and(inShooter).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().and(inShooter).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));

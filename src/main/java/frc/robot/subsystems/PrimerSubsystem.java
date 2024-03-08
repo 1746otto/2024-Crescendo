@@ -95,13 +95,13 @@ public class PrimerSubsystem extends SubsystemBase{
     return setSpeedCommand(PrimerConstants.kAmp);
   }
   public Command intakeCommand() {
-    return setSpeedCommand(PrimerConstants.kIntake).until(() -> isPrimerBeamBreakBroken()).withTimeout(1.5).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kIntake).finallyDo(() -> setSpeed(0));
   }
   public Command outtakeCommand() {
-    return setSpeedCommand(PrimerConstants.kOuttake).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kOuttake).finallyDo(() -> setSpeed(0));
   }
   public Command shootCommand() {
-    return setSpeedCommand(PrimerConstants.kShoot).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kShoot).finallyDo(() -> setSpeed(0));
   }
   public Command stopCommand() {
     return setSpeedCommand(PrimerConstants.kStop);

@@ -85,16 +85,16 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
     // Needs to go but idk if it can be replaced with out breaking stuff.
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).until(() -> isBeamBreakTriggered()).withTimeout(2).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
-        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(0.1);
+        return setSpeedCommand(IntakeRollerConstants.kIntake);
     }
     public Command intakeCommand(){
         return dumbIntakeCommand().andThen(intakeSenseCommand());
     }
     public Command outtakeCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kOuttake);
+        return setSpeedCommand(IntakeRollerConstants.kOuttake).finallyDo(() -> setSpeed(0));
     }
     public Command holdCommand() {
         return setSpeedCommand(IntakeRollerConstants.kHold);
