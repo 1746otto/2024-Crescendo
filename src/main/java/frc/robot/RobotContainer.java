@@ -112,12 +112,21 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
+    /*
     joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
       .until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake) && intakeRollers.intakeHasPiece())
       .andThen(new ParallelDeadlineGroup(intakeWrist.indexPosCommand(), indexer.setSpeedCommand(IndexerConstants.kForward)))
-      .andThen(primer.intakeCommand().deadlineWith(intakeRollers.outtakeCommand())).andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
+      .andThen(new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kOuttake)))
+      .andThen(primer.intakeCommand()).andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
+    */
     //Fixed controls
-    
+    joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal))));
+
+    joystick.a().onTrue(new InstantCommand(() -> indexer.setSpeed(IndexerConstants.kForward))
+      .andThen(intakeWrist.indexPosCommand())
+      .andThen(new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kOuttake)))
+      .andThen(primer.intakeCommand())
+      .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
 
     //pivot
     joystick.rightBumper().and(inShooter).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
@@ -125,7 +134,7 @@ public class RobotContainer {
     joystick.leftTrigger().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
     joystick.leftBumper().and(inShooter).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
     joystick.leftBumper().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
+    joystick.rightTrigger().and(inShooter).whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
@@ -135,7 +144,6 @@ public class RobotContainer {
   public void configureDefaultCommands() {
      // check wrist up and intake roller beambreak is triggered
   }
-
   
 
   public Command getAutonomousCommand() {
