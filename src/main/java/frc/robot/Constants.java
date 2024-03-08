@@ -85,6 +85,7 @@ public final class Constants {
     public static final double kShoot = 1.0;//0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kSubwooferShot = 0.8;
+    public static final double kSubwooferSpeed = 4640;
     public static final double kStop = 0.0;
 
     // device IDs
@@ -152,7 +153,6 @@ public final class Constants {
     public static double kTolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
     public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
-
     public static int kShooterBeambreak = 1;
 
     // Trapezoidal profiling
