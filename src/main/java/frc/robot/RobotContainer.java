@@ -106,7 +106,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(1));
-      NamedCommands.registerCommand("ShootSubWoofer", shooter.setRequestCommand(ShooterConstants.kSubwooferShot).andThen(new WaitUntilCommand((() ->{return shooter.isAtReq();}))));
+      NamedCommands.registerCommand("ShootSubWoofer", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())))); // Might want to have a check for is at request instead of just calling this over again.
       NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
       configureBindings();
       configureDefaultCommands();
