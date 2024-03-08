@@ -130,11 +130,17 @@ public class RobotContainer {
     // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     // Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
+    
+    //BetterAuton Implementation
     Command bottom2Piece = drivetrain.getAutoPath("Bottom2P");
-    Command theory = drivetrain.getAutoPath("ThreeSouthSide");
-    //return theory;
-    Command tune = drivetrain.getAutoPath("PathPlanTest");
-    Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+    Command top2Piece = drivetrain.getAutoPath("Top2P");
+    Command middle2Piece = drivetrain.getAutoPath("Middle2P");
+    Command fourPiece = drivetrain.getAutoPath("Bottom4P");
+    
+    // Command theory = drivetrain.getAutoPath("ThreeSouthSide");
+    // Command tune = drivetrain.getAutoPath("PathPlanTest");
+    // Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+    
     return bottom2Piece;
   }
 }
