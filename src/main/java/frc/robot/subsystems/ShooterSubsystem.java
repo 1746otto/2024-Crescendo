@@ -11,6 +11,8 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
@@ -42,6 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
 
+  private double targetVelocity;
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
@@ -57,9 +61,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.kP);
-    pidController.setI(ShooterConstants.kI);
-    pidController.setD(ShooterConstants.kD);
+    pidController.setP(0);
+    pidController.setI(0);
+    pidController.setD(0);
+    pidController.setFF(ShooterConstants.kV);
+    
     
 
     // Making the bottom roller follow the top roller
@@ -100,8 +106,25 @@ public class ShooterSubsystem extends SubsystemBase {
     return setSpeedCommand(ShooterConstants.kStop);
   }
 
+  public double getRPM() {
+    return topRollerNeo.getEncoder().getVelocity();
+  }
+
+  public boolean isAtReq() {
+    return Math.abs(targetVelocity - getRPM()) < ShooterConstants.kRPMTolerance;
+  }
+
   public Command setSpeedCommand(double speed) {
     return runOnce(() -> setSpeed(speed));
+  }
+
+  public void setRequest(double RPM) {
+    targetVelocity = RPM;
+    pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
+  }
+
+  public Command setRequestCommand(double RPM) {
+    return runOnce(() -> setRequest(RPM));
   }
 
   /**

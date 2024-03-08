@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -40,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.BooleanSupplier;
 
@@ -87,15 +89,25 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-      NamedCommands.registerCommand("intakeCommand", new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand()).withTimeout(1.5)
-      .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand(),intakeRollers.outtakeCommand())))); //Change to andThen if broken
+      NamedCommands.registerCommand("intakeCommand", intakeRollers.intakeSpeedCommand().andThen(intakeWrist.intakePosCommand()).andThen(new WaitCommand(2)));
+      NamedCommands.registerCommand("indexCommand", 
+        indexer.setForwardSpeedCommand()
+        .andThen(intakeWrist.indexPosCommand())
+        .andThen(intakeRollers.outtakeSpeedCommand())
+        .andThen(primer.intakeCommand())
+        .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())));
+      NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(indexer.setForwardSpeedCommand()
+        .andThen(intakeWrist.indexPosCommand())
+        .andThen(intakeRollers.outtakeSpeedCommand())
+        .andThen(primer.intakeCommand())
+        .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())), new InstantCommand(), () -> primer.isPrimerBeamBreakBroken()));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(1));
-      NamedCommands.registerCommand("ShootSubWoofer", shooter.setSpeedCommand(ShooterConstants.kSubwooferShot));
+      NamedCommands.registerCommand("ShootSubWoofer", shooter.setRequestCommand(ShooterConstants.kSubwooferShot).andThen(new WaitUntilCommand((() ->{return shooter.isAtReq();}))));
+      NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
       configureBindings();
       configureDefaultCommands();
       

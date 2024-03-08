@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 
@@ -122,7 +123,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * required position.
      */
     public Command indexPosCommand() {
-        return run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isAtReqPosition(IntakeWristConstants.kStow)).andThen(stopMotorCommand());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kStow)).andThen(new WaitUntilCommand(() -> isAtReqPosition(IntakeWristConstants.kStow))).andThen(stopMotorCommand());
     }
     public Command intakePosCommand() {
         return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() ->  isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());

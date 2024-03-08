@@ -103,6 +103,21 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return run(() -> setSpeed(speed)); // needs to be an instant command. MUST FIX AFTER COMP
     }
 
+    public Command intakeSpeedCommand() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
+    }
+
+    public Command outtakeSpeedCommand() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kOuttake));
+    }
+
+    public Command stowSpeedCommand() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kHold));
+    }
+    public Command stopSpeedCommand() {
+        return runOnce(() -> setSpeed(0));
+    }
+
     public boolean intakeHasPiece() {
         return Timer.getFPGATimestamp() - beamBreakLastTrigger > 0.25;
     }

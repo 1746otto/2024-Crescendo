@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterWristConstants;
 
 import com.revrobotics.CANSparkMax;
@@ -105,7 +106,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return run(() -> setRequest(position)).until(() -> atPosition(position));
+        return runOnce(() -> setRequest(position)).andThen(new WaitUntilCommand(() -> atPosition(position)));
     }
 
     public Command goToAmpPose(){
