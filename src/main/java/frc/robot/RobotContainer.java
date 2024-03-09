@@ -151,6 +151,12 @@ public class RobotContainer {
     //return theory;
     Command tune = drivetrain.getAutoPath("PathPlanTest");
     Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+    
+    Command top2Piece = drivetrain.getAutoPath("Top2P");
+    Command middle2Piece = drivetrain.getAutoPath("Middle2P");
+    Command bottom2Piece = drivetrain.getAutoPath("Bottom2P");
+    Command fourPiece = drivetrain.getAutoPath("Bottom4P");
+    
     return baseAuton1;
   }
 }
