@@ -48,8 +48,8 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         // Initialization of motor controllers and PID controller
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(true);
-        rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
-        rollerBeamBreak2 =  new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
+        rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel1);
+        rollerBeamBreak2 =  new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel2);
     }
 
     
@@ -79,7 +79,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return setSpeedCommand(IntakeRollerConstants.kStop);
     }
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(2).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(2.0).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
         return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(0.1);

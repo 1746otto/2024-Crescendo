@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "newAuton3"
+            "pathName": "New New Path"
           }
         },
         {
@@ -22,15 +22,28 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "primeShooter"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "pivotSubwoofer"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootSubWoofer"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "pivotSubwoofer"
+                  "name": "primeShooter"
                 }
               }
             ]

@@ -219,15 +219,22 @@
         "data": {
           "commands": [
             {
-              "type": "named",
+              "type": "deadline",
               "data": {
-                "name": "pivotSubwoofer"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "shootCommand"
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "pivotSubwoofer"
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "ShootSubWoofer"
+                    }
+                  }
+                ]
               }
             },
             {
@@ -261,25 +268,32 @@
       "name": "New Event Marker",
       "waypointRelativePos": 8.0,
       "command": {
-        "type": "sequential",
+        "type": "deadline",
         "data": {
           "commands": [
             {
-              "type": "named",
+              "type": "sequential",
               "data": {
-                "name": "pivotSubwoofer"
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "pivotSubwoofer"
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "ShootSubWoofer"
+                    }
+                  }
+                ]
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "pivotSubwoofer"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "ShootSubWoofer"
+                "name": "primeShooter"
               }
             }
           ]

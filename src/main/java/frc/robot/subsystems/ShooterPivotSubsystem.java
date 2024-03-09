@@ -91,7 +91,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return run(() -> setRequest(position)).until(() -> atRequest(position));
+        return run(() -> setRequest(position)).until(() -> atRequest(position));//CHANGE BACK TO RUN IF BROKEN
     }
 
     public Command goToAmpPose(){
@@ -105,7 +105,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
     public Command goToSubCommand() {
-        return runPivot (ShooterWristConstants.kSubwooferPos);
+        return runPivot(ShooterWristConstants.kSubwooferPos);
     }
     
     public Command stopCommand() {
