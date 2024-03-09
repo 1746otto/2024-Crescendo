@@ -757,46 +757,5 @@
       "timestamp": 5.01132363679963
     }
   ],
-  "eventMarkers": [
-    {
-      "timestamp": 1.5144156169209166,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeCommand"
-        }
-      }
-    },
-    {
-      "timestamp": 2.6897529636692266,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "indexCommand"
-        }
-      }
-    },
-    {
-      "timestamp": 3.713257977356874,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "pivotSubwoofer"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "ShootSubWoofer"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ]
+  "eventMarkers": []
 }

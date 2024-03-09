@@ -122,7 +122,7 @@ public final class Constants {
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
-    public static final double kPrimerCurrentLimit = 20;
+    public static final double kPrimerCurrentLimit = 30;
 
     // PID values
     public static final double kP = 0.1;
@@ -150,7 +150,7 @@ public final class Constants {
     public static double kSubwooferPos = 0.55; // To change
     public static double kIntakePos = 0.516; // To change
     public static double kAmpPos = 0.757375;// To change
-    public static double kTolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
+    public static double kTolerance = Math.toRadians(5) / ( 2 * Math.PI );// To change
     public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
     public static int kShooterBeambreak = 1;

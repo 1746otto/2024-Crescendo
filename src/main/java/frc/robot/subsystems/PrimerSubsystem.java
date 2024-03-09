@@ -6,15 +6,18 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -95,6 +98,9 @@ public class PrimerSubsystem extends SubsystemBase{
     return setSpeedCommand(PrimerConstants.kAmp);
   }
   public Command intakeCommand() {
+    if (Utils.isSimulation()) {
+      return new WaitCommand(2.5);
+    }
     return setSpeedCommand(PrimerConstants.kIntake).finallyDo(() -> setSpeed(0));
   }
   public Command outtakeCommand() {

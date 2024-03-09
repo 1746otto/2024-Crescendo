@@ -46,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.BooleanSupplier;
 
 import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import frc.robot.subsystems.ArmRollerSubsystem;
 import frc.robot.subsystems.LEDSubsystemtest;
@@ -85,6 +86,7 @@ public class RobotContainer {
   public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
   public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
+  public boolean isIndexing = false;
   
  
   //pathplanner testing
@@ -92,15 +94,15 @@ public class RobotContainer {
       NamedCommands.registerCommand("intakeCommand", intakeRollers.intakeSpeedCommand().andThen(intakeWrist.intakePosCommand()).andThen(new WaitCommand(2)));
       NamedCommands.registerCommand("indexCommand", 
         indexer.setForwardSpeedCommand()
-        .andThen(intakeWrist.indexPosCommand())
+        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToNormalPos()))
         .andThen(intakeRollers.outtakeSpeedCommand())
-        .andThen(primer.intakeCommand())
+        .andThen(primer.intakeCommand().until(inShooter))
         .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())));
       NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(indexer.setForwardSpeedCommand()
         .andThen(intakeWrist.indexPosCommand())
         .andThen(intakeRollers.outtakeSpeedCommand())
-        .andThen(primer.intakeCommand())
-        .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())), new InstantCommand(), () -> primer.isPrimerBeamBreakBroken()));
+        .andThen(primer.intakeCommand().until(inShooter))
+        .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())), new InstantCommand(),inShooter));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
@@ -133,28 +135,34 @@ public class RobotContainer {
       .andThen(primer.intakeCommand()).andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
     */
     //Fixed controls
-    joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal))));
+    joystick.y().onTrue(new ParallelCommandGroup(intakeRollers.intakeSpeedCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal))));
 
-    joystick.a().onTrue(new InstantCommand(() -> indexer.setSpeed(IndexerConstants.kForward))
-      .andThen(intakeWrist.indexPosCommand())
-      .andThen(new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kOuttake)))
-      .andThen(primer.intakeCommand())
-      .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
+    joystick.a().onTrue(new InstantCommand(() -> {isIndexing = true;}).andThen(
+      indexer.setForwardSpeedCommand())
+      .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToNormalPos()))
+      .andThen(intakeRollers.outtakeSpeedCommand())
+      .andThen(primer.intakeCommand().until(inShooter))
+      .finallyDo(() -> {
+        intakeRollers.setSpeed(0);
+        indexer.setSpeed(0);
+        isIndexing = false;
+      }));
 
       // new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
       // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
     
     //Parker's new controls
-    joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand(), indexer.stopCommand(), primer.stopCommand()));
+    //joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand(), indexer.stopCommand(), primer.stopCommand()));
     //joystick.b().whileTrue(intakeWrist.halfWayPosCommand().andThen(intakeRollers.outtakeCommand())) ask about lol
-   
+    joystick.start().onTrue(new InstantCommand(() -> drivetrain.seedFieldRelative()));
     //pivot
-    joystick.rightBumper().and(inShooter).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().and(inShooter).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
-    joystick.leftTrigger().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.leftBumper().and(inShooter).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
-    joystick.leftBumper().and(inShooter).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.rightTrigger().and(inShooter).whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
+    // This can lead to amp state really being not amp when te toggle ends even though in code it is true
+    joystick.rightBumper().and(() -> !isIndexing).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
+    joystick.leftTrigger().and(() -> !isIndexing).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
+    joystick.leftTrigger().and(() -> !isIndexing).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.leftBumper().and(() -> !isIndexing).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
+    joystick.leftBumper().and(() -> !isIndexing).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.rightTrigger().and(() -> !isIndexing).whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
