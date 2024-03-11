@@ -41,7 +41,8 @@ public final class Constants {
     public static final double kHold = 0.1;
     public static final double kStop = 0;
     public static final double kIntakeCurrentLimit = 20;
-    public static final int kIntakeAnalogInputChannel = 1; // To Change
+    public static final int kIntakeAnalogInputChannel1 = 2;
+    public static final int kIntakeAnalogInputChannel2 = 3;// To Change
   }
 
   public static class IntakeWristConstants
@@ -101,6 +102,7 @@ public final class Constants {
     // public static final double kFF = 0.0001654579973546788;
     public static final int kShooterAnalogInputChannel = 0;
 
+    public static final double kTolerance = 100;
 
   }
 
@@ -113,8 +115,8 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.2;
-    public static final double kOuttake = -0.2;
+    public static final double kIntake = 0.4;
+    public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
@@ -141,12 +143,13 @@ public final class Constants {
     public static int kShooterMasterID = 52;
     public static int kShooterSlaveID = 51;
     public static double kPivotReduction = 60;
-    public static double kStartPos = 0.216;
-    public static double kPodiumPos = 0.799382; // To change
-    public static double kSubwooferPos = 0.55; // To change
-    public static double kIntakePos = 0.516; // To change
-    public static double kAmpPos = 0.757375;// To change
-    public static double kTolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
+    public static double kStartPos = 0.207;
+    public static double kPodiumPos = 0.709822; // To change
+    public static double kSubwooferPos = 0.541; // To change
+    public static double kIntakePos = 0.514; // To change
+    public static double kAmpPos = 0.748;// To change
+    public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
+    public static double kTolerance = Math.toRadians(5) / ( 2 * Math.PI );
     public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
 

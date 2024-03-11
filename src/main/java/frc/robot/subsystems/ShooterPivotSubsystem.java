@@ -105,7 +105,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
     public Command goToSubCommand() {
-        return runPivot (ShooterWristConstants.kSubwooferPos);
+        return runPivot(ShooterWristConstants.kSubwooferPos);
     }
     
     public Command stopCommand() {
