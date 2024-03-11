@@ -96,6 +96,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public Command setSpeedCommand(double speed){
         return run(() -> setSpeed(speed));
     }
+
+    public Command setIntakeSpeed() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
+    }
+
     public boolean objectOnHand(){
         return ((Math.floor(rollerBeamBreak1.getVoltage()) == 0) || (Math.floor(rollerBeamBreak2.getVoltage()) == 0));
     }

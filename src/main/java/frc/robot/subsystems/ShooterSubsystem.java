@@ -11,6 +11,8 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
 
@@ -42,6 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
 
+  private double setpoint = 0;
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
@@ -55,9 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.kP);
-    pidController.setI(ShooterConstants.kI);
-    pidController.setD(ShooterConstants.kD);
+    pidController.setP(0);
+    pidController.setI(0);
+    pidController.setD(0);
+    pidController.setFF(ShooterConstants.kV);
+
     
 
     // Making the bottom roller follow the top roller
@@ -100,6 +107,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command setSpeedCommand(double speed) {
     return runOnce(() -> setSpeed(speed));
+  }
+
+  public boolean isAtSetpoint() {
+    return Math.abs(setpoint - topRollerNeo.getEncoder().getVelocity()) < ShooterConstants.kTolerance;
+  }
+
+  public Command goToRequestCommand(double speed) {
+    return runOnce(() -> setRequest(speed)).andThen(new WaitUntilCommand(() -> isAtSetpoint()));
+  }
+
+  public void setRequest(double speed) {
+    setpoint = speed;
+    pidController.setReference(speed, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
   }
 
   /**

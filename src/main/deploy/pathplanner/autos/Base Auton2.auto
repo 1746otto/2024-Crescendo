@@ -12,19 +12,26 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "deadline",
                 "data": {
-                  "name": "pivotSubwoofer"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootSubWoofer"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "pivotSidewoofer"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootSubWoofer"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -37,22 +44,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 5.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
-                }
-              }
-            ]
+            "name": "stopShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAuton2"
           }
         }
       ]
