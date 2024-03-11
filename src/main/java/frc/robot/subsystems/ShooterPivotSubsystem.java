@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
 
 import com.revrobotics.CANSparkMax;
@@ -45,6 +46,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
     private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+
+    private double currentTime;
 
     public ShooterPivotSubsystem(){
       master = new CANSparkMax(ShooterWristConstants.ShooterMasterID,MotorType.kBrushless);
@@ -73,9 +76,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public void setRequest(double position) {
-       // m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
+       m_goal = new TrapezoidProfile.State(position, ShooterConstants.shooterPivotVelocity); //Skeptical about this
        targetPose = position;
-       
+       currentTime = 0;
 
     }
     public boolean atRequest(double position) {
@@ -115,14 +118,25 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
-        //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
-        //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
-        
-        if (atRequest(targetPose)) {
-             master.stopMotor();
-        } else {   //Commented out to NOT consider tolerances.
-             m_pidController.setReference(targetPose, CANSparkMax.ControlType.kPosition);
+
+        m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
+
+        if (m_profile.isFinished(currentTime))
+        {
+            if (Math.abs(master.getEncoder().getPosition() - m_setpoint.position) <= ShooterWristConstants.ktolerance)
+            {
+                master.stopMotor();
+            }else
+            {
+                m_pidController.setReference(m_goal.position, CANSparkMax.ControlType.kPosition);
+            }
         }
+
+        currentTime += kDt;
+
+        // wait until traj finished, then check if we are inside/outside tolerances,
+        // if outside, set target to goal.position
+        // if inside, stop motors
         
     }    
 }
