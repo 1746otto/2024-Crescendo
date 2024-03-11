@@ -131,7 +131,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
  
-        if (atSetpoint()){
+        if (!atSetpoint()){
             m_pidController.setReference(targetPose, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, targetPose - encoder.getPosition()), ArbFFUnits.kVoltage);
         }
         else {
