@@ -183,6 +183,8 @@ public class RobotContainer {
     //return theory;
     Command tune = drivetrain.getAutoPath("PathPlanTest");
     Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+
+    Command Bottom4PAuton = drivetrain.getAutoPath("Bottom4P");
     
     return baseAuton1;
   }

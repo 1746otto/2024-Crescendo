@@ -2,35 +2,23 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.29,
-      "y": 5.49
+      "x": 0.7218158264581296,
+      "y": 6.579185680732721
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "TestAuton1"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "pivotSubwoofer"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "primeShooter"
+                  "pathName": "Top-TopP"
                 }
               }
             ]
