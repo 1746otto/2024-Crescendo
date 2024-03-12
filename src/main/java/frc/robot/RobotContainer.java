@@ -96,7 +96,7 @@ public class RobotContainer {
         indexer.setForwardSpeedCommand()
         .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToNormalPos()))
         .andThen(intakeRollers.outtakeSpeedCommand())
-        .andThen(primer.intakeCommand().until(inShooter))
+        .andThen(primer.intakeCommand().until(inShooter).withTimeout(1))
         .andThen(intakeRollers.stopSpeedCommand().alongWith(indexer.stopIndexer())));
       NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(indexer.setForwardSpeedCommand()
         .andThen(intakeWrist.indexPosCommand())
@@ -179,12 +179,12 @@ public class RobotContainer {
     Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     // Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
-    Command theory = drivetrain.getAutoPath("ThreeSouthSide");
+    Command theory = drivetrain.getAutoPath("Bottom4P");
     //return theory;
     Command tune = drivetrain.getAutoPath("PathPlanTest");
     Command baseAuton4 = drivetrain.getAutoPath("4Piece");
     Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
-    
-    return threePieceChoreo;
+
+    return theory;
   }
 }

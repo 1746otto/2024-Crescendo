@@ -20,7 +20,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "ShootSubWoofer"
           }
         },
         {
@@ -49,13 +49,25 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "indexCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCommand"
+                  "name": "ShootSubWoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "primeShooter"
                 }
               }
             ]
@@ -87,13 +99,25 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "indexCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCommand"
+                  "name": "ShootSubWoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "primeShooter"
                 }
               }
             ]
@@ -125,13 +149,25 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "indexCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCommand"
+                  "name": "ShootSubWoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "primeShooter"
                 }
               }
             ]
