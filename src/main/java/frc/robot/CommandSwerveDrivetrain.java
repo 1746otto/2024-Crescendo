@@ -4,11 +4,15 @@ import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
@@ -16,6 +20,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveTranslation;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -62,7 +67,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                                        // Log state with Phoenix SignalLogger class
                 (state)->SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
-                (Measure<Voltage> volts)-> sysidSteerRequest.withVolts(volts),
+                (Measure<Voltage> volts)-> sysidSteerRequest.withVolts(volts).apply(m_requestParameters, Modules),
                 null,
                 this));
     private SysIdRoutine translationRoutine =
@@ -74,7 +79,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                                        // Log state with Phoenix SignalLogger class
                 (state)->SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
-                (Measure<Voltage> volts)-> sysidTranslationRequest.withVolts(volts),
+                (Measure<Voltage> volts)-> sysidTranslationRequest.withVolts(volts).apply(m_requestParameters, Modules),
                 null,
                 this));
     private SysIdRoutine rotationRoutine =
@@ -86,7 +91,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                                        // Log state with Phoenix SignalLogger class
                 (state)->SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
-                (Measure<Voltage> volts)-> sysidRotationRequest.withVolts(volts),
+                (Measure<Voltage> volts)-> sysidRotationRequest.withVolts(volts).apply(m_requestParameters, Modules),
                 null,
                 this));
 
@@ -137,6 +142,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                                             new ReplanningConfig()),
             ()->(DriverStation.getAlliance().get() == Alliance.Red), // Change this if the path needs to be flipped on red vs blue
             this); // Subsystem for requirements
+        for (SwerveModule module : Modules) {
+            module.getDriveMotor().setNeutralMode(NeutralModeValue.Coast);
+        }
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

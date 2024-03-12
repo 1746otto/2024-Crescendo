@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -94,14 +95,14 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    joystick.a().whileTrue(drivetrain.sysIdSteerQuasistatic(runDirection));
-    joystick.b().whileTrue(drivetrain.sysIdSteerDynamic(runDirection));
-    joystick.x().whileTrue(drivetrain.sysIdTranslationQuasistatic(runDirection));
-    joystick.y().whileTrue(drivetrain.sysIdTranslationDynamic(runDirection));
-    joystick.leftBumper().whileTrue(drivetrain.sysIdRotationQuasistatic(runDirection));
-    joystick.rightBumper().whileTrue(drivetrain.sysIdTranslationDynamic(runDirection));
-    joystick.povUp().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
-    joystick.povDown().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
+    joystick.a().whileTrue(new ConditionalCommand(drivetrain.sysIdSteerQuasistatic(Direction.kForward), drivetrain.sysIdSteerQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.b().whileTrue(new ConditionalCommand(drivetrain.sysIdSteerDynamic(Direction.kForward), drivetrain.sysIdSteerDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.x().whileTrue(new ConditionalCommand(drivetrain.sysIdTranslationQuasistatic(Direction.kForward), drivetrain.sysIdTranslationQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.y().whileTrue(new ConditionalCommand(drivetrain.sysIdTranslationDynamic(Direction.kForward), drivetrain.sysIdTranslationDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.leftBumper().whileTrue(new ConditionalCommand(drivetrain.sysIdRotationQuasistatic(Direction.kForward), drivetrain.sysIdRotationQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.rightBumper().whileTrue(new ConditionalCommand(drivetrain.sysIdRotationDynamic(Direction.kForward), drivetrain.sysIdRotationDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.rightStick().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
+    joystick.leftStick().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
