@@ -14,9 +14,9 @@ import frc.robot.constants.VisionConstants;
 
 public class Vision {
     Thread visionThread;
-    PhotonCamera[] cameras;
-    PhotonPipelineResult[] lastResults;
-    Pose3d[] cameraPoses;
+    PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
+    PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
     Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
     Pose3d tempPose;
@@ -24,7 +24,7 @@ public class Vision {
     boolean continueLoop;
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
-        
+
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
         }
@@ -40,15 +40,17 @@ public class Vision {
             SmartDashboard.putString("Vision Error Message", e.getMessage());
         }
 
-        visionThread.setName("Vision Thread");
-
         visionThread = new Thread(() -> {
             while (true) {
                 getResult();
                 
-                filter1();
+                filter3();
             }
         });
+
+        visionThread.setName("Vision Thread");
+
+        visionThread.run();
     }
 
     private void getResult() {
@@ -258,7 +260,7 @@ public class Vision {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
                         }
@@ -280,7 +282,7 @@ public class Vision {
                     do {
                         continueLoop = false;
                         try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true; // This could all be fixed with a goto...
                         }
