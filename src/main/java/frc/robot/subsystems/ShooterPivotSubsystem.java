@@ -118,6 +118,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
+        if (SmartDashboard.getNumber("Target", targetPose) != targetPose) {
+            targetPose = SmartDashboard.getNumber("Target", targetPose);
+        }
         //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
         //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
         

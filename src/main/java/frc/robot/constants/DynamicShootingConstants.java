@@ -27,6 +27,7 @@ public class DynamicShootingConstants {
   static {
     TreeMap<Double, Pair<Double, Double>> tempMap = new TreeMap<Double, Pair<Double, Double>>();
     tempMap.put(3.0, new Pair<>(4.0, 4.0));
+    tempMap.put(3.0, new Pair<>(4.0, 4.0));
     distanceMap = tempMap;
   };
 }
