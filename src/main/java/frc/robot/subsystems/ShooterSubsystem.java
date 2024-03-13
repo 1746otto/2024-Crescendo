@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
 
@@ -44,9 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
-  
+
   private double setpoint = 0;
-  private double temp = 0; // Use in various intermediary steps.
 
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
@@ -55,38 +54,27 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of motor controllers
     topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
     bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-
-    topRollerNeo.getEncoder().setAverageDepth(2);
-    topRollerNeo.getEncoder().setMeasurementPeriod(16);
-    
-    // Likely unneccessary
-    bottomRollerNeo.getEncoder().setAverageDepth(2);
-    bottomRollerNeo.getEncoder().setMeasurementPeriod(16);
-
-    topRollerNeo.enableVoltageCompensation(12);
-    topRollerNeo.enableVoltageCompensation(12);
-
     topRollerNeo.setIdleMode(IdleMode.kCoast);
     bottomRollerNeo.setIdleMode(IdleMode.kCoast);
-
-    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
-    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
+    topRollerNeo.setInverted(true);
 
     //Setting PID values for the top shooting roller
     pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.kP);
-    pidController.setI(ShooterConstants.kI);
-    pidController.setD(ShooterConstants.kD);
+    pidController.setP(0);
+    pidController.setI(0);
+    pidController.setD(0);
     pidController.setFF(ShooterConstants.kV);
 
-    topRollerNeo.setInverted(true);
+    
+
     // Making the bottom roller follow the top roller
     bottomRollerNeo.follow(topRollerNeo, true);
-    setRequest(4000);
-    
-    //topRollerNeo.set(.02);
 
-    CANSparkMax.enableExternalUSBControl(true);
+    // Initialization of analog input for beam break detection
+    topRollerNeo.setSmartCurrentLimit(40);
+    bottomRollerNeo.setSmartCurrentLimit(40);
+       
+
   }
 
   /**
@@ -101,11 +89,6 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public BooleanSupplier isBeamBreakBroken() {
     return beamBreakLastState;
-  }
-
-  public void setRequest(double RPM) {
-    setpoint = RPM;
-    pidController.setReference(RPM, ControlType.kVelocity, 0, Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
   /**
@@ -126,17 +109,24 @@ public class ShooterSubsystem extends SubsystemBase {
     return runOnce(() -> setSpeed(speed));
   }
 
+  public boolean isAtSetpoint() {
+    return Math.abs(setpoint - topRollerNeo.getEncoder().getVelocity()) < ShooterConstants.kTolerance;
+  }
+
+  public Command goToRequestCommand(double speed) {
+    return runOnce(() -> setRequest(speed)).andThen(new WaitUntilCommand(() -> isAtSetpoint()));
+  }
+
+  public void setRequest(double speed) {
+    setpoint = speed;
+    pidController.setReference(speed, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
+  }
+
   /**
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    SmartDashboard.putNumber("Velocity", topRollerNeo.getEncoder().getVelocity());
-    temp = SmartDashboard.getNumber("Request velocity", setpoint);
-    if (temp != setpoint) {
-      setRequest(temp);
-    }
-
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
+    
   }
 
 }

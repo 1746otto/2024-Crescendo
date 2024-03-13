@@ -140,6 +140,9 @@ public class IntakeWristSubsystem extends SubsystemBase{
         if (current > 0) {
             System.out.println(current);
         }
+        // if(isAtReqPosition(reqPosition)){
+        //     stopIntake();
+        // } Add here to test later
         SmartDashboard.putNumber("Pose", getPosition());
         SmartDashboard.putNumber("Current", current);
         
