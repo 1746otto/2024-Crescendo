@@ -160,30 +160,30 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         BaseStatusSignal.setUpdateFrequencyForAll(
         250,
+        Modules[0].getDriveMotor().getMotorVoltage(),
         Modules[0].getDriveMotor().getPosition(),
         Modules[0].getDriveMotor().getVelocity(),
-        Modules[0].getDriveMotor().getMotorVoltage(),
+        Modules[0].getSteerMotor().getMotorVoltage(),
         Modules[0].getSteerMotor().getPosition(),
         Modules[0].getSteerMotor().getVelocity(),
-        Modules[0].getSteerMotor().getMotorVoltage(),
+        Modules[1].getDriveMotor().getMotorVoltage(),
         Modules[1].getDriveMotor().getPosition(),
         Modules[1].getDriveMotor().getVelocity(),
-        Modules[1].getDriveMotor().getMotorVoltage(),
+        Modules[1].getSteerMotor().getMotorVoltage(),
         Modules[1].getSteerMotor().getPosition(),
         Modules[1].getSteerMotor().getVelocity(),
-        Modules[1].getSteerMotor().getMotorVoltage(),
+        Modules[2].getDriveMotor().getMotorVoltage(),
         Modules[2].getDriveMotor().getPosition(),
         Modules[2].getDriveMotor().getVelocity(),
-        Modules[2].getDriveMotor().getMotorVoltage(),
+        Modules[2].getSteerMotor().getMotorVoltage(),
         Modules[2].getSteerMotor().getPosition(),
         Modules[2].getSteerMotor().getVelocity(),
-        Modules[2].getSteerMotor().getMotorVoltage(),
+        Modules[3].getDriveMotor().getMotorVoltage(),
         Modules[3].getDriveMotor().getPosition(),
         Modules[3].getDriveMotor().getVelocity(),
-        Modules[3].getDriveMotor().getMotorVoltage(),
+        Modules[3].getSteerMotor().getMotorVoltage(),
         Modules[3].getSteerMotor().getPosition(),
-        Modules[3].getSteerMotor().getVelocity(),
-        Modules[3].getSteerMotor().getMotorVoltage());
+        Modules[3].getSteerMotor().getVelocity());
 
         // Might be able to use optimize all but kinda time crunch rn
         for (SwerveModule module : Modules) {
