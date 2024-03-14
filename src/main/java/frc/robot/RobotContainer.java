@@ -103,6 +103,7 @@ public class RobotContainer {
     joystick.rightBumper().whileTrue(new ConditionalCommand(drivetrain.sysIdRotationDynamic(Direction.kForward), drivetrain.sysIdRotationDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
     joystick.rightStick().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
     joystick.leftStick().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
+    joystick.start().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(Math.atan2(-joystick.getLeftX(), -joystick.getLeftY())))));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
