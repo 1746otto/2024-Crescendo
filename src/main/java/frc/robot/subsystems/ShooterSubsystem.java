@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -73,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of analog input for beam break detection
     topRollerNeo.setSmartCurrentLimit(40);
     bottomRollerNeo.setSmartCurrentLimit(40);
-       
+    SmartDashboard.putNumber("Speed", setpoint);
 
   }
 
@@ -126,7 +127,10 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    
+    if (SmartDashboard.getNumber("Speed", setpoint) != setpoint) {
+      setpoint = SmartDashboard.getNumber("Speed", setpoint);
+    }
+    pidController.setReference(setpoint, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
   }
 
 }
