@@ -50,8 +50,8 @@ import frc.robot.subsystems.ShooterPivotSubsystem;
 public class RobotContainer {
   // SUBSYSTEMS
 
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double MaxSpeed = 4.5; // 6 meters per second desired top speed
+  private double MaxAngularRate = 4.5; // 3/4 of a rotation per second max angular velocity
 
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -69,7 +69,7 @@ public class RobotContainer {
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.Velocity); // I want field-centric
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -115,6 +115,7 @@ public class RobotContainer {
     // indexer.setDefaultCommand(indexer.forwardCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
     // intakeRollers.setDefaultCommand(intakeRollers.outtakeCommand().onlyIf(() -> (!intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken())));
     // primer.setDefaultCommand(primer.intakeCommand().onlyIf(() -> (intakeRollers.isIntakeBeamBreakBroken() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow) && !primer.isPrimerBeamBreakBroken()))); // check wrist up and intake roller beambreak is triggered
+    drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY()*4.5).withVelocityY(-joystick.getLeftY()*4.5).withRotationalRate(-joystick.getRightX()*4.5)));
   }
 
   

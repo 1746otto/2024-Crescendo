@@ -116,6 +116,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         configurePathPlanner();
 
+        for (SwerveModule module : Modules) {
+            module.getSteerMotor();
+        }
+
         if (enableSignalLogging)
             configSignalLogger();
         

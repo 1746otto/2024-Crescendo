@@ -30,8 +30,8 @@ public class TunerConstants {
         .withKS(0).withKV(0).withKA(0)
     // Voltage
     : new Slot0Configs()
-        .withKP(121.83).withKI(0).withKD(1.0862)
-        .withKS(0.31421).withKV(0.12552).withKA(0.0053385);
+        .withKP(0).withKI(0).withKD(0)
+        .withKS(0.31688).withKV(2.6775).withKA(0.11567);
     
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
@@ -42,8 +42,8 @@ public class TunerConstants {
         .withKS(0).withKV(0).withKA(0)
     // Voltage
     : new Slot0Configs()
-        .withKP(3).withKI(0).withKD(0.0)
-        .withKS(0).withKV(0).withKA(0);
+        .withKP(0).withKI(0).withKD(0.0)
+        .withKS(0.22333).withKV(0.12575).withKA(0.0054641);
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
