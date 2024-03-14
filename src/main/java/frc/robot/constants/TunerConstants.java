@@ -30,8 +30,8 @@ public class TunerConstants {
         .withKS(0).withKV(0).withKA(0)
     // Voltage
     : new Slot0Configs()
-        .withKP(65.034).withKI(0).withKD(0.77923)
-        .withKS(0.29972).withKV(0.1251).withKA(0.0055199);
+        .withKP(121.83).withKI(0).withKD(1.0862)
+        .withKS(0.31421).withKV(0.12552).withKA(0.0053385);
     
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
