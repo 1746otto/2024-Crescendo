@@ -75,6 +75,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
+      SmartDashboard.putNumber("target", targetPose);
       
       setRequest(encoder.getPosition());
     }

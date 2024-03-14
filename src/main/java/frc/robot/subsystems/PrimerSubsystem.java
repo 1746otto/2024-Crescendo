@@ -34,6 +34,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
   private TalonSRX primerNeo;
   private AnalogInput speakerBeamBreak;
+  public boolean primerStow;
 
   /** CANSparkMan pid controller */
   //private SparkPIDController pidController;
@@ -103,6 +104,11 @@ public class PrimerSubsystem extends SubsystemBase{
     }
     return setSpeedCommand(PrimerConstants.kIntake).finallyDo(() -> setSpeed(0));
   }
+  
+  public Command setIntakeSpeed() {
+    return runOnce(() -> setSpeed(PrimerConstants.kIntake));
+  }
+
   public Command outtakeCommand() {
     return setSpeedCommand(PrimerConstants.kOuttake).finallyDo(() -> setSpeed(0));
   }
@@ -111,6 +117,10 @@ public class PrimerSubsystem extends SubsystemBase{
   }
   public Command stopCommand() {
     return setSpeedCommand(PrimerConstants.kStop);
+  }
+
+  public Command setOuttakeSpeed() {
+    return runOnce(() -> setSpeed(PrimerConstants.kOuttake));
   }
 
   public Command setSpeedCommand(double speed) {
@@ -122,6 +132,10 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
+    SmartDashboard.putNumber("Primer output", primerNeo.getMotorOutputVoltage());
+    if (primerStow && isPrimerBeamBreakBroken()) {
+      //setSpeed(PrimerConstants.kIntake);
+    }
   }
   
 }

@@ -13,6 +13,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -40,6 +42,7 @@ import frc.robot.commands.handlePrimerShooter;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -87,6 +90,7 @@ public class RobotContainer {
   public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   public boolean isIndexing = false;
+  public double temp = -1;
   
  
   //pathplanner testing
@@ -121,50 +125,51 @@ public class RobotContainer {
   private void configureBindings() {
   
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(temp * joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    /*
-    joystick.y().onTrue(new ParallelCommandGroup(new RepeatCommand(new InstantCommand()), new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kIntake)), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-      .until(() -> intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake) && intakeRollers.intakeHasPiece())
-      .andThen(new ParallelDeadlineGroup(intakeWrist.indexPosCommand(), indexer.setSpeedCommand(IndexerConstants.kForward)))
-      .andThen(new InstantCommand(() -> intakeRollers.setSpeed(IntakeRollerConstants.kOuttake)))
-      .andThen(primer.intakeCommand()).andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
-    */
+    joystick.y().onTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
+    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).finallyDo(() -> {primer.primerStow = true;})));
     //Fixed controls
-    joystick.y().onTrue(new ParallelCommandGroup(intakeRollers.intakeSpeedCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal))));
 
-    joystick.a().onTrue(new InstantCommand(() -> {isIndexing = true;}).andThen(
-      indexer.setForwardSpeedCommand())
-      .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToNormalPos()))
-      .andThen(intakeRollers.outtakeSpeedCommand())
-      .andThen(primer.intakeCommand().until(inShooter))
-      .finallyDo(() -> {
-        intakeRollers.setSpeed(0);
-        indexer.setSpeed(0);
-        isIndexing = false;
-      }));
-
-      // new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-      // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))));
+    joystick.b().whileTrue(pivot.goToAmpPose()
+      .andThen(new InstantCommand(() -> {primer.primerStow = false;}))
+      .andThen(
+        new StartEndCommand(
+          () -> {
+            primer.setSpeed(PrimerConstants.kOuttake);
+            intakeRollers.setSpeed(IntakeRollerConstants.kIntake);
+            indexer.setSpeed(IndexerConstants.kReverse);
+          },
+          () -> {
+            pivot.setRequest(ShooterWristConstants.kIntakePos);
+            primer.setSpeed(0);
+            indexer.setSpeed(0);
+            intakeRollers.setSpeed(0);
+            primer.primerStow = true;
+          }
+        )
+      )
+    );
+    // joystick.a().whileTrue(primer.setIntakeSpeed().finallyDo(() -> primer.setSpeed(0)));
     
-    //Parker's new controls
-    //joystick.a().onTrue(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand(), indexer.stopCommand(), primer.stopCommand()));
-    //joystick.b().whileTrue(intakeWrist.halfWayPosCommand().andThen(intakeRollers.outtakeCommand())) ask about lol
-    joystick.start().onTrue(new InstantCommand(() -> drivetrain.seedFieldRelative()));
+    joystick.start().onTrue(new InstantCommand(drivetrain::seedFieldRelative));
     //pivot
-    // This can lead to amp state really being not amp when te toggle ends even though in code it is true
-    joystick.rightBumper().and(() -> !isIndexing).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().and(() -> !isIndexing).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
-    joystick.leftTrigger().and(() -> !isIndexing).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.leftBumper().and(() -> !isIndexing).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
-    joystick.leftBumper().and(() -> !isIndexing).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.rightTrigger().and(() -> !isIndexing).whileTrue(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp));
+    joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
+    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
+    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
+    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
+    joystick.rightTrigger().whileTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp)).finallyDo(() -> {primer.primerStow = true;}));
 
+    
     if (Utils.isSimulation()) {
+
+
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
@@ -177,7 +182,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Command auton = drivetrain.getAutoPath("5Piece");
     Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
-    // Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
+    Command baseAuton2 = drivetrain.getAutoPath("Base Auton2");
     // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
     Command theory = drivetrain.getAutoPath("Bottom4P");
     //return theory;

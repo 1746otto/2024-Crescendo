@@ -46,6 +46,9 @@ public class IndexerSubsystem extends SubsystemBase {
         return setSpeedCommand(IndexerConstants.kStop);
     }
     
+    public Command setOuttakeSpeed() {
+        return runOnce(() -> setSpeed(IndexerConstants.kReverse));
+    }
 
     public Command setSpeedCommand(double speed) {
         return run(() -> setSpeed(speed));

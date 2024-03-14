@@ -53,7 +53,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         // Initialization of motor controllers and PID controller
         intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
         intakeMotor.setInverted(true);
-        rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
+        rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel2);
         beamBreakLastTrigger = Timer.getFPGATimestamp();
     }
 
@@ -85,7 +85,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
     // Needs to go but idk if it can be replaced with out breaking stuff.
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(2.0).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
         return setSpeedCommand(IntakeRollerConstants.kIntake);
@@ -125,11 +125,16 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public boolean isBeamBreakTriggered(){
         return ((rollerBeamBreak1.getVoltage() >= 1));
     }
+    public Command setIntakeSpeed() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
+    }
 
+    
     @Override
     public void periodic() {
         SmartDashboard.putNumber("roller Voltage", rollerBeamBreak1.getVoltage());
         if (!isBeamBreakTriggered())
             beamBreakLastTrigger = Timer.getFPGATimestamp();
+
     }
 }

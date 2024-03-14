@@ -34,7 +34,11 @@
                     {
                       "type": "path",
                       "data": {
+<<<<<<< HEAD
                         "pathName": "Bottom2PBetter"
+=======
+                        "pathName": "Bottom2p"
+>>>>>>> Dalton-2024
                       }
                     },
                     {
@@ -49,18 +53,22 @@
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "indexCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
+=======
+>>>>>>> Dalton-2024
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "ShootSubWoofer"
                 }
               },
@@ -68,6 +76,9 @@
                 "type": "named",
                 "data": {
                   "name": "primeShooter"
+=======
+                  "name": "shootCommand"
+>>>>>>> Dalton-2024
                 }
               }
             ]
@@ -99,18 +110,22 @@
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "indexCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
+=======
+>>>>>>> Dalton-2024
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "ShootSubWoofer"
                 }
               },
@@ -118,6 +133,9 @@
                 "type": "named",
                 "data": {
                   "name": "primeShooter"
+=======
+                  "name": "shootCommand"
+>>>>>>> Dalton-2024
                 }
               }
             ]
@@ -149,18 +167,22 @@
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "indexCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
+=======
+>>>>>>> Dalton-2024
                   "name": "pivotSubwoofer"
                 }
               },
               {
                 "type": "named",
                 "data": {
+<<<<<<< HEAD
                   "name": "ShootSubWoofer"
                 }
               },
@@ -168,6 +190,9 @@
                 "type": "named",
                 "data": {
                   "name": "primeShooter"
+=======
+                  "name": "shootCommand"
+>>>>>>> Dalton-2024
                 }
               }
             ]
@@ -176,6 +201,10 @@
       ]
     }
   },
+<<<<<<< HEAD
   "folder": null,
+=======
+  "folder": "BetterAutons",
+>>>>>>> Dalton-2024
   "choreoAuto": false
 }
