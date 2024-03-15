@@ -67,8 +67,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       slave.setSmartCurrentLimit(50);
       m_pidController = master.getPIDController();
       m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(12.8); // 6.4
-      m_pidController.setD(5.0);
+      m_pidController.setP(6.4); // 6.4
+      m_pidController.setD(0.0);
 
       double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
       double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;

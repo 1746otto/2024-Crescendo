@@ -96,7 +96,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * @return The current position of the turning motor.
      */
     public double getPosition() {
-        return turningMotor.getPosition().getValueAsDouble();
+        return turningMotor.getPosition().getValue();
     }
 
     public void stopMotor() {

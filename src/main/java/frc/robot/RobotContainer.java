@@ -175,9 +175,9 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new ParallelCommandGroup(
-        new ConditionalCommand(led.setLedIntakeCommand(), led.turnOffLed(), inIntakeDown),
-        new ConditionalCommand(led.setLedShooter(), led.turnOffLed(), inShooter)));
+    // led.setDefaultCommand(new ParallelCommandGroup(
+    //     new ConditionalCommand(led.setLedIntakeCommand(), led.turnOffLed(), inIntakeDown),
+    //     new ConditionalCommand(led.setLedShooter(), led.turnOffLed(), inShooter)));
      // check wrist up and intake roller beambreak is triggered
   }
   
