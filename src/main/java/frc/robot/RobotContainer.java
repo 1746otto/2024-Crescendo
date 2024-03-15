@@ -37,6 +37,7 @@ import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
 import frc.robot.commands.checkPrimerPiece;
 import frc.robot.commands.handlePrimerShooter;
@@ -76,6 +77,8 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  private final ShootAnywhereCommand shootany = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led, null, null, MaxAngularRate);
+
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
 
@@ -102,7 +105,7 @@ public class RobotContainer {
     // good ones
     //NamedCommands.registerCommand("spinUpSubwoofer", shooter.goToRequestCommand(ShooterConstants.kSubwooferShot));
 
-
+      shootany.generateValues(30);
       configureBindings();
       configureDefaultCommands();
       

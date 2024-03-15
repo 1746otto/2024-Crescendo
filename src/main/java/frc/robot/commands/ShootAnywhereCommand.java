@@ -22,10 +22,13 @@ import edu.wpi.first.math.spline.CubicHermiteSpline;
 import edu.wpi.first.math.spline.SplineHelper;
 import edu.wpi.first.math.spline.Spline.ControlVector;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.constants.DynamicShootingConstants;
@@ -57,7 +60,7 @@ public class ShootAnywhereCommand extends Command {
   Translation2d speakerPose;
 
   double direction;
-
+  // This is so jank the entire class needs to be rewritten;
   public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, double direction) {
     
     swerve = swerveSubsystem;
@@ -75,10 +78,10 @@ public class ShootAnywhereCommand extends Command {
       .withDeadband(6 * 0.1).withRotationalDeadband(1.5 * Math.PI * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     request.HeadingController = new PhoenixPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI, DynamicShootingConstants.kD);
-    speakerPose = (DriverStation.getAlliance().get() == Alliance.Blue) ? new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY) : new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
+    speakerPose = (/*DriverStation.getAlliance().get() == Alliance.Blue*/true) ? new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY) : new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
     for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {
-      pivotPositions[i] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(), DynamicShootingConstants.distanceMap.get(i).get_1());
-      shooterSpeeds[i] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(), DynamicShootingConstants.distanceMap.get(i).get_2());      
+      pivotPositions[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(), DynamicShootingConstants.distanceMap.get(i).get_2());
+      shooterSpeeds[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(), DynamicShootingConstants.distanceMap.get(i).get_1());      
     }
 
     ControlVector[] startAndEnd = SplineHelper.getCubicControlVectorsFromWaypoints(
@@ -128,12 +131,43 @@ public class ShootAnywhereCommand extends Command {
     swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
   }
 
+  public void generateValues(int count) {
+
+    String shooterString = new String(" ");
+    String pivotString = new String(" ");
+    SmartDashboard.putNumber("thing", count);
+    for (int i = 0; i < count; i++) {
+      // Find above and below keys.
+      double distance = Math.random() * (-DynamicShootingConstants.distanceMap.get(0).get_0() + DynamicShootingConstants.distanceMap.get(DynamicShootingConstants.distanceMapLength - 1).get_0()) + DynamicShootingConstants.distanceMap.get(0).get_0();
+      Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
+      Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
+      
+      // Find and apply interpolated angle and speed
+      if (lowEntry == null || lowEntry.getValue() <= 0 || highEntry == null || highEntry.getValue() <= 0) {
+        //leds.setToHue(1);
+        continue;
+      }
+      else {
+        //leds.setToHue(65);
+      }
+      
+
+      double interpolationValue = (distance - lowEntry.getKey())/(highEntry.getKey() - lowEntry.getKey());
+
+      shooterString = shooterString.concat(Double.toString(distance).concat(" ").concat(Double.toString(shooterSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY())).concat("\n"));
+      pivotString = pivotString.concat(Double.toString(distance) + " " + Double.toString(pivotSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY()) + "\n");
+    }
+    System.out.println("dfalkjf;lkasjdf;lkjsad;lkfjad;lfkjd;lfkjsadf");
+    //System.out.println(shooterString.length());
+    System.out.println(pivotString.length());
+    SmartDashboard.putString("pivot", pivotString);
+  }
+
   @Override
   public void execute() {
 
     // Find above and below keys
     double distance = swerve.getState().Pose.getTranslation().minus(speakerPose).getNorm();
-    Rotation2d angle = swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle();
     Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
     Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
     
