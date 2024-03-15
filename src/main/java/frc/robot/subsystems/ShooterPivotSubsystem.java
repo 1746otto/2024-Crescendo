@@ -58,14 +58,15 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       m_pidController = master.getPIDController();
       encoder.setAverageDepth(8); //To change 
       m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(12.8);//6.4
-      m_pidController.setD(5.0);
+      m_pidController.setP(6.4);//6.4
+      m_pidController.setD(0);
 
       double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
       double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;
       
       master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
       master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
+      SmartDashboard.putNumber("target", targetPose);
       
     }
     public void test() {
@@ -118,8 +119,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
-        if (SmartDashboard.getNumber("Target", targetPose) != targetPose) {
-            targetPose = SmartDashboard.getNumber("Target", targetPose);
+        if (SmartDashboard.getNumber("target", targetPose) != targetPose) {
+            targetPose = SmartDashboard.getNumber("target", targetPose);
         }
         //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
         //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);

@@ -74,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of analog input for beam break detection
     topRollerNeo.setSmartCurrentLimit(40);
     bottomRollerNeo.setSmartCurrentLimit(40);
-       
+    SmartDashboard.putNumber("Speed", setpoint);
 
   }
 
@@ -128,8 +128,9 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void periodic() {
     if (SmartDashboard.getNumber("Speed", setpoint) != setpoint) {
-      setpoint =  SmartDashboard.getNumber("Speed", setpoint);
+      setpoint = SmartDashboard.getNumber("Speed", setpoint);
     }
+    pidController.setReference(setpoint, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
   }
 
 }
