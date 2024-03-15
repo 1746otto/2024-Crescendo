@@ -3,16 +3,16 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.LEDSubsystemtest;
+import frc.robot.subsystems.LEDSubsystem;
 
 
 
 public class handleLEDCommand extends Command {
-    private LEDSubsystemtest led;
+    private LEDSubsystem led;
     private BooleanSupplier intake;
     private BooleanSupplier shooter;
 
-    public handleLEDCommand(LEDSubsystemtest led, BooleanSupplier intake, BooleanSupplier shooter ) {
+    public handleLEDCommand(LEDSubsystem led, BooleanSupplier intake, BooleanSupplier shooter ) {
         this.led = led;
         this.intake = intake;
         this.shooter = shooter;

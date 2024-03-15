@@ -4,11 +4,12 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,7 +25,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
@@ -36,6 +38,7 @@ import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.TeleopIntakeToPrimerCommand;
 import frc.robot.commands.checkPrimerPiece;
 import frc.robot.commands.handleLEDCommand;
@@ -53,7 +56,7 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import frc.robot.subsystems.ArmRollerSubsystem;
-import frc.robot.subsystems.LEDSubsystemtest;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 
 public class RobotContainer {
@@ -66,7 +69,8 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  private final LEDSubsystemtest led = new LEDSubsystemtest();
+  private final Vision vision = new Vision(drivetrain);
+  private final LEDSubsystem led = new LEDSubsystem();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
@@ -82,6 +86,8 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  private final ShootAnywhereCommand shootany = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led, null, null, MaxAngularRate);
 
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;

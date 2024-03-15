@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants;
 
-public class LEDSubsystemtest extends SubsystemBase {
+public class LEDSubsystem extends SubsystemBase {
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
 
-  public LEDSubsystemtest() {
+  public LEDSubsystem() {
     led = new AddressableLED(LEDConstants.PWMPortLeft);
     ledBuffer = new AddressableLEDBuffer(LEDConstants.LEDLength);
     led.setLength(ledBuffer.getLength());

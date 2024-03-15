@@ -164,9 +164,4 @@ public final class Constants {
     public static final double kG = 0; // Units of Volts. Calculated by voltage required to hold vertical position.
     public static final double kS = 0; // Units of Volts.
   }
-
-  public static class ShootAnywhereConstants {
-    public static Tuple3<Double>[] distanceMap = (Tuple3<Double>[]) new Object[] {new Tuple3<Double>(3.0, 3.0, 3.0)};
-    
-  }
 }
