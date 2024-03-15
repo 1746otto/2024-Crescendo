@@ -41,8 +41,7 @@ public final class Constants {
     public static final double kHold = 0.1;
     public static final double kStop = 0;
     public static final double kIntakeCurrentLimit = 20;
-    public static final int kIntakeAnalogInputChannel1 = 2;
-    public static final int kIntakeAnalogInputChannel2 = 3;// To Change
+    public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
   public static class IntakeWristConstants

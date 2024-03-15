@@ -51,10 +51,10 @@ public class LEDSubsystemtest extends SubsystemBase {
     led.setData(ledBuffer);
   }
   public Command setLedIntakeCommand(){
-    return runOnce(() -> setLedtoIntake());
+    return run(() -> setLedtoIntake()).finallyDo(() -> setLedOff());
   }
   public Command setLedShooter() {
-    return runOnce(() -> setLEDToShooter());
+    return run(() -> setLEDToShooter()).finallyDo(() -> setLedOff());
   }
   public Command turnOffLed(){
     return runOnce(() -> setLedOff());

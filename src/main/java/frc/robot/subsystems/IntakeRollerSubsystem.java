@@ -53,7 +53,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
         // Initialization of motor controllers and PID controller
         rollerMotor = new TalonFX(IntakeRollerConstants.kIntakeID);
-        rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel1);
+        rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
     }
 
     
