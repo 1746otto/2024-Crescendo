@@ -16,12 +16,14 @@ public class Vision {
     Thread visionThread;
     PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
-    Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
+    public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
+    
     Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
     Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     boolean continueLoop;
+
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
 
