@@ -58,8 +58,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       m_pidController = master.getPIDController();
       encoder.setAverageDepth(8); //To change 
       m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(12.8);//6.4
-      m_pidController.setD(5.0);
+      m_pidController.setP(6.4);//6.4
+      m_pidController.setD(0);
 
       double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
       double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;
