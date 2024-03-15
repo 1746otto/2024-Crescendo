@@ -50,7 +50,7 @@ public class Vision {
 
         visionThread.setName("Vision Thread");
 
-        visionThread.run();
+        visionThread.start();
     }
 
     private void getResult() {
