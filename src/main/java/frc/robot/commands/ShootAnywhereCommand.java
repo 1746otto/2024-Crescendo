@@ -56,7 +56,9 @@ public class ShootAnywhereCommand extends Command {
 
   Translation2d speakerPose;
 
-  ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis) {
+  double direction;
+
+  public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, double direction) {
     
     swerve = swerveSubsystem;
     vision = visionSubsystem;
@@ -66,6 +68,8 @@ public class ShootAnywhereCommand extends Command {
     xAxisSupplier = xAxis;
     yAxisSupplier = yAxis;
     
+    this.direction = direction;
+
     pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI, DynamicShootingConstants.kD, new Constraints(DynamicShootingConstants.kMaxAngularVelocity, DynamicShootingConstants.kMaxAngularAcceleration));
     request = new SwerveRequest.FieldCentricFacingAngle()
       .withDeadband(6 * 0.1).withRotationalDeadband(1.5 * Math.PI * 0.1) // Add a 10% deadband
@@ -121,7 +125,7 @@ public class ShootAnywhereCommand extends Command {
 
   @Override
   public void initialize() {
-    swerve.applyRequest(() -> request.withVelocityX(-xAxisSupplier.getAsDouble() * 6).withVelocityY(-yAxisSupplier.getAsDouble() * 6).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
+    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
   }
 
   @Override
@@ -129,6 +133,7 @@ public class ShootAnywhereCommand extends Command {
 
     // Find above and below keys
     double distance = swerve.getState().Pose.getTranslation().minus(speakerPose).getNorm();
+    Rotation2d angle = swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle();
     Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
     Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
     
