@@ -49,8 +49,8 @@ public final class Constants {
   {
     public static final int kIntakeTurnID = 11;
     // PID constants
-    public static final double kP = 0.07;
-    public static final double kFF = 0.1;
+    public static final double kP = 0.008;
+    public static final double kFF = 0.01;
 
     // Positions
     public static final double kIntake = 17.5;
@@ -106,6 +106,9 @@ public final class Constants {
 
     public static final double kTolerance = 100;
 
+    public static final double kMotionMagicCruiseVelocity = 80;
+    public static final double kMotionMagicCruiseAcceleration = 160;
+    public static final double kMotionMagicJerk = 1600;
   }
 
   /**
@@ -131,8 +134,8 @@ public final class Constants {
   }// Should go away for final competition code
 
   public static class LEDConstants {
-    public static final int PWMPortLeft = 0;
-    public static final int LEDLength = 135;
+    public static final int PWMPortLeft = 9;
+    public static final int LEDLength = 18;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;
     public static final int coneVValue = 130;

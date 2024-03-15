@@ -21,7 +21,7 @@ public class LEDSubsystemtest extends SubsystemBase {
     led.start();
   }
 
-  public void setLEDToCube() {
+  public void setLEDToShooter() {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, LEDConstants.cubeHValue, LEDConstants.cubeSValue,
           LEDConstants.cubeVValue);
@@ -36,7 +36,7 @@ public class LEDSubsystemtest extends SubsystemBase {
     led.setData(ledBuffer);
   }
 
-  public void setLedtoCone() {
+  public void setLedtoIntake() {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, LEDConstants.coneHValue, LEDConstants.coneSValue,
           LEDConstants.coneVValue);
@@ -50,11 +50,11 @@ public class LEDSubsystemtest extends SubsystemBase {
     }
     led.setData(ledBuffer);
   }
-  public Command setLedConeCommand(){
-    return runOnce(() -> setLedtoCone());
+  public Command setLedIntakeCommand(){
+    return runOnce(() -> setLedtoIntake());
   }
-  public Command setLedCubeCommand(){
-    return runOnce(() -> setLEDToCube());
+  public Command setLedShooter() {
+    return runOnce(() -> setLEDToShooter());
   }
   public Command turnOffLed(){
     return runOnce(() -> setLedOff());

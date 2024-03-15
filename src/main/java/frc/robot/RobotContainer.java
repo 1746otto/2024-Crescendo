@@ -131,9 +131,9 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
 
-    joystick.y().onTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
-    .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).finallyDo(() -> {primer.primerStow = true;})));
+    // joystick.y().onTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
+    // .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
+    // new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).finallyDo(() -> {primer.primerStow = true;})));
     //Fixed controls
 
     joystick.b().whileTrue(pivot.goToAmpPose()
@@ -175,6 +175,9 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
+    led.setDefaultCommand(new ParallelCommandGroup(
+        new ConditionalCommand(led.setLedIntakeCommand(), led.turnOffLed(), inIntakeDown),
+        new ConditionalCommand(led.setLedShooter(), led.turnOffLed(), inShooter)));
      // check wrist up and intake roller beambreak is triggered
   }
   

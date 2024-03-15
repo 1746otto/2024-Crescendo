@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -32,15 +33,15 @@ import com.revrobotics.CANSparkBase.ControlType;
  */
 public class IntakeRollerSubsystem extends SubsystemBase {
     /** Motor controller for controlling the intake. */
-    CANSparkMax intakeMotor;
+    TalonFX rollerMotor; 
 
     /** PID controller for maintaining the turning motor position. */
     SparkPIDController pidController;
 
     /** Flag indicating whether the intake is outside or not. */
     boolean outside;
-    private AnalogInput rollerBeamBreak1;
-    private AnalogInput rollerBeamBreak2;
+    private AnalogInput rollerSensor;
+ 
 
     double beamBreakLastTrigger = 0;
 
@@ -51,15 +52,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public IntakeRollerSubsystem() {
 
         // Initialization of motor controllers and PID controller
-        intakeMotor = new CANSparkMax(IntakeRollerConstants.kIntakeID, MotorType.kBrushless);
-        intakeMotor.setInverted(true);
-        rollerBeamBreak1 = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel2);
-        beamBreakLastTrigger = Timer.getFPGATimestamp();
+        rollerMotor = new TalonFX(IntakeRollerConstants.kIntakeID);
+        rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel1);
     }
 
     
     public void setSpeed(double speed) {
-        intakeMotor.set(speed);
+        rollerMotor.set(speed);
     }
 
     /**
@@ -119,12 +118,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
 
     public boolean intakeHasPiece() {
-        return Timer.getFPGATimestamp() - beamBreakLastTrigger > 0.25;
+        return (rollerSensor.getVoltage() >= 1);
     }
 
-    public boolean isBeamBreakTriggered(){
-        return ((rollerBeamBreak1.getVoltage() >= 1));
-    }
     public Command setIntakeSpeed() {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
     }
@@ -132,9 +128,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("roller Voltage", rollerBeamBreak1.getVoltage());
-        if (!isBeamBreakTriggered())
-            beamBreakLastTrigger = Timer.getFPGATimestamp();
-
+        SmartDashboard.putNumber("roller Voltage", rollerSensor.getVoltage());
     }
 }

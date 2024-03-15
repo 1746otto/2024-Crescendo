@@ -113,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isAtReq() {
-    return Math.abs(targetVelocity - getRPM()) < ShooterConstants.kRPMTolerance;
+    return Math.abs(targetVelocity - getRPM()) < ShooterConstants.kTolerance;
   }
 
   public Command setSpeedCommand(double speed) {
