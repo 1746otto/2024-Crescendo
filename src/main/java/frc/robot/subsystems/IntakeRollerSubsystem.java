@@ -13,7 +13,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -43,7 +46,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     private AnalogInput rollerSensor;
  
 
-    double beamBreakLastTrigger = 0;
+    double buttonLastTrigger = 0;
 
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
@@ -52,8 +55,14 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public IntakeRollerSubsystem() {
 
         // Initialization of motor controllers and PID controller
-        rollerMotor = new TalonFX(IntakeRollerConstants.kIntakeID);
+        rollerMotor = new TalonFX(IntakeRollerConstants.kIntakeRollerID);
+        
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
+        TalonFXConfiguration configs = new TalonFXConfiguration();
+        configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(6);
+        rollerMotor.getConfigurator().apply(configs);
+        rollerMotor.setInverted(true);
+        rollerMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     
@@ -84,10 +93,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
     // Needs to go but idk if it can be replaced with out breaking stuff.
     public Command intakeSenseCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(2.0).finallyDo(() -> setSpeed(0));
+        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(5).until(() -> intakeHasPiece()).finallyDo(() -> setSpeed(0));
     }
     public Command dumbIntakeCommand(){
-        return setSpeedCommand(IntakeRollerConstants.kIntake);
+        return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(.4);
     }
     public Command intakeCommand(){
         return dumbIntakeCommand().andThen(intakeSenseCommand());
@@ -117,8 +126,16 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return runOnce(() -> setSpeed(0));
     }
 
+    /**
+     * Run once intake is down only
+     * @return
+     */
     public boolean intakeHasPiece() {
-        return (rollerSensor.getVoltage() >= 1);
+        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125;
+    }
+
+    public boolean buttonPressed() {
+        return rollerSensor.getVoltage() <= 0.2;
     }
 
     public Command setIntakeSpeed() {
@@ -126,8 +143,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
 
     
+
+    
     @Override
     public void periodic() {
+        if (!buttonPressed()) {
+            buttonLastTrigger = Timer.getFPGATimestamp();
+        }
         SmartDashboard.putNumber("roller Voltage", rollerSensor.getVoltage());
     }
 }

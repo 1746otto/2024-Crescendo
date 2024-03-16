@@ -133,9 +133,9 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
-      targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
-    }
+    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
+    //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
+    // }
     pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
   }
 

@@ -4,11 +4,14 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
@@ -20,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -48,14 +52,17 @@ public class IntakeWristSubsystem extends SubsystemBase{
         Slot0Configs pidController = talonFxConfig.Slot0;
         pidController.kP = IntakeWristConstants.kP;
         pidController.kD = IntakeWristConstants.kFF;
+        
 
         // MotionMagicConfigs motionMagic = talonFxConfig.MotionMagic; // tune all of this
         // motionMagic.MotionMagicCruiseVelocity = ShooterConstants.kMotionMagicCruiseVelocity;
         // motionMagic.MotionMagicAcceleration = ShooterConstants.kMotionMagicCruiseAcceleration;
         // motionMagic.MotionMagicJerk = ShooterConstants.kMotionMagicJerk;
-        talonFxConfig.CurrentLimits.SupplyCurrentLimit = 80;
-        talonFxConfig.CurrentLimits.StatorCurrentLimit = 130;
+        talonFxConfig.CurrentLimits.SupplyCurrentLimit = 60;
+        talonFxConfig.CurrentLimits.StatorCurrentLimit = 60;
+        
         turningMotor.getConfigurator().apply(talonFxConfig);
+        turningMotor.setNeutralMode(NeutralModeValue.Brake);
         
 
         // Setting the initial required position to the origin
@@ -77,8 +84,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * @param req The target position for the turning motor.
      */
     public void intakeToReq(double req) { 
-        turningMotor.setControl(new PositionDutyCycle(req));
-          
+        turningMotor.setControl(new PositionDutyCycle(req));  
     }
 
     /**
@@ -133,6 +139,12 @@ public class IntakeWristSubsystem extends SubsystemBase{
     public Command stopMotorCommand(){
         return runOnce(this::stopMotor);
     }
+
+    public Command intakeTest() {
+        //return run(this::testIntake).finallyDo(() -> stopIntake());
+        return new SequentialCommandGroup(runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() -> isAtReqPosition(IntakeWristConstants.kIntake))));
+    }
+  
 
     @Override
     public void periodic() {

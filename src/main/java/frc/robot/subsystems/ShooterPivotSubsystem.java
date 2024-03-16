@@ -65,6 +65,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       slave.setIdleMode(IdleMode.kBrake);
       master.setSmartCurrentLimit(50);
       slave.setSmartCurrentLimit(50);
+      //master.enableVoltageCompensation(12);
+      //slave.enableVoltageCompensation(12);
       m_pidController = master.getPIDController();
       m_pidController.setFeedbackDevice(encoder);
       m_pidController.setP(6.4); // 6.4

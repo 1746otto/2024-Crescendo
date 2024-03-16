@@ -15,9 +15,8 @@ import frc.robot.constants.VisionConstants;
 public class Vision {
     Thread visionThread;
     PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
-    PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    public PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
     public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
-    
     Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
     Pose3d tempPose;
@@ -262,6 +261,7 @@ public class Vision {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
+                            cameraPoses[i] = tempPose;
                             // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
@@ -284,6 +284,7 @@ public class Vision {
                     do {
                         continueLoop = false;
                         try {
+                            cameraPoses[i] = tempPose;
                             // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true; // This could all be fixed with a goto...

@@ -128,7 +128,9 @@ public class ShootAnywhereCommand extends Command {
 
   @Override
   public void initialize() {
-    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
+    //swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
+    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(vision.cameraPoses[0].getRotation().toRotation2d()));
+
   }
 
   public void generateValues(int count) {
@@ -157,17 +159,17 @@ public class ShootAnywhereCommand extends Command {
       shooterString = shooterString.concat(Double.toString(distance).concat(" ").concat(Double.toString(shooterSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY())).concat("\n"));
       pivotString = pivotString.concat(Double.toString(distance) + " " + Double.toString(pivotSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY()) + "\n");
     }
-    System.out.println("dfalkjf;lkasjdf;lkjsad;lkfjad;lfkjd;lfkjsadf");
-    //System.out.println(shooterString.length());
-    System.out.println(pivotString.length());
-    SmartDashboard.putString("pivot", pivotString);
+    System.out.println("Auto generated data:");
+    System.out.println(shooterString);
+    System.out.println(pivotString);
+    //SmartDashboard.putString("pivot", pivotString);
   }
 
   @Override
   public void execute() {
 
     // Find above and below keys
-    double distance = swerve.getState().Pose.getTranslation().minus(speakerPose).getNorm();
+    double distance = vision.cameraPoses[0].getTranslation().toTranslation2d().getNorm();
     Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
     Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
     

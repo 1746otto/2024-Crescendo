@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -46,6 +47,8 @@ public class PrimerSubsystem extends SubsystemBase{
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
     primerNeo.setInverted(true);
     primerNeo.setNeutralMode(NeutralMode.Brake);
+    primerNeo.configVoltageCompSaturation(12);
+    primerNeo.enableVoltageCompensation(true);
     speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -102,7 +105,7 @@ public class PrimerSubsystem extends SubsystemBase{
     if (Utils.isSimulation()) {
       return new WaitCommand(2.5);
     }
-    return setSpeedCommand(PrimerConstants.kIntake).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).finallyDo(() -> setSpeed(0));
   }
   
   public Command setIntakeSpeed() {
@@ -123,8 +126,12 @@ public class PrimerSubsystem extends SubsystemBase{
     return runOnce(() -> setSpeed(PrimerConstants.kOuttake));
   }
 
+  public Command backupCommand() {
+    return runOnce(() -> setSpeed(0.1)).withTimeout(.03).finallyDo(() -> setSpeed(0));
+  }
+
   public Command setSpeedCommand(double speed) {
-    return run(() -> setSpeed(speed));
+    return runOnce(() -> setSpeed(speed));
   }
   public boolean isPrimerBeamBreakBroken() { //To change 
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));

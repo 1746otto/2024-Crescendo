@@ -35,8 +35,8 @@ public final class Constants {
 
   public static class IntakeRollerConstants
   {
-    public static final int kIntakeID = 12;
-    public static final double kIntake = 0.8;
+    public static final int kIntakeRollerID = 11;
+    public static final double kIntake = 0.4;
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
@@ -46,18 +46,18 @@ public final class Constants {
 
   public static class IntakeWristConstants
   {
-    public static final int kIntakeTurnID = 11;
+    public static final int kIntakeTurnID = 12;
     // PID constants
-    public static final double kP = 0.008;
+    public static final double kP = 0.3;
     public static final double kFF = 0.01;
 
     // Positions
-    public static final double kIntake = 0.22753;
-    public static final double kStow = 0;
+    public static final double kIntake = 14.01;
+    public static final double kStow = 0.0;
     public static final double kHalf = kIntake / 2;
 
     // tolerance
-    public static final double kTolerance = 0.4;
+    public static final double kTolerance = 1.0;
 
   }
   
@@ -119,7 +119,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.4;
+    public static final double kIntake = 0.2;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;

@@ -142,8 +142,11 @@ public class RobotContainer {
 
     joystick.y().onTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new ParallelDeadlineGroup(intakeRollers.intakeCommand(), intakeWrist.intakePosCommand(), pivot.goToNormalPos().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)))
     .andThen(new ParallelDeadlineGroup(primer.intakeCommand(), //Deadline
-    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()),intakeRollers.outtakeCommand()))).finallyDo(() -> {primer.primerStow = true;})));
-    //Fixed controls
+    new SequentialCommandGroup(intakeWrist.indexPosCommand().alongWith(indexer.forwardCommand()), intakeRollers.outtakeCommand()))).andThen(primer.backupCommand().alongWith(indexer.stopIndexer())).finallyDo(() -> {primer.primerStow = true;})));
+    // //Fixed controls
+  
+    //joystick.y().onTrue(intakeWrist.intakeTest()); PID
+    
 
     
 
@@ -173,7 +176,7 @@ public class RobotContainer {
     joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
     joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setSpeedCommand(ShooterConstants.kShoot)));
     joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
-    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setSpeedCommand(ShooterConstants.kSubwooferShot)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
+    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)));
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileFalse(pivot.goToNormalPos().alongWith(shooter.StopCommand()));
     joystick.rightTrigger().whileTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp)).finallyDo(() -> {primer.primerStow = true;}));
     
