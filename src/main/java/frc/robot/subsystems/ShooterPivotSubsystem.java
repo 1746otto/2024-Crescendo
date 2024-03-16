@@ -16,6 +16,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -28,8 +29,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterWristConstants;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
@@ -56,8 +55,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public ShooterPivotSubsystem() {
 
-      master = new CANSparkMax(ShooterWristConstants.kShooterMasterID,MotorType.kBrushless);
-      slave = new CANSparkMax(ShooterWristConstants.kShooterSlaveID,MotorType.kBrushless);
+      master = new CANSparkMax(ShooterWristConstants.kShooterMasterID, MotorType.kBrushless);
+      slave = new CANSparkMax(ShooterWristConstants.kShooterSlaveID, MotorType.kBrushless);
       slave.follow(master, true);//Might need to have a workaround//Might need to change
       encoder = master.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
@@ -114,7 +113,17 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kAmpPos);
     }
 
-    public Command goToNormalPos() {
+    /**
+     * Sets the targetPose variable to indexing position and the waits until pivot is at that position.
+     * 
+     * <p> Ends on: pivot within tolerance
+     * 
+     * <p> End behavior: The pivot stop if it is within tolerance,
+     * otherwise the pid will run regardless of whether or not the command is still running.
+     * The pid will renable without a new command if the pivot falls out of tolerance.
+     * @return SequentialCommandGroup
+     */
+    public Command goToIntakePos() {
         return runPivot(ShooterWristConstants.kIntakePos);
     }
     public Command goToPodiumPos() {

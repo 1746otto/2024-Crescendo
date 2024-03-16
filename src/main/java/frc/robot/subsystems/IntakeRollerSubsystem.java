@@ -70,6 +70,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         rollerMotor.set(speed);
     }
 
+    public void stop() {
+        rollerMotor.stopMotor();
+    }
+
     /**
      * Checks if an object is detected on the intake based on the current output
      * current.
@@ -88,9 +92,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      * @return An InstantCommand object for outtake operation.
      */
 
-    public Command stopCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kStop);
-    }
+    
     // Needs to go but idk if it can be replaced with out breaking stuff.
     public Command intakeSenseCommand() {
         return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(5).until(() -> intakeHasPiece()).finallyDo(() -> setSpeed(0));
@@ -99,10 +101,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return setSpeedCommand(IntakeRollerConstants.kIntake).withTimeout(.4);
     }
     public Command intakeCommand(){
-        return dumbIntakeCommand().andThen(intakeSenseCommand());
-    }
-    public Command outtakeCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kOuttake).finallyDo(() -> setSpeed(0));
+        return intakeSpeedCommand().until(() -> intakeHasPiece()).finallyDo(() -> setSpeed(0));
     }
     public Command holdCommand() {
         return setSpeedCommand(IntakeRollerConstants.kHold);
@@ -115,14 +114,14 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
     }
 
-    public Command outtakeSpeedCommand() {
+    public Command outtakeCommand() {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kOuttake));
     }
 
     public Command stowSpeedCommand() {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kHold));
     }
-    public Command stopSpeedCommand() {
+    public Command stopCommand() {
         return runOnce(() -> setSpeed(0));
     }
 
@@ -136,10 +135,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     public boolean buttonPressed() {
         return rollerSensor.getVoltage() <= 0.2;
-    }
-
-    public Command setIntakeSpeed() {
-        return runOnce(() -> setSpeed(IntakeRollerConstants.kIntake));
     }
 
     

@@ -34,20 +34,20 @@ public class DynamicShootingConstants {
     
     ArrayList<Tuple3<Double>> tempMap = new ArrayList<Tuple3<Double>>();
 
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(30), 4500.0, .55));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37), 4500.0,.55));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(48), 4500.0, .529));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(59), 4500.0, .521));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+32), 4500.0, .507));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+44), 4500.0, .497));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+54), 4750.0, .492));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+64), 4875.0, .485));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+74), 5000.0, .479));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+83), 5250.0, .474));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+92), 5250.0, .472));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+107), 5250.0, .469));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+121), 5250.0, .4655));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+134), 5250.0, .465));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(30 + 16.25), 4500.0, .553)); // Tested is .55 but if sub is good then this must be higher bc no monotonicity.
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37 + 16.25), 4500.0,.55)); // Test this one
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(48 + 16.25), 4500.0, .529));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(59 + 16.25), 4500.0, .521));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+32 + 16.25), 4500.0, .507));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+44 + 16.25), 4500.0, .497));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+54 + 16.25), 4750.0, .492));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+64 + 16.25), 4875.0, .485));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+74 + 16.25), 5000.0, .479));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+83 + 16.25), 5250.0, .474));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+92 + 16.25), 5250.0, .472));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+107 + 16.25), 5250.0, .469));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+121 + 16.25), 5250.0, .4655));
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(37+134 + 16.25), 5250.0, .465));
 
     distanceMap = tempMap;
     distanceMapLength = tempMap.size();

@@ -136,7 +136,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
-    pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
+    //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
   }
 
 }

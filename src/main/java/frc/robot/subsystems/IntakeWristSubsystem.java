@@ -126,20 +126,19 @@ public class IntakeWristSubsystem extends SubsystemBase{
         return false;
     }
 
-    /**
-     * Periodic method for updating the turning motor's position based on the
-     * required position.
-     */
     public Command indexPosCommand() {
-        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isAtReqPosition(IntakeWristConstants.kStow)),stopMotorCommand());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kStow)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kStow))).finallyDo(() -> stopMotor());
     }
     public Command intakePosCommand() {
-        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() ->  isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kIntake))).finallyDo(() -> stopMotor());
     }
     public Command stopMotorCommand(){
         return runOnce(this::stopMotor);
     }
-
+    /**
+     * Ewww ugly get this out of here
+     * @return bad
+     */
     public Command intakeTest() {
         //return run(this::testIntake).finallyDo(() -> stopIntake());
         return new SequentialCommandGroup(runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() -> isAtReqPosition(IntakeWristConstants.kIntake))));

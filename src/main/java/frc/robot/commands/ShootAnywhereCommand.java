@@ -130,7 +130,6 @@ public class ShootAnywhereCommand extends Command {
   public void initialize() {
     //swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
     swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(vision.cameraPoses[0].getRotation().toRotation2d()));
-
   }
 
   public void generateValues(int count) {

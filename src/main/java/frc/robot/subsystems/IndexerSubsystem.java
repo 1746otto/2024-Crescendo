@@ -35,8 +35,8 @@ public class IndexerSubsystem extends SubsystemBase {
         return runOnce(() -> setSpeed(IndexerConstants.kForward));
     }
 
-    public Command stopIndexer() {
-        return runOnce(() -> setSpeed(IndexerConstants.kStop));
+    public void stop() {
+        setSpeed(IndexerConstants.kStop);
     }
 
     public Command reverseCommand() {
@@ -51,6 +51,6 @@ public class IndexerSubsystem extends SubsystemBase {
     }
 
     public Command setSpeedCommand(double speed) {
-        return run(() -> setSpeed(speed));
+        return runOnce(() -> setSpeed(speed));
     }
 }

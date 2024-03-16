@@ -79,7 +79,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /**
    * Stops the primer motor
    */
-  public void stopPrimer() {
+  public void stop() {
     primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kStop);
   }
 
@@ -101,6 +101,19 @@ public class PrimerSubsystem extends SubsystemBase{
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
   }
+
+  /**
+   * Runs the primer forward until the beambreak is broken.
+   * <p> Ends on: 
+   * <ul>
+   *   <li> Beambreak broken
+   * </ul>
+   * <p> End Behavior: 
+   * <ul>
+   *   <li> Whether interrupted or not, sets speed to 0 upon finishing.
+   * </ul>
+   * @return Command
+   */
   public Command intakeCommand() {
     if (Utils.isSimulation()) {
       return new WaitCommand(2.5);
@@ -127,7 +140,7 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   public Command backupCommand() {
-    return runOnce(() -> setSpeed(0.1)).withTimeout(.03).finallyDo(() -> setSpeed(0));
+    return runOnce(() -> setSpeed(0.05)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.1)).finallyDo(() -> setSpeed(0));
   }
 
   public Command setSpeedCommand(double speed) {
