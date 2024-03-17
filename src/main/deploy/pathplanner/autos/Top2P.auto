@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2358147077653734,
-      "y": 5.565873600441298
+      "x": 0.7218158264581296,
+      "y": 6.579185680732721
     },
     "rotation": 60.0
   },
@@ -20,7 +20,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "primeShooter"
           }
         },
         {
@@ -32,14 +38,14 @@
                 "data": {
                   "pathName": "Top2P"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexCommand"
           }
         },
         {
@@ -51,7 +57,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
           }
         }
       ]

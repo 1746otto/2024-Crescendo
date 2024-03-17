@@ -20,7 +20,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "primeShooter"
           }
         },
         {
@@ -30,13 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom2p"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
+                  "pathName": "Bottom2PBetter"
                 }
               }
             ]
@@ -51,7 +51,19 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "primeShooter"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": []
           }
         }
       ]

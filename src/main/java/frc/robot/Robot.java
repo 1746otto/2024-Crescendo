@@ -19,6 +19,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    
+    SmartDashboard.putData(m_robotContainer.autoChooser);
   }
 
   @Override
@@ -31,7 +33,12 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (m_robotContainer.autoChooser.getSelected() != m_robotContainer.currentAuton) {
+      m_robotContainer.autonCommand = m_robotContainer.drivetrain.getAutoPath(m_robotContainer.autoChooser.getSelected());
+      m_robotContainer.currentAuton = m_robotContainer.autoChooser.getSelected();
+    }
+  }
 
   @Override
   public void disabledExit() {}
@@ -60,6 +67,8 @@ public class Robot extends TimedRobot {
       m_robotContainer.temp = (DriverStation.getAlliance().get() == Alliance.Blue) ? -1 : 1;
     else
       m_robotContainer.temp = -1;
+
+    m_robotContainer.setTeleopInitState();
   }
 
   @Override

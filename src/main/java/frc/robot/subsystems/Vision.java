@@ -230,8 +230,8 @@ public class Vision {
     private void filter3() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
-            SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
-            SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
+            SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
+            SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds() - lastResults[i].getLatencyMillis() / 1000.0);
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 

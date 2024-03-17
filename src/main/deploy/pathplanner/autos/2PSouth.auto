@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6980016827583313,
-      "y": 4.436374187469482
+      "x": 0.7044441642327478,
+      "y": 4.4361399886695265
     },
-    "rotation": -59.99999878552441
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -39,7 +39,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3PSouth.1"
+            "pathName": "2PSouth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexCommand"
           }
         },
         {
@@ -68,26 +74,14 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "3PSouth.2"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "goToSubwooferSpeed"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "primeShooter"
+            "name": "stopShooter"
           }
         }
       ]
     }
   },
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }

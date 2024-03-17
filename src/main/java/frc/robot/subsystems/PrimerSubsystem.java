@@ -120,6 +120,10 @@ public class PrimerSubsystem extends SubsystemBase{
     }
     return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).finallyDo(() -> setSpeed(0));
   }
+
+  public Command fastIntakeCommand() {
+    return setSpeedCommand(.5).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(backupCommand());
+  }
   
   public Command setIntakeSpeed() {
     return runOnce(() -> setSpeed(PrimerConstants.kIntake));
@@ -140,7 +144,7 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   public Command backupCommand() {
-    return runOnce(() -> setSpeed(0.05)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.1)).finallyDo(() -> setSpeed(0));
+    return runOnce(() -> setSpeed(-.3)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
   }
 
   public Command setSpeedCommand(double speed) {

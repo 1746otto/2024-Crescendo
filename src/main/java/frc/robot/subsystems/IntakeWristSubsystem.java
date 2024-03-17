@@ -105,8 +105,8 @@ public class IntakeWristSubsystem extends SubsystemBase{
         return turningMotor.getPosition().getValue();
     }
 
-    public void stopMotor() {
-        turningMotor.stopMotor();
+    public void stop() {
+        turningMotor.set(0);
     }
 
     /**
@@ -127,13 +127,13 @@ public class IntakeWristSubsystem extends SubsystemBase{
     }
 
     public Command indexPosCommand() {
-        return runOnce(() -> intakeToReq(IntakeWristConstants.kStow)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kStow))).finallyDo(() -> stopMotor());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kStow)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kStow))).finallyDo(() -> stop());
     }
     public Command intakePosCommand() {
-        return runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kIntake))).finallyDo(() -> stopMotor());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kIntake))).finallyDo(() -> stop());
     }
     public Command stopMotorCommand(){
-        return runOnce(this::stopMotor);
+        return runOnce(this::stop);
     }
     /**
      * Ewww ugly get this out of here

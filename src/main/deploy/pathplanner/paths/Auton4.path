@@ -132,22 +132,28 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
+      "name": "shootPiece",
       "waypointRelativePos": 0,
       "command": {
-        "type": "deadline",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "primeShooter"
+                "name": "pivotSubwoofer"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.1
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "pivotSubwoofer"
+                "name": "primeShooter"
               }
             }
           ]
@@ -155,16 +161,22 @@
       }
     },
     {
-      "name": "New Event Marker",
+      "name": "intake piece",
       "waypointRelativePos": 0.35,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "intakeCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "indexCommand"
               }
             }
           ]
@@ -181,7 +193,13 @@
             {
               "type": "named",
               "data": {
-                "name": "shootCommand"
+                "name": "goToSubwooferSpeed"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "primeShooter"
               }
             }
           ]

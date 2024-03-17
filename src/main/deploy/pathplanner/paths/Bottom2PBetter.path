@@ -32,15 +32,15 @@
     },
     {
       "anchor": {
-        "x": 2.293183835025989,
+        "x": 2.4,
         "y": 4.038562638842631
       },
       "prevControl": {
-        "x": 2.5874406374847925,
+        "x": 2.694256802458803,
         "y": 4.029367113765794
       },
       "nextControl": {
-        "x": 1.8232420006879377,
+        "x": 1.9300581656619484,
         "y": 4.053248321165694
       },
       "isLocked": false,
@@ -98,10 +98,52 @@
       "rotateFast": true
     }
   ],
-  "constraintZones": [],
-  "eventMarkers": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 1.5,
+      "maxWaypointRelativePos": 1.55,
+      "constraints": {
+        "maxVelocity": 0.4,
+        "maxAcceleration": 3.05,
+        "maxAngularVelocity": 270.0,
+        "maxAngularAcceleration": 360.0
+      }
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "intake",
+      "waypointRelativePos": 1.25,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "indexCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "pivotSubwoofer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 4.72,
+    "maxVelocity": 2.36,
     "maxAcceleration": 3.05,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 360.0

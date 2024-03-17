@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -59,10 +60,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
         TalonFXConfiguration configs = new TalonFXConfiguration();
-        configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(6);
+        configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(IntakeRollerConstants.kIntakeCurrentLimit);
+        configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        
         rollerMotor.getConfigurator().apply(configs);
-        rollerMotor.setInverted(true);
-        rollerMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     
@@ -71,7 +73,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        rollerMotor.stopMotor();
+        rollerMotor.set(0); // I would use stop motor, but it hasn't been tested and I don't want any weird behavior.
     }
 
     /**

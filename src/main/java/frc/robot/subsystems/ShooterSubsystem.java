@@ -83,7 +83,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
-  public void setSpeed(double speed) {
+  public void setOutput(double speed) {
     topRollerNeo.set(speed);
   }
 
@@ -112,12 +112,16 @@ public class ShooterSubsystem extends SubsystemBase {
     return topRollerNeo.getEncoder().getVelocity();
   }
 
+  public void stop() {
+    setRequest(0);
+  }
+
   public boolean isAtReq() {
     return Math.abs(targetVelocity - getRPM()) < ShooterConstants.kTolerance;
   }
 
   public Command setSpeedCommand(double speed) {
-    return runOnce(() -> setSpeed(speed));
+    return runOnce(() -> setRequest(speed));
   }
 
   public void setRequest(double RPM) {
@@ -137,6 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
+    SmartDashboard.putNumber("shooterspeed", topRollerNeo.getEncoder().getVelocity());  
   }
 
 }

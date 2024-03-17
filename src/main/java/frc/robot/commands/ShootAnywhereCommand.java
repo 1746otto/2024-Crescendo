@@ -24,6 +24,7 @@ import edu.wpi.first.math.spline.Spline.ControlVector;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -51,6 +52,7 @@ public class ShootAnywhereCommand extends Command {
 
   DoubleSupplier xAxisSupplier;
   DoubleSupplier yAxisSupplier;
+  DoubleSupplier rightXAxis;
 
   SwerveRequest.FieldCentricFacingAngle request;
 
@@ -61,7 +63,7 @@ public class ShootAnywhereCommand extends Command {
 
   double direction;
   // This is so jank the entire class needs to be rewritten;
-  public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, double direction) {
+  public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, DoubleSupplier angularRequest, double direction) {
     
     swerve = swerveSubsystem;
     vision = visionSubsystem;
@@ -70,6 +72,7 @@ public class ShootAnywhereCommand extends Command {
     leds = ledSubsystem;
     xAxisSupplier = xAxis;
     yAxisSupplier = yAxis;
+    rightXAxis = angularRequest;
     
     this.direction = direction;
 
@@ -129,7 +132,7 @@ public class ShootAnywhereCommand extends Command {
   @Override
   public void initialize() {
     //swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
-    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(vision.cameraPoses[0].getRotation().toRotation2d()));
+    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection((Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) ? swerve.getState().Pose.getRotation().plus(Rotation2d.fromRadians(-rightXAxis.getAsDouble() * 4.5 * .02)) : speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle()));
   }
 
   public void generateValues(int count) {
@@ -167,6 +170,10 @@ public class ShootAnywhereCommand extends Command {
   @Override
   public void execute() {
 
+    // Make sure the values we are homing to are valid
+    if (vision.lastResults[0].getTimestampSeconds() < 0 || Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) {
+      return;
+    }
     // Find above and below keys
     double distance = vision.cameraPoses[0].getTranslation().toTranslation2d().getNorm();
     Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);

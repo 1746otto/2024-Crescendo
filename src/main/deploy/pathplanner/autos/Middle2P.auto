@@ -20,7 +20,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "primeShooter"
           }
         },
         {
@@ -31,12 +37,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "Middle2P"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeCommand"
                 }
               }
             ]
@@ -51,7 +51,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shootCommand"
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "primeShooter"
           }
         }
       ]

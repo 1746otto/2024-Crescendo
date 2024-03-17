@@ -40,7 +40,7 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 20;
+    public static final double kIntakeCurrentLimit = 5;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
@@ -52,12 +52,12 @@ public final class Constants {
     public static final double kFF = 0.01;
 
     // Positions
-    public static final double kIntake = 14.01;
+    public static final double kIntake = 14;
     public static final double kStow = 0.0;
     public static final double kHalf = kIntake / 2;
 
     // tolerance
-    public static final double kTolerance = 1.0;
+    public static final double kTolerance = 0.5;
 
   }
   
@@ -81,23 +81,26 @@ public final class Constants {
    * IDs, speeds, and PID values are included.
    */
   public static class ShooterConstants {
-    // speed constants
-    public static final double kShoot = 1.0;//0.2 and 1.0
-    public static final double kReverse = -kShoot;
-    public static final double kSubwooferShot = 0.8;
-    public static final double kSubwooferSpeed = 4640;
-    public static final double kStop = 0.0;
-
+    
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
     public static final int kShooterBottomRollerMotorID = 22;
-
+    
     // PID constants (top shooting roller)
     public static final double kP = 0.0011200000118743628;
     public static final double kI = 0;
     public static final double kD = 0.0002500000118743628;
     public static final double kS = 0.17;
     public static final double kV = 0.0001654583333333333;
+    
+    // speed constants
+    public static final double kShoot = 1/kV;//0.2 and 1.0
+    public static final double kReverse = -kShoot;
+    public static final double kSubwooferShot = 0.8;
+    public static final double kSubwooferSpeed = 4640;
+    public static final double kStop = 0.0;
+
+    
 
     public static final int kCurrentLimit = 60;
     // public static final double kFF = 0.0001654579973546788;
@@ -119,7 +122,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.2;
+    public static final double kIntake = 0.3;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
@@ -148,9 +151,9 @@ public final class Constants {
     public static int kShooterSlaveID = 51;
     public static double kPivotReduction = 60;
     public static double kStartPos = 0.207;
-    public static double kPodiumPos = 0.709822; // To change
+    public static double kPodiumPos = 0.801; // To change
     public static double kSubwooferPos = 0.55; // To change 0.541
-    public static double kIntakePos = 0.514; // To change
+    public static double kIntakePos = 0.526; // To change
     public static double kAmpPos = 0.748;// To change
     public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
     public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI );

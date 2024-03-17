@@ -68,7 +68,37 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "intake",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "indexCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "pivotSubwoofer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.36,
     "maxAcceleration": 3.05,
@@ -81,7 +111,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BetterPaths",
+  "folder": null,
   "previewStartingState": {
     "rotation": -60.0,
     "velocity": 0
