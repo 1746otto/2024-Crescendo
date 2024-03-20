@@ -81,6 +81,14 @@ public class ShootAnywhereCommand extends Command {
       .withDeadband(6 * 0.1).withRotationalDeadband(1.5 * Math.PI * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     request.HeadingController = new PhoenixPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI, DynamicShootingConstants.kD);
+
+
+
+
+
+
+  
+     
     speakerPose = (/*DriverStation.getAlliance().get() == Alliance.Blue*/true) ? new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY) : new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
     for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {
       pivotPositions[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(), DynamicShootingConstants.distanceMap.get(i).get_2());

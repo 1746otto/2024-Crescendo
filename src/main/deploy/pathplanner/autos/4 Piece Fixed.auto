@@ -45,25 +45,13 @@
         {
           "type": "named",
           "data": {
-            "name": "indexCommand"
+            "name": "confirmPiece"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "pivotSubwoofer"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "goToSubwooferSpeed"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "primeShooter"
+            "name": "confirmShootPiece"
           }
         },
         {
@@ -75,32 +63,13 @@
         {
           "type": "named",
           "data": {
-            "name": "fastIndexCommand"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "pivotSubwoofer"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "goToSubwooferSpeed"
-                }
-              }
-            ]
+            "name": "confirmPiece"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "confirmShootPiece"
           }
         },
         {
@@ -112,32 +81,13 @@
         {
           "type": "named",
           "data": {
-            "name": "indexCommand"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "pivotSubwoofer"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "goToSubwooferSpeed"
-                }
-              }
-            ]
+            "name": "confirmPiece"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "confirmShootPiece"
           }
         },
         {

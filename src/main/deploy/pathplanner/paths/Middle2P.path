@@ -49,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "intake",
-      "waypointRelativePos": 0.65,
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "sequential",
         "data": {
@@ -63,7 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "fastIndexCommand"
+                "name": "indexCommand"
               }
             },
             {
@@ -78,8 +78,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.36,
-    "maxAcceleration": 3.05,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 4.05,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 360.0
   },
@@ -94,5 +94,5 @@
     "rotation": -0.2863413834631175,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

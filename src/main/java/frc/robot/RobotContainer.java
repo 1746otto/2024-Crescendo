@@ -104,23 +104,24 @@ public class RobotContainer {
   public boolean isIndexing = false;
   public double temp = -1;
   boolean intookPiece;
+  boolean stowPivot = false;
   
  
   //pathplanner testing
   public RobotContainer() {
-      NamedCommands.registerCommand("intakeCommand", intakeRollers.intakeSpeedCommand().andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)));
+      NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
       NamedCommands.registerCommand("indexCommand", 
         indexer.setForwardSpeedCommand()
         .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
         .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.intakeCommand()).finallyDo((interrupted) -> {intookPiece = !interrupted;}).withTimeout(1.5))
+        .andThen(new SequentialCommandGroup(primer.intakeCommand()).withTimeout(1.5))
         .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
       NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(
         new InstantCommand(),
         indexer.setForwardSpeedCommand()
         .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
         .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.intakeCommand()).finallyDo((interrupted) -> {intookPiece = !interrupted;}).withTimeout(1))
+        .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(1.5)
         .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())),
         inShooter));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
@@ -128,7 +129,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
       NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
-      NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.1))); // Might want to have a check for is at request instead of just calling this over again.
+      NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
       NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
       NamedCommands.registerCommand("fastIndexCommand",
       indexer.setForwardSpeedCommand()
@@ -136,6 +137,38 @@ public class RobotContainer {
         .andThen(intakeRollers.outtakeCommand())
         .andThen(new SequentialCommandGroup(primer.fastIntakeCommand()).finallyDo((interrupted) -> {intookPiece = !interrupted;}).withTimeout(.875))
         .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
+      NamedCommands.registerCommand("confirmShootPiece", new ConditionalCommand(new ParallelCommandGroup(pivot.runPivot(ShooterWristConstants.kSubwooferPos), shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)).andThen(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitCommand(.375)))), new InstantCommand(), () -> intookPiece));
+      NamedCommands.registerCommand("setSubwooferSpeed", new InstantCommand(() -> shooter.setRequest(ShooterConstants.kSubwooferSpeed)));
+      NamedCommands.registerCommand("s", new InstantCommand());
+      NamedCommands.registerCommand("confirmPieceShort", new ConditionalCommand(
+        new InstantCommand(),
+        indexer.setForwardSpeedCommand()
+        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
+        .andThen(intakeRollers.outtakeCommand())
+        .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(.125)
+        .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())),
+        inShooter));
+      NamedCommands.registerCommand("Eject stuck pieces", 
+        new SequentialCommandGroup(
+          new ParallelCommandGroup(
+            pivot.goToAmpPose(),
+            intakeWrist.intakePosCommand()
+          ),
+          new InstantCommand(() -> {
+            primer.setSpeed(PrimerConstants.kAmp);
+            intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
+            indexer.setSpeed(IndexerConstants.kForward);
+          }),
+          new WaitCommand(0.5),
+          new InstantCommand(() -> {
+            pivot.setRequest(ShooterWristConstants.kIntakePos);
+            intakeWrist.setRequest(IntakeWristConstants.kStow);
+            primer.stop();
+            indexer.stop();
+            intakeRollers.stop();
+          })
+        )
+      );
       configureBindings();
       configureDefaultCommands();
       autoChooser = new SendableChooser<>();
@@ -145,7 +178,7 @@ public class RobotContainer {
       autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
       autoChooser.addOption("Four Piece close. Start center subwoofer", "4 Piece Fixed");
       autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
-      autoChooser.addOption("Four piece south. Start on source side", "4PSouth");
+      autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
       
   }
  
@@ -186,6 +219,9 @@ public class RobotContainer {
         () -> {
           intakeRollers.stop();
           indexer.stop();
+          if (stowPivot) {
+            pivot.setRequest(ShooterWristConstants.kStartPos);
+          }
           primer.primerStow = true;
         }
       )
@@ -207,6 +243,7 @@ public class RobotContainer {
           },
           () -> {
             pivot.setRequest(ShooterWristConstants.kIntakePos);
+            intakeWrist.setRequest(IntakeWristConstants.kStow);
             primer.stop();
             indexer.stop();
             intakeRollers.stop();
@@ -243,8 +280,8 @@ public class RobotContainer {
       )
     );
     //pivot
-    joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose().alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp)));
-    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
+    joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new WaitCommand(100))*/.alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))/*.finallyDo(() -> pivot.setRequest(ShooterWristConstants.kStartPos))*/);
+    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(new InstantCommand(() -> intakeWrist.setRequest(IntakeWristConstants.kIntake))).alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos(); intakeWrist.setRequest(IntakeWristConstants.kStow);}));
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100)).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
     joystick.rightTrigger().whileTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp)).finallyDo(() -> {primer.primerStow = true;}));
     joystick.rightTrigger().onFalse(primer.backupCommand());

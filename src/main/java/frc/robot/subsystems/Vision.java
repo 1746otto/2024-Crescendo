@@ -7,7 +7,9 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.constants.VisionConstants;
@@ -22,6 +24,7 @@ public class Vision {
     Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     boolean continueLoop;
+    int speakerID;
 
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
@@ -49,8 +52,28 @@ public class Vision {
             }
         });
 
+        if (DriverStation.getAlliance().isPresent())
+            if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                speakerID = 7;
+            }
+            else {
+                speakerID = 4;
+            }
+
         visionThread.setName("Vision Thread");
 
+        visionThread.start();
+    }
+
+    public void stopThread() {
+        try {
+        visionThread.join();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void startThread() {
         visionThread.start();
     }
 
@@ -256,13 +279,17 @@ public class Vision {
 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
+                    if (target.getFiducialId() == speakerID) {
+                        cameraPoses[i] = tempPose;
+                    }
+                    
                     // This must be here in order to try until the swerve drive unlocks the pose estimator.
                     do {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
-                            cameraPoses[i] = tempPose;
-                            // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            
+                            //swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
                         }
@@ -279,13 +306,17 @@ public class Vision {
                     && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                     
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
+                    
+                    if (target.getFiducialId() == speakerID) {
+                        cameraPoses[i] = tempPose;
+                    }
+                    
                     // This must be here in order to try until the swerve drive unlocks the pose estimator.
                     do {
                         continueLoop = false;
                         try {
-                            cameraPoses[i] = tempPose;
-                            // swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            //cameraPoses[i] = tempPose;
+                            //swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true; // This could all be fixed with a goto...
                         }
