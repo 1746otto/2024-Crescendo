@@ -4,6 +4,16 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.opencv.core.Mat.Tuple3;
+
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -26,28 +36,29 @@ public final class Constants {
 
   public static class IntakeRollerConstants
   {
-    public static final int kIntakeID = 12;
-    public static final double kIntake = 0.8;
+    public static final int kIntakeRollerID = 11;
+    public static final double kIntake = 0.4;
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 30;
-    
+    public static final double kIntakeCurrentLimit = 5;
+    public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
   public static class IntakeWristConstants
   {
-    public static final int kIntakeTurnID = 11;
+    public static final int kIntakeTurnID = 12;
     // PID constants
-    public static final double kP = 0.07;
-    public static final double kFF = 0.1;
+    public static final double kP = 0.3;
+    public static final double kFF = 0.01;
 
     // Positions
-    public static final double kIntake = 17.5;
-    public static final double kStow = 0;
+    public static final double kIntake = 14;
+    public static final double kStow = 0.0;
+    public static final double kHalf = kIntake / 2;
 
     // tolerance
-    public static final double kTolerance = 0.2;
+    public static final double kTolerance = 0.5;
 
   }
   
@@ -71,25 +82,37 @@ public final class Constants {
    * IDs, speeds, and PID values are included.
    */
   public static class ShooterConstants {
-    // speed constants
-    public static final double kShoot = 1.0;//0.2 and 1.0
-    public static final double kReverse = -kShoot;
-    public static final double kStop = 0.0;
-
+    
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
     public static final int kShooterBottomRollerMotorID = 22;
-
+    
     // PID constants (top shooting roller)
     public static final double kP = 0.0011200000118743628;
     public static final double kI = 0;
     public static final double kD = 0.0002500000118743628;
     public static final double kS = 0.17;
     public static final double kV = 0.0001654583333333333;
-    public static final double kFF = 0.0001654579973546788;
+    
+    // speed constants
+    public static final double kShoot = 1/kV;//0.2 and 1.0
+    public static final double kReverse = -kShoot;
+    public static final double kSubwooferShot = 0.8;
+    public static final double kSubwooferSpeed = 1/kV;//4640;
+    public static final double kStop = 0.0;
+    public static final double kPodium = 5350;
+
+    
+
+    public static final int kCurrentLimit = 60;
+    // public static final double kFF = 0.0001654579973546788;
     public static final int kShooterAnalogInputChannel = 0;
 
+    public static final double kTolerance = 200;
 
+    public static final double kMotionMagicCruiseVelocity = 80;
+    public static final double kMotionMagicCruiseAcceleration = 160;
+    public static final double kMotionMagicJerk = 1600;
   }
 
   /**
@@ -101,12 +124,12 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.4;
-    public static final double kOuttake = -0.4;
+    public static final double kIntake = 0.3;
+    public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
-    public static final double kPrimerCurrentLimit = 20;
+    public static final double kPrimerCurrentLimit = 30;
 
     // PID values
     public static final double kP = 0.1;
@@ -115,8 +138,8 @@ public final class Constants {
   }// Should go away for final competition code
 
   public static class LEDConstants {
-    public static final int PWMPortLeft = 0;
-    public static final int LEDLength = 135;
+    public static final int PWMPortLeft = 9;
+    public static final int LEDLength = 18;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;
     public static final int coneVValue = 130;
@@ -126,21 +149,28 @@ public final class Constants {
   }
 
   public static class ShooterWristConstants {
-    public static int ShooterMasterID = 52;
-    public static int ShooterSlaveID = 51;
-    public static double kstartPos = 0.216;
-    public static double kpodiumPos = 0.799382; // To change
-    public static double ksubwooferPos = 0.559; // To change
-    public static double kintakePos = 0.516; // To change
-    public static double kampPos = 0.757375;// To change
-    public static double ktolerance = Math.toRadians(10) / ( 2 * Math.PI );// To change
-    public static double klimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
+    public static int kShooterMasterID = 52;
+    public static int kShooterSlaveID = 51;
+    public static double kPivotReduction = 60;
+    public static double kOldFlat = 0.377481;
+    public static double kFlat = 0.377481;
+    public static double k4PPreloadShot = 0;
+    public static double k4PLastShot = kFlat + Rotation2d.fromDegrees(32.4238401).getRotations();
+    public static double kStartPos = 0.207 - kFlat + kOldFlat;
+    public static double kPodiumPos = kFlat + 0.5 - Rotation2d.fromDegrees(21.8).getRotations();//0.801; // To change
+    public static double kSubwooferPos = 0.55-kFlat+kOldFlat; // To change 0.541
+    public static double kIntakePos = 0.526-kFlat+kOldFlat; // To change
+    public static double kAmpPos = 0.748-kFlat + kOldFlat;// To change
+    public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
+    public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI );
+    public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
-
     public static int kShooterBeambreak = 1;
 
     // Trapezoidal profiling
-    public static double maxVelocity = 1.75;
-    public static double maxAcceleration = 0.75;
+    public static double maxVelocity = 1.75; // TODO: Units and true value
+    public static double maxAcceleration = 0.75; // TODO: Units and true value
+    public static final double kG = 0; // Units of Volts. Calculated by voltage required to hold vertical position.
+    public static final double kS = 0; // Units of Volts.
   }
 }

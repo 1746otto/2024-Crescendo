@@ -16,7 +16,7 @@ public class TeleopIntakeToPrimerCommand extends SequentialCommandGroup{
     addCommands(
         indexer.stopCommand(),
         primer.stopCommand(),
-        pivot.goToNormalPos(),
+        pivot.goToIntakePos(),
         intakeWrist.intakePosCommand(), 
         intakeRollers.intakeCommand(),
         intakeWrist.indexPosCommand(),

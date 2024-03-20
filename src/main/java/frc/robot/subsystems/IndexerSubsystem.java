@@ -28,8 +28,17 @@ public class IndexerSubsystem extends SubsystemBase {
 
 
     public Command forwardCommand() {
-        return setSpeedCommand(IndexerConstants.kForward).finallyDo(() -> setSpeed(0));
+        return runOnce(() -> setSpeed(IndexerConstants.kForward));
     }
+
+    public Command setForwardSpeedCommand() {
+        return runOnce(() -> setSpeed(IndexerConstants.kForward));
+    }
+
+    public void stop() {
+        setSpeed(IndexerConstants.kStop);
+    }
+
     public Command reverseCommand() {
         return setSpeedCommand(IndexerConstants.kReverse);
     }
@@ -37,8 +46,11 @@ public class IndexerSubsystem extends SubsystemBase {
         return setSpeedCommand(IndexerConstants.kStop);
     }
     
+    public Command setOuttakeSpeed() {
+        return runOnce(() -> setSpeed(IndexerConstants.kReverse));
+    }
 
     public Command setSpeedCommand(double speed) {
-        return run(() -> setSpeed(speed));
+        return runOnce(() -> setSpeed(speed));
     }
 }

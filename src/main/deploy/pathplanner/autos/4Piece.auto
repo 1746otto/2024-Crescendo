@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "goToSubwooferSpeed"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Auton4"

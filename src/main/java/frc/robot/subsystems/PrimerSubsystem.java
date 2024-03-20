@@ -6,15 +6,19 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PrimerConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -31,6 +35,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
   private TalonSRX primerNeo;
   private AnalogInput speakerBeamBreak;
+  public boolean primerStow;
 
   /** CANSparkMan pid controller */
   //private SparkPIDController pidController;
@@ -42,6 +47,8 @@ public class PrimerSubsystem extends SubsystemBase{
     primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
     primerNeo.setInverted(true);
     primerNeo.setNeutralMode(NeutralMode.Brake);
+    primerNeo.configVoltageCompSaturation(12);
+    primerNeo.enableVoltageCompensation(true);
     speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -72,7 +79,7 @@ public class PrimerSubsystem extends SubsystemBase{
   /**
    * Stops the primer motor
    */
-  public void stopPrimer() {
+  public void stop() {
     primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kStop);
   }
 
@@ -94,21 +101,54 @@ public class PrimerSubsystem extends SubsystemBase{
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
   }
+
+  /**
+   * Runs the primer forward until the beambreak is broken.
+   * <p> Ends on: 
+   * <ul>
+   *   <li> Beambreak broken
+   * </ul>
+   * <p> End Behavior: 
+   * <ul>
+   *   <li> Whether interrupted or not, sets speed to 0 upon finishing.
+   * </ul>
+   * @return Command
+   */
   public Command intakeCommand() {
-    return setSpeedCommand(PrimerConstants.kIntake).until(() -> isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    if (Utils.isSimulation()) {
+      return new WaitCommand(2.5);
+    }
+    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).finallyDo(() -> setSpeed(0));
   }
+
+  public Command fastIntakeCommand() {
+    return setSpeedCommand(.5).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(backupCommand());
+  }
+  
+  public Command setIntakeSpeed() {
+    return runOnce(() -> setSpeed(PrimerConstants.kIntake));
+  }
+
   public Command outtakeCommand() {
-    return setSpeedCommand(PrimerConstants.kOuttake).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kOuttake).finallyDo(() -> setSpeed(0));
   }
   public Command shootCommand() {
-    return setSpeedCommand(PrimerConstants.kShoot).until(() -> !isPrimerBeamBreakBroken()).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kShoot).finallyDo(() -> setSpeed(0));
   }
   public Command stopCommand() {
     return setSpeedCommand(PrimerConstants.kStop);
   }
 
+  public Command setOuttakeSpeed() {
+    return runOnce(() -> setSpeed(PrimerConstants.kOuttake));
+  }
+
+  public Command backupCommand() {
+    return runOnce(() -> setSpeed(-.3)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
+  }
+
   public Command setSpeedCommand(double speed) {
-    return run(() -> setSpeed(speed));
+    return runOnce(() -> setSpeed(speed));
   }
   public boolean isPrimerBeamBreakBroken() { //To change 
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
@@ -116,6 +156,10 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
+    SmartDashboard.putNumber("Primer output", primerNeo.getMotorOutputVoltage());
+    if (primerStow && isPrimerBeamBreakBroken()) {
+      //setSpeed(PrimerConstants.kIntake);
+    }
   }
   
 }
