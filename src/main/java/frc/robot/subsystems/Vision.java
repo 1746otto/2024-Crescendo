@@ -31,6 +31,7 @@ public class Vision {
 
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
+            cameraPoses[i] = new Pose3d();
         }
 
         getResult();
