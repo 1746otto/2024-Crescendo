@@ -61,9 +61,9 @@ public class ShootAnywhereCommand extends Command {
 
   Translation2d speakerPose;
 
-  double direction;
+  DoubleSupplier directionSupplier;
   // This is so jank the entire class needs to be rewritten;
-  public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, DoubleSupplier angularRequest, double direction) {
+  public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem, ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, DoubleSupplier xAxis, DoubleSupplier yAxis, DoubleSupplier angularRequest, DoubleSupplier directionSupplier) {
     
     swerve = swerveSubsystem;
     vision = visionSubsystem;
@@ -74,7 +74,7 @@ public class ShootAnywhereCommand extends Command {
     yAxisSupplier = yAxis;
     rightXAxis = angularRequest;
     
-    this.direction = direction;
+    this.directionSupplier = directionSupplier;
 
     pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI, DynamicShootingConstants.kD, new Constraints(DynamicShootingConstants.kMaxAngularVelocity, DynamicShootingConstants.kMaxAngularAcceleration));
     request = new SwerveRequest.FieldCentricFacingAngle()
@@ -140,7 +140,7 @@ public class ShootAnywhereCommand extends Command {
   @Override
   public void initialize() {
     //swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
-    swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection((Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) ? swerve.getState().Pose.getRotation().plus(Rotation2d.fromRadians(-rightXAxis.getAsDouble() * 4.5 * .02)) : speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle()));
+    swerve.applyRequest(() -> request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(directionSupplier.getAsDouble()  * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection((Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) ? swerve.getState().Pose.getRotation().plus(Rotation2d.fromRadians(-rightXAxis.getAsDouble() * 4.5 * .02)) : speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle()));
   }
 
   public void generateValues(int count) {
