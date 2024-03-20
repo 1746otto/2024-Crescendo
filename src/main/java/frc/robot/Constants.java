@@ -70,7 +70,7 @@ public final class Constants {
    */
   public static class IndexerConstants {
     public static final int kIndexerID = 41;
-    public static final double kForward = 1.0;
+    public static final double kForward = 0.3;
     public static final double kReverse = -kForward;
     public static final double kStop = 0.0;
     // Constant that sets motor inverted
