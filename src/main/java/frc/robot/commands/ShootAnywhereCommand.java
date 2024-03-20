@@ -97,6 +97,7 @@ public class ShootAnywhereCommand extends Command {
       shooterSpeeds[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(),
           DynamicShootingConstants.distanceMap.get(i).get_1());
     }
+    System.out.println(shooterSpeeds);
 
     ControlVector[] startAndEnd = SplineHelper.getCubicControlVectorsFromWaypoints(
         new Pose2d(
@@ -132,7 +133,7 @@ public class ShootAnywhereCommand extends Command {
                     - DynamicShootingConstants.distanceMap.get(0).get_0(),
                 DynamicShootingConstants.distanceMap.get(1).get_1()
                     - DynamicShootingConstants.distanceMap.get(0).get_1())),
-        pivotPositions,
+        shooterSpeeds,
         new Pose2d(
             new Translation2d(
                 DynamicShootingConstants.distanceMap.get(DynamicShootingConstants.distanceMapLength - 2).get_0(),
@@ -144,7 +145,7 @@ public class ShootAnywhereCommand extends Command {
                     - DynamicShootingConstants.distanceMap.get(DynamicShootingConstants.distanceMapLength - 1)
                         .get_1())));
 
-    shooterSplines = SplineHelper.getCubicSplinesFromControlVectors(startAndEnd[0], pivotPositions, startAndEnd[1]);
+    shooterSplines = SplineHelper.getCubicSplinesFromControlVectors(startAndEnd[0], shooterSpeeds, startAndEnd[1]);
 
   }
 
@@ -193,7 +194,7 @@ public class ShootAnywhereCommand extends Command {
     }
     System.out.println("Auto generated data:");
     System.out.println(shooterString);
-    System.out.println(pivotString);
+    //System.out.println(pivotString);
     // SmartDashboard.putString("pivot", pivotString);
   }
 
