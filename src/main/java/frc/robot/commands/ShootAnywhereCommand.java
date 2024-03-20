@@ -155,11 +155,11 @@ public class ShootAnywhereCommand extends Command {
     // yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
     // xAxisSupplier.getAsDouble() *
     // 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
-    swerve.applyRequest(() -> request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
+    /*swerve.applyRequest(() -> request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5)
         .withTargetDirection((Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3)
             ? swerve.getState().Pose.getRotation().plus(Rotation2d.fromRadians(-rightXAxis.getAsDouble() * 4.5 * .02))
-            : speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle()));
+            : speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle()));*/
   }
 
   public void generateValues(int count) {
@@ -200,7 +200,8 @@ public class ShootAnywhereCommand extends Command {
 
   @Override
   public void execute() {
-
+    SmartDashboard.putNumber("Distance to speaker", speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm());
+    SmartDashboard.putNumber("Robot Angle", speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().getDegrees());
     // Make sure the values we are homing to are valid
     if (vision.lastResults[0].getTimestampSeconds() < 0
         || Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) {
@@ -225,9 +226,11 @@ public class ShootAnywhereCommand extends Command {
     // Will get optimised away :)
     double shooterRPM = shooterSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
     double shooterAngle = pivotSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
+    SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
+    SmartDashboard.putNumber("Shooter speed", shooterRPM);
 
-    shooter.setRequest(shooterRPM);
-    pivot.setRequest(shooterAngle);
+    //shooter.setRequest(shooterRPM);
+    //pivot.setRequest(shooterAngle);
 
   }
 

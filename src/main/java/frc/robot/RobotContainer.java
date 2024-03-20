@@ -172,14 +172,15 @@ public class RobotContainer {
         )
       );
       ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
-      boolean loopForever = true;
-      while (loopForever) {
-        shootAnywhereCommand.generateValues(300);
-        try {Thread.sleep(2000);}
-        catch (Exception e) {
+      // boolean loopForever = true;
+      // while (loopForever) {
+      //   shootAnywhereCommand.generateValues(300);
+      //   try {Thread.sleep(2000);}
+      //   catch (Exception e) {
       
-        }
-      }
+      //   }
+      // }
+      CommandScheduler.getInstance().schedule(shootAnywhereCommand.ignoringDisable(true));
 
       configureBindings();
       configureDefaultCommands();
