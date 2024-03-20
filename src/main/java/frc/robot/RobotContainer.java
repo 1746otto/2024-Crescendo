@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -90,7 +91,6 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private Command shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
 
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
@@ -111,7 +111,6 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-    Command shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
       NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
       NamedCommands.registerCommand("indexCommand", 
         indexer.setForwardSpeedCommand()
@@ -172,6 +171,8 @@ public class RobotContainer {
           })
         )
       );
+      ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
+      shootAnywhereCommand.generateValues(30);
       configureBindings();
       configureDefaultCommands();
       autoChooser = new SendableChooser<>();
