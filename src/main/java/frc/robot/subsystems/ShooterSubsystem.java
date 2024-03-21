@@ -6,6 +6,10 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -22,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
 
@@ -29,10 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
   
   /** CANSparkMax motor controller for the top shooting roller with PID control. */
-  private CANSparkMax topRollerNeo;
-  
-  /** CANSparkMax motor controller for the bottom shooting roller (follows top roller). */
-  private CANSparkMax bottomRollerNeo;
+  private TalonFX shooterRoller;
   
   /** Analog input for detecting beam breaks. */
   private AnalogInput beamBreak;
@@ -53,20 +55,22 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-    topRollerNeo.setIdleMode(IdleMode.kCoast);
-    bottomRollerNeo.setIdleMode(IdleMode.kCoast);
-    topRollerNeo.setInverted(true);
-    bottomRollerNeo.follow(topRollerNeo, true);
-    
+    shooterRoller = new TalonFX(ShooterConstants.kShooterTopRollerMotorID);
+    TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    shooterRoller.setInverted(true);
+
+    shooterRoller.getConfigurator().apply(rollerConfig);
 
     //Setting PID values for the top shooting roller
-    pidController = topRollerNeo.getPIDController();
-    pidController.setP(0);
-    pidController.setI(0);
-    pidController.setD(0);
-    pidController.setFF(ShooterConstants.kV);
+    Slot0Configs pidController = rollerConfig.Slot0;
+    pidController.kD = ShooterConstants.kV;
+    
+    // pidController = shooterRoller.getPIDController();
+    // pidController.setP(0);
+    // pidController.setI(0);
+    // pidController.setD(0);
+    // pidController.setFF(ShooterConstants.kV);
     
     
 
@@ -74,8 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
 
     // Initialization of analog input for beam break detection
-    topRollerNeo.setSmartCurrentLimit(40);
-    bottomRollerNeo.setSmartCurrentLimit(40);
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    rollerConfig.CurrentLimits.StatorCurrentLimit = 40;
     SmartDashboard.putNumber("Speed", targetVelocity);
 
   }
@@ -84,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
   public void setOutput(double speed) {
-    topRollerNeo.set(speed);
+    shooterRoller.set(speed);
   }
 
   /**
@@ -109,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM() {
-    return topRollerNeo.getEncoder().getVelocity();
+    return shooterRoller.getVelocity();
   }
 
   public void stop() {
@@ -141,7 +145,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", topRollerNeo.getEncoder().getVelocity());  
+    SmartDashboard.putNumber("shooterspeed", shooterRoller.getEncoder().getVelocity());  
   }
 
 }

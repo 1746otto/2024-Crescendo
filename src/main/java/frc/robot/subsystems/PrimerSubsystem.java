@@ -7,13 +7,18 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PrimerConstants;
@@ -33,7 +38,7 @@ import com.revrobotics.CANSparkBase.ControlType;
  */
 public class PrimerSubsystem extends SubsystemBase{
   /** CANSparkMax motor controller for the priming roller. */
-  private TalonSRX primerNeo;
+  private TalonFX primerRoller;
   private AnalogInput speakerBeamBreak;
   public boolean primerStow;
 
@@ -44,11 +49,14 @@ public class PrimerSubsystem extends SubsystemBase{
    * Creates a new PrimerSubsystem with initialized motor controller.
    */
   public PrimerSubsystem() {
-    primerNeo = new TalonSRX(PrimerConstants.kPrimerRollerMotorID);
-    primerNeo.setInverted(true);
-    primerNeo.setNeutralMode(NeutralMode.Brake);
-    primerNeo.configVoltageCompSaturation(12);
-    primerNeo.enableVoltageCompensation(true);
+    primerRoller = new TalonFX(PrimerConstants.kPrimerRollerMotorID);
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(IntakeRollerConstants.kIntakeCurrentLimit);
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    primerRoller.getConfigurator().apply(configs);
+
+    
+    primerRoller.setInverted(true);
     speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -64,23 +72,23 @@ public class PrimerSubsystem extends SubsystemBase{
   }
   
   public void setSpeed(double speed) {
-    primerNeo.set(ControlMode.PercentOutput,speed);
+    primerRoller.set(speed);
   }
   /**
    * Run the motor backwards at a slow speed of kPrimerReverseSpeed.
    */
   
   public void returnNote() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kOuttake);
+    primerRoller.set(PrimerConstants.kOuttake);
   }
   public void note() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kIntake);
+    primerRoller.set(PrimerConstants.kIntake);
   }
   /**
    * Stops the primer motor
    */
   public void stop() {
-    primerNeo.set(ControlMode.PercentOutput,PrimerConstants.kStop);
+    primerRoller.set(PrimerConstants.kStop);
   }
 
   /**
@@ -156,7 +164,6 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
-    SmartDashboard.putNumber("Primer output", primerNeo.getMotorOutputVoltage());
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
