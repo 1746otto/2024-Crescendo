@@ -24,7 +24,7 @@ public class Vision {
     Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     boolean continueLoop;
-    int speakerID;
+    int speakerID = 7;
 
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {

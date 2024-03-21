@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -180,7 +181,7 @@ public class RobotContainer {
       
       //   }
       // }
-      CommandScheduler.getInstance().schedule(shootAnywhereCommand.ignoringDisable(true));
+      new Trigger(()->DriverStation.isEnabled()).whileTrue(shootAnywhereCommand);
 
       configureBindings();
       configureDefaultCommands();

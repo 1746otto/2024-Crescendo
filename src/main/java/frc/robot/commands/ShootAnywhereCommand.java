@@ -213,12 +213,14 @@ public class ShootAnywhereCommand extends Command {
     Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
     // Find and apply interpolated angle and speed
-    if (lowEntry.getKey() == null || lowEntry.getValue() <= 0 || highEntry.getKey() == null
-        || highEntry.getValue() <= 0) {
+    if (lowEntry == null || lowEntry.getValue() <= 0 || highEntry == null
+        || highEntry.getValue() >= 7) {
       leds.setToHue(1);
+      SmartDashboard.putBoolean("null entry", true);
       return;
     } else {
       leds.setToHue(65);
+      SmartDashboard.putBoolean("null entry", false);
     }
 
     double interpolationValue = (distance - lowEntry.getKey()) / (highEntry.getKey() - lowEntry.getKey());
