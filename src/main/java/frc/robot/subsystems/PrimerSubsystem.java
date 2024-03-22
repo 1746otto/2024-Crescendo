@@ -51,7 +51,7 @@ public class PrimerSubsystem extends SubsystemBase{
   public PrimerSubsystem() {
     primerRoller = new TalonFX(PrimerConstants.kPrimerRollerMotorID);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(IntakeRollerConstants.kIntakeCurrentLimit);
+    configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(PrimerConstants.kPrimerCurrentLimit);
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     primerRoller.getConfigurator().apply(configs);
 
@@ -164,6 +164,7 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
+    SmartDashboard.putNumber("Primer output voltage", primerRoller.getMotorVoltage().getValueAsDouble());
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }

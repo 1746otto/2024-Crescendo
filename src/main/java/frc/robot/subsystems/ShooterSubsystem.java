@@ -33,7 +33,6 @@ import frc.robot.Constants.ShooterWristConstants;
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
   
-  /** CANSparkMax motor controller for the top shooting roller with PID control. */
   private TalonFX shooterRoller;
   
   /** Analog input for detecting beam breaks. */
@@ -64,7 +63,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //Setting PID values for the top shooting roller
     Slot0Configs pidController = rollerConfig.Slot0;
-    pidController.kD = ShooterConstants.kV;
+    pidController.kP = ShooterConstants.kP;
+    pidController.kI = ShooterConstants.kI;
+    pidController.kD = ShooterConstants.kD;
+    pidController.kS = ShooterConstants.kS;
+    pidController.kV = ShooterConstants.kV;
     
     // pidController = shooterRoller.getPIDController();
     // pidController.setP(0);
@@ -113,7 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM() {
-    return shooterRoller.getVelocity();
+    return shooterRoller.getVelocity().getValueAsDouble();
   }
 
   public void stop() {
@@ -145,7 +148,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", shooterRoller.getEncoder().getVelocity());  
+    SmartDashboard.putNumber("shooterspeed", shooterRoller.getVelocity().getValueAsDouble());  
   }
 
 }
