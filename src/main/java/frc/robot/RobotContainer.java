@@ -9,7 +9,9 @@ import java.util.function.BooleanSupplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -181,8 +183,9 @@ public class RobotContainer {
       
       //   }
       // }
-      new Trigger(()->DriverStation.isEnabled()).whileTrue(shootAnywhereCommand);
-
+      vision.toString();
+      //new Trigger(()->DriverStation.isEnabled()).whileTrue(shootAnywhereCommand);
+      led.setLedtoIntake();
       configureBindings();
       configureDefaultCommands();
       autoChooser = new SendableChooser<>();
@@ -311,7 +314,7 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
+    //led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
      // check wrist up and intake roller beambreak is triggered
   }
 
@@ -338,6 +341,8 @@ public class RobotContainer {
     //Command baseAuton4 = drivetrain.getAutoPath("4Piece");
     //Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
     //Command fourP = drivetrain.getAutoPath("4P");
-    return autonCommand;
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PSouthSub");
+    drivetrain.seedFieldRelative(new Pose2d(path.getPreviewStartingHolonomicPose().getTranslation(), Rotation2d.fromDegrees(-60)));
+    return AutoBuilder.followPath(path);
   }
 }
