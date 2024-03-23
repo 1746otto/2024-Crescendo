@@ -18,45 +18,39 @@ public class IndexerSubsystem extends SubsystemBase {
     public IndexerSubsystem() {
         indexerMotor = new CANSparkMax(IndexerConstants.kIndexerID, MotorType.kBrushless);
         indexerMotor.setInverted(IndexerConstants.kMotorInvert);
+        indexerMotor.setSmartCurrentLimit(40);
     }
 
-    /**
-     * Indexer is set to run at the value of kIndexerSpeed.
-     */
-    public void startIndexing() {
-        indexerMotor.set(IndexerConstants.kIndexerSpeed);
-    }
-
-    /**
-     * Indexer is set to stop running.
-     */
-    public void stopIndexing() {
-        indexerMotor.set(IndexerConstants.kIndexerStopSpeed);
-    }
-
-    /**
-     * Indexer run back at the value of kIndexerSpeed.
-     */
-    public void indexBackwards() {
-        indexerMotor.set(IndexerConstants.kIndexerRevSpeed);
+   
+    public void setSpeed(double speed) {
+        indexerMotor.set(speed);
     }
 
 
-
-    
-    /**
-     * Command to start running the indexer using startIndexing().
-     * @return A command that starts runs the indexer
-     */
-    public Command indexCommand() {
-        return runOnce(() -> startIndexing());
+    public Command forwardCommand() {
+        return runOnce(() -> setSpeed(IndexerConstants.kForward));
     }
 
-    /**
-     * Command to stop the indexer using stopIndexing().
-     * @return A command to stop the indexer
-     */
+    public Command setForwardSpeedCommand() {
+        return runOnce(() -> setSpeed(IndexerConstants.kForward));
+    }
+
+    public void stop() {
+        setSpeed(IndexerConstants.kStop);
+    }
+
+    public Command reverseCommand() {
+        return setSpeedCommand(IndexerConstants.kReverse);
+    }
     public Command stopCommand() {
-        return runOnce(() -> stopIndexing());
+        return setSpeedCommand(IndexerConstants.kStop);
+    }
+    
+    public Command setOuttakeSpeed() {
+        return runOnce(() -> setSpeed(IndexerConstants.kReverse));
+    }
+
+    public Command setSpeedCommand(double speed) {
+        return runOnce(() -> setSpeed(speed));
     }
 }

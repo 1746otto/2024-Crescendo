@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.937565851983556,
-      "y": 6.704377510606872
+      "x": 2.24,
+      "y": 1.87
     },
     "rotation": 0
   },
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test2direction"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "drivetrainCommand"
+            "pathName": "Tune path"
           }
         }
       ]
