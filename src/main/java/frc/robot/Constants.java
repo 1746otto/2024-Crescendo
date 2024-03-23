@@ -172,5 +172,7 @@ public final class Constants {
     public static double maxAcceleration = 0.75; // TODO: Units and true value
     public static final double kG = 0; // Units of Volts. Calculated by voltage required to hold vertical position.
     public static final double kS = 0; // Units of Volts.
+    public static final double kP = 6.4;
+    public static final double kD = 0.0;
   }
 }

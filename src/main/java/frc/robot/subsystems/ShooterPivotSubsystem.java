@@ -5,6 +5,13 @@ import java.util.function.BooleanSupplier;
 
 import javax.management.openmbean.TabularType;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.reduxrobotics.sensors.canandcoder.Canandcoder;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -27,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.IntakeRollerConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
 
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -36,10 +45,10 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 public class ShooterPivotSubsystem extends SubsystemBase{
     private SparkPIDController m_pidController;
-    private SparkAbsoluteEncoder encoder;
+    private Canandcoder encoder;
 
-    public CANSparkMax master;
-    private CANSparkMax slave;
+    public TalonFX master;
+    private TalonFX slave;
 
     private double targetPose = ShooterWristConstants.kIntakePos;
     private final TrapezoidProfile m_profile =
@@ -54,28 +63,25 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     private double startTime = 0;
 
     public ShooterPivotSubsystem() {
-
-      master = new CANSparkMax(ShooterWristConstants.kShooterMasterID, MotorType.kBrushless);
-      slave = new CANSparkMax(ShooterWristConstants.kShooterSlaveID, MotorType.kBrushless);
-      slave.follow(master, true);//Might need to have a workaround//Might need to change
-      encoder = master.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-
-      master.setIdleMode(IdleMode.kBrake);
-      slave.setIdleMode(IdleMode.kBrake);
-      master.setSmartCurrentLimit(50);
-      slave.setSmartCurrentLimit(50);
+      TalonFXConfiguration configs = new TalonFXConfiguration();
+      master = new TalonFX(ShooterWristConstants.kShooterMasterID);
+      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
+      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
+      encoder = new Canandcoder(0);//Change
+      configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
+      master.getConfigurator().apply(configs);
+      slave.getConfigurator().apply(configs);
+      Slot0Configs pidController = configs.Slot0;
+      pidController.kP = ShooterWristConstants.kP;
+      pidController.kD = ShooterWristConstants.kD;
+      pidController.kS = ShooterWristConstants.kS;
       //master.enableVoltageCompensation(12);
       //slave.enableVoltageCompensation(12);
-      m_pidController = master.getPIDController();
-      m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(6.4); // 6.4
-      m_pidController.setD(0.0);
 
       double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
       double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;
-      
-      master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
-      master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
+    
       SmartDashboard.putNumber("target", targetPose);
       
       setRequest(encoder.getPosition());
