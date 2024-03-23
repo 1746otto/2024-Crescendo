@@ -53,7 +53,7 @@ public class DynamicShootingConstants {
     distanceMapLength = tempMap.size();
     distanceToIndex = new TreeMap<>();
 
-    for (int i = 0; i < distanceMap.size(); i++)
+    for (int i = 1; i < distanceMap.size() - 1; i++)
       distanceToIndex.put(distanceMap.get(i).get_0(), i);
     
   };

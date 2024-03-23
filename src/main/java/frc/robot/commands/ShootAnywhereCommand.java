@@ -177,7 +177,7 @@ public class ShootAnywhereCommand extends Command {
       Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
       // Find and apply interpolated angle and speed
-      if (lowEntry == null || lowEntry.getValue() <= 0 || highEntry == null || highEntry.getValue() <= 0) {
+      if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
         // leds.setToHue(1);
         continue;
       } else {
@@ -213,8 +213,8 @@ public class ShootAnywhereCommand extends Command {
     Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
     // Find and apply interpolated angle and speed
-    if (lowEntry == null || lowEntry.getValue() <= 0 || highEntry == null
-        || highEntry.getValue() >= 7) {
+    if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null
+        || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
       leds.setToHue(1);
       SmartDashboard.putBoolean("null entry", true);
       return;
