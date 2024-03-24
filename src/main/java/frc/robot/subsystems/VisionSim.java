@@ -124,7 +124,6 @@ public class VisionSim {
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
-
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getPoseAmbiguity() > VisionConstants.kAmbiguityCutoff)
                     continue;
                 
@@ -139,7 +138,9 @@ public class VisionSim {
                  * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
                  * depending on which is smaller the best or alternate tag transform is chosen.
                  */
-                System.out.println(target.getBestCameraToTarget().getTranslation().getNorm() );
+                // System.out.println(target.getBestCameraToTarget().getTranslation().getNorm() );
+                System.out.println("Best camera norm: " + target.getBestCameraToTarget().getTranslation().getNorm());
+                System.out.println("Alternate camera pose: " + target.getAlternateCameraToTarget().getTranslation().getNorm());
                 if (target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
@@ -149,7 +150,7 @@ public class VisionSim {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
-                            System.out.println("adding measurement!");
+                            System.out.println((target.getPoseAmbiguity()));
                             poseEstimator.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;

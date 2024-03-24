@@ -13,7 +13,7 @@ public class VisionConstants {
     public static final double kAngleMargin = Units.degreesToRadians(3.0); // TODO: Tune the angle margin for the robot.
     public static final double kAngularPerpendicularityCutoff = Units.degreesToRadians(7.0); // Perpendicularity as in the direction facing and the plane of the tag. Maybe parallel rename to parallel cutoff? TODO: Tune the perpendicularity cutoff for this robot.
     public static final double kDistanceCutoff = 5; // TODO: Tune the distance cutoff for this robot.
-    public static final double kAmbiguityCutoff = 1; // TODO: Tune the ambiguity cutoff for this robot. It is probably fine, but we need to test it.
+    public static final double kAmbiguityCutoff = 0.2; // TODO: Tune the ambiguity cutoff for this robot. It is probably fine, but we need to test it.
     public static final String[] kCameraNames = {
         "front_camera"
     };

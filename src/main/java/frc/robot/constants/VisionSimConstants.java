@@ -51,10 +51,10 @@ public class VisionSimConstants {
     public static Lazy<SimCameraProperties> CameraProperties = new Lazy<SimCameraProperties>(() -> {
         SimCameraProperties cameraProperties = new SimCameraProperties();
         // A 640 x 480 camera with a 100 degree diagonal FOV.
-        cameraProperties.setCalibration(1200, 1600, Rotation2d.fromDegrees(100));
+        cameraProperties.setCalibration(1200, 1600, Rotation2d.fromDegrees(94));
         // Approximate detection noise with average and standard deviation error in
         // pixels.
-        cameraProperties.setCalibError(0.25, 0.08);
+        cameraProperties.setCalibError(3.25, 0.25);
         // Set the camera image capture framerate (Note: this is limited by robot loop
         // rate).
         cameraProperties.setFPS(20);
