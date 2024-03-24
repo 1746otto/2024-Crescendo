@@ -41,7 +41,6 @@ public class VisionSim {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
             cameraPoses[i] = new Pose3d();
             PhotonCameraSim cameraSim = new PhotonCameraSim(cameras[i], cameraProperties);
-            cameraSim.enableDrawWireframe(true);
             visionSim.addCamera(cameraSim, VisionConstants.kCameraTransforms[i]);
         }
 
@@ -140,7 +139,8 @@ public class VisionSim {
                  * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
                  * depending on which is smaller the best or alternate tag transform is chosen.
                  */
-                if (tempPose.getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
+                System.out.println(target.getBestCameraToTarget().getTranslation().getNorm() );
+                if (target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
 

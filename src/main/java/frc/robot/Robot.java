@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
   private Optional<VisionSim> visionSimSubsystem;
   private Optional<SwerveDrivePoseEstimator> poseEstimator;
   private VisionSystemSim visionSim = new VisionSystemSim("photonSim2");
-  private Pose3d simPose = new Pose3d(new Pose2d(new Translation2d(13, 2.157), new Rotation2d(Math.PI)));
+  private Pose3d simPose = new Pose3d(new Pose2d(new Translation2d(14, 5.585), new Rotation2d(Math.PI)));
   private TargetModel model36h11 = TargetModel.kAprilTag36h11;
   private VisionTargetSim visionTargetSim = new VisionTargetSim(new Pose3d(), model36h11);
   private AprilTagFieldLayout simAprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
@@ -162,7 +162,7 @@ public class Robot extends TimedRobot {
     Transform3d oneDegreeTransform = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1)));
     simPose = simPose.transformBy(oneDegreeTransform);
     for (SwerveModulePosition position: VisionSimConstants.SwerveModulePositions.getValue()) {
-      position.distanceMeters = encoderNoise.nextDouble(-0.1, 5);
+      position.distanceMeters = encoderNoise.nextDouble(-0.1, 2);
     }
     SmartDashboard.putNumber("module1 dist", VisionSimConstants.SwerveModulePositions.getValue()[0].distanceMeters);
     poseEstimator.get().update(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
