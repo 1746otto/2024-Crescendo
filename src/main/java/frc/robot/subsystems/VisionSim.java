@@ -132,7 +132,7 @@ public class VisionSim {
                 // Transforms to the pose of the camera, not the robot.
                 Pose3d tempPose = bestTargetToRobotPose(target, i);
 
-                visionSystemSim.getDebugField().getObject("tempPose").setPose(tempPose.toPose2d());
+                // visionSystemSim.getDebugField().getObject("tempPose").setPose(tempPose.toPose2d());
                 
                 /*
                  * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
