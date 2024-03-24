@@ -23,6 +23,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -51,7 +52,7 @@ public class Robot extends TimedRobot {
   private Optional<VisionSim> visionSimSubsystem;
   private Optional<SwerveDrivePoseEstimator> poseEstimator;
   private VisionSystemSim visionSim = new VisionSystemSim("photonSim2");
-  private Pose3d simPose = new Pose3d(13, 2.157, 0, new Rotation3d(0, 0, Math.PI));
+  private Pose3d simPose = new Pose3d(new Pose2d(new Translation2d(13, 2.157), new Rotation2d(Math.PI)));
   private TargetModel model36h11 = TargetModel.kAprilTag36h11;
   private VisionTargetSim visionTargetSim = new VisionTargetSim(new Pose3d(), model36h11);
   private AprilTagFieldLayout simAprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
@@ -173,12 +174,12 @@ public class Robot extends TimedRobot {
     visionSim.getDebugField().getObject("estimate").setPose(poseEstimator.get().getEstimatedPosition());
     noiseOverTime.add(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
 
-    if (noiseOverTime.size() > 1000) {
-      System.out.println(noiseOverTime);
+    if (noiseOverTime.size() % 250 == 0) {
+      // System.out.println(noiseOverTime);
       double sum = 0;
       for (double d: noiseOverTime) sum += d;
       System.out.println(sum / (double) noiseOverTime.size());
-      throw new EmptyStackException();
+      // throw new EmptyStackException();
     }
   }
 }
