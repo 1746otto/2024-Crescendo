@@ -75,7 +75,7 @@ public class VisionSim {
 
         visionThread.setName("Vision Thread");
 
-        visionThread.start();
+        // visionThread.start();
     }
 
     public void stopThread() {
@@ -84,6 +84,10 @@ public class VisionSim {
 
     public void startThread() {
         visionThread.start();
+    }
+
+    public boolean isRunning() {
+        return visionThread.isAlive();
     }
 
     private void getResult() {
@@ -142,6 +146,7 @@ public class VisionSim {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
+                            System.out.println("adding measurement!");
                             poseEstimator.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
@@ -195,7 +200,7 @@ public class VisionSim {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
-                            
+                            System.out.println("adding measurement!");
                             poseEstimator.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
@@ -223,6 +228,7 @@ public class VisionSim {
                         continueLoop = false;
                         try {
                             //cameraPoses[i] = tempPose;
+                            System.out.println("adding measurement!");
                             poseEstimator.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true; // This could all be fixed with a goto...

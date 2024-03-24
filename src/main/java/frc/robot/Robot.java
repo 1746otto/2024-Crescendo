@@ -5,7 +5,10 @@
 package frc.robot;
 
 import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import org.photonvision.estimation.TargetModel;
@@ -23,6 +26,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -45,13 +49,15 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private Optional<VisionSim> visionSimSubsystem;
-  private Optional<SwerveDrivePoseEstimator> poseEsimator;
+  private Optional<SwerveDrivePoseEstimator> poseEstimator;
   private VisionSystemSim visionSim = new VisionSystemSim("photonSim2");
-  private Pose3d simPose = new Pose3d(13, 2.157, 2, new Rotation3d(0, 0, Math.PI));
+  private Pose3d simPose = new Pose3d(13, 2.157, 0, new Rotation3d(0, 0, Math.PI));
   private TargetModel model36h11 = TargetModel.kAprilTag36h11;
   private VisionTargetSim visionTargetSim = new VisionTargetSim(new Pose3d(), model36h11);
   private AprilTagFieldLayout simAprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
   private Supplier<Rotation3d> gyro = () -> simPose.getRotation();
+  private Random encoderNoise = new Random();
+  private ArrayList<Double> noiseOverTime = new ArrayList<Double>();
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
@@ -63,10 +69,10 @@ public class Robot extends TimedRobot {
     visionSim.addVisionTargets(visionTargetSim);
     visionSim.resetRobotPose(simPose);
     
-    poseEsimator = Optional.of(new SwerveDrivePoseEstimator(VisionSimConstants.Kinematics.getValue(),
+    poseEstimator = Optional.of(new SwerveDrivePoseEstimator(VisionSimConstants.Kinematics.getValue(),
         simPose.toPose2d().getRotation(), VisionSimConstants.SwerveModulePositions.getValue(), simPose.toPose2d()));
-    visionSimSubsystem = Optional.of(new VisionSim(poseEsimator.get(), gyro, visionSim, VisionSimConstants.CameraProperties.getValue()));
-    poseEsimator.get().resetPosition(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue(),
+    visionSimSubsystem = Optional.of(new VisionSim(poseEstimator.get(), gyro, visionSim, VisionSimConstants.CameraProperties.getValue()));
+    poseEstimator.get().resetPosition(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue(),
         simPose.toPose2d());
 
   }
@@ -147,10 +153,32 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-    System.out.println(visionSim.getRobotPose());
-    simPose = simPose.transformBy(new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1))));
+    if (!visionSimSubsystem.get().isRunning()) {
+      visionSimSubsystem.get().startThread();
+    }
+    
+    
+    Transform3d oneDegreeTransform = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1)));
+    simPose = simPose.transformBy(oneDegreeTransform);
+    for (SwerveModulePosition position: VisionSimConstants.SwerveModulePositions.getValue()) {
+      position.distanceMeters = encoderNoise.nextDouble(-0.1, 5);
+    }
+    SmartDashboard.putNumber("module1 dist", VisionSimConstants.SwerveModulePositions.getValue()[0].distanceMeters);
+    poseEstimator.get().update(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
     visionSim.update(simPose);
-    visionSim.getDebugField().setRobotPose(poseEsimator.get().getEstimatedPosition());
-    poseEsimator.get().update(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
+    // System.out.println("Estimated " + poseEstimator.get().getEstimatedPosition().toString());
+    // System.out.println("Actual " + simPose.toPose2d().toString());
+
+    Transform2d diff = simPose.toPose2d().minus(poseEstimator.get().getEstimatedPosition());
+    visionSim.getDebugField().getObject("estimate").setPose(poseEstimator.get().getEstimatedPosition());
+    noiseOverTime.add(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
+
+    if (noiseOverTime.size() > 1000) {
+      System.out.println(noiseOverTime);
+      double sum = 0;
+      for (double d: noiseOverTime) sum += d;
+      System.out.println(sum / (double) noiseOverTime.size());
+      throw new EmptyStackException();
+    }
   }
 }
