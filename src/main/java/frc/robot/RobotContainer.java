@@ -106,7 +106,7 @@ public class RobotContainer {
   boolean intookPiece;
   boolean stowPivot = false;
   
- 
+
   //pathplanner testing
   public RobotContainer() {
       NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
