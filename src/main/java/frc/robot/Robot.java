@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.photonvision.estimation.TargetModel;
+import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 
@@ -20,6 +21,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -34,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.constants.VisionSimConstants;
 import frc.robot.subsystems.VisionSim;
 
 public class Robot extends TimedRobot {
@@ -48,33 +51,24 @@ public class Robot extends TimedRobot {
   private TargetModel model36h11 = TargetModel.kAprilTag36h11;
   private VisionTargetSim visionTargetSim = new VisionTargetSim(new Pose3d(), model36h11);
   private AprilTagFieldLayout simAprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
-
+  private Supplier<Rotation3d> gyro = () -> simPose.getRotation();
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    SmartDashboard.putData(m_robotContainer.autoChooser);
+    if (!Utils.isSimulation())
+      return;
+    
     visionSim.addAprilTags(simAprilTagFieldLayout);
     visionSim.addVisionTargets(visionTargetSim);
     visionSim.resetRobotPose(simPose);
-    if (Utils.isSimulation()) {
-      SwerveModule[] modules = new SwerveModule[4];
-      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-      Translation2d[] moduleLocations = new Translation2d[4];
+    
+    poseEsimator = Optional.of(new SwerveDrivePoseEstimator(VisionSimConstants.Kinematics.getValue(),
+        simPose.toPose2d().getRotation(), VisionSimConstants.SwerveModulePositions.getValue(), simPose.toPose2d()));
+    visionSimSubsystem = Optional.of(new VisionSim(poseEsimator.get(), gyro, visionSim, VisionSimConstants.CameraProperties.getValue()));
+    poseEsimator.get().resetPosition(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue(),
+        simPose.toPose2d());
 
-      int iteration = 0;
-      for (SwerveModuleConstants module : TunerConstants.createSimDrivetrain() ){
-        modules[iteration] = new SwerveModule(module, TunerConstants.SIM_DRIVETRAIN_CONSTANTS.CANbusName);
-        moduleLocations[iteration] = new Translation2d(module.LocationX, module.LocationY);
-        modulePositions[iteration] = modules[iteration].getPosition(true);
-
-        iteration++;
-      }
-      Supplier<Rotation3d> gyro = () -> simPose.getRotation();
-      SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleLocations);
-      poseEsimator = Optional.of(new SwerveDrivePoseEstimator(kinematics,
-          simPose.toPose2d().getRotation(), modulePositions, simPose.toPose2d()));
-      visionSimSubsystem = Optional.of(new VisionSim(poseEsimator.get(), gyro));
-    }
-    SmartDashboard.putData(m_robotContainer.autoChooser);
   }
 
   @Override
@@ -156,5 +150,7 @@ public class Robot extends TimedRobot {
     System.out.println(visionSim.getRobotPose());
     simPose = simPose.transformBy(new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1))));
     visionSim.update(simPose);
+    visionSim.getDebugField().setRobotPose(poseEsimator.get().getEstimatedPosition());
+    poseEsimator.get().update(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
   }
 }

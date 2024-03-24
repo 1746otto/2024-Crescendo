@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -32,11 +35,13 @@ public class VisionSim {
     String tags = new String();
 
 
-    public VisionSim(SwerveDrivePoseEstimator poseEstimator, Supplier<Rotation3d> gyro) {
+    public VisionSim(SwerveDrivePoseEstimator poseEstimator, Supplier<Rotation3d> gyro, VisionSystemSim visionSim, SimCameraProperties cameraProperties) {
 
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
             cameraPoses[i] = new Pose3d();
+            PhotonCameraSim cameraSim = new PhotonCameraSim(cameras[i], cameraProperties);
+            visionSim.addCamera(cameraSim, VisionConstants.kCameraTransforms[i]);
         }
 
         getResult();
