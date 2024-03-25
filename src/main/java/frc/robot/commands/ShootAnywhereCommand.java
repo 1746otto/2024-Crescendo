@@ -56,6 +56,7 @@ public class ShootAnywhereCommand extends Command {
     DoubleSupplier rightXAxis;
 
     SwerveRequest.FieldCentricFacingAngle request;
+    SwerveRequest.FieldCentric request2;
 
     Translation2d[] pivotPositions = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
     Translation2d[] shooterSpeeds = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
@@ -168,26 +169,10 @@ public class ShootAnywhereCommand extends Command {
 
   @Override
   public void initialize() {
-    // swerve.applyRequest(() -> request.withVelocityX(direction *
-    // yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
-    // xAxisSupplier.getAsDouble() *
-    // 4.5).withTargetDirection(speakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
-
-    // ? swerve.getState().Pose.getRotation().plus(Rotation2d.fromRadians(-rightXAxis.getAsDouble() * 4.5 * .02))
-    //         :
-    //(Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || canDriverRotate)
-    // drive = swerve.applyRequest(() -> {
-        
-    //     request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
-    //     .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5);
-    //     if (canDriverRotate) {
-    //         return request.(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI);
-    //     } else {
-    //         return request.withTargetDirection(
-    //          speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180)));
-    //     }
-    //     });
-    // CommandScheduler.getInstance().schedule(drive);
+    // swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
+    // xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(speakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
+    
+  
   }
 
     public void generateValues(int count) {
@@ -232,8 +217,19 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
-        swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
-
+      if (Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || canDriverRotate) {
+        swerve.setControl(
+        request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
+        .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
+        speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
+      } else {
+        swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6) // Drive forward with
+        // negative Y (forward)
+        .withVelocityY(yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
+        .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
+      }
+      
+  
         // Make sure the values we are homing to are valid
         if (vision.lastResults[0].getTimestampSeconds() < 0
                 || Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) {
