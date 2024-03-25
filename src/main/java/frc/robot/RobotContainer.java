@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -79,7 +78,6 @@ public class RobotContainer {
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
-  private final IndexerSubsystem indexer = new IndexerSubsystem();
   
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -110,19 +108,12 @@ public class RobotContainer {
   //pathplanner testing
   public RobotContainer() {
       NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
-      NamedCommands.registerCommand("indexCommand", 
-        indexer.setForwardSpeedCommand()
-        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
-        .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.intakeCommand()).withTimeout(1.5))
-        .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
       NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(
         new InstantCommand(),
-        indexer.setForwardSpeedCommand()
-        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
+        intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
         .andThen(intakeRollers.outtakeCommand())
         .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(1.5)
-        .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())),
+        .andThen(intakeRollers.stopCommand()),
         inShooter));
       NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
       NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
@@ -131,23 +122,17 @@ public class RobotContainer {
       NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
       NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
       NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
-      NamedCommands.registerCommand("fastIndexCommand",
-      indexer.setForwardSpeedCommand()
-        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
-        .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.fastIntakeCommand()).finallyDo((interrupted) -> {intookPiece = !interrupted;}).withTimeout(.875))
-        .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())));
       NamedCommands.registerCommand("confirmShootPiece", new ConditionalCommand(new ParallelCommandGroup(pivot.runPivot(ShooterWristConstants.kSubwooferPos), shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)).andThen(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitCommand(.375)))), new InstantCommand(), () -> intookPiece));
       NamedCommands.registerCommand("setSubwooferSpeed", new InstantCommand(() -> shooter.setRequest(ShooterConstants.kSubwooferSpeed)));
       NamedCommands.registerCommand("s", new InstantCommand());
       NamedCommands.registerCommand("confirmPieceShort", new ConditionalCommand(
         new InstantCommand(),
-        indexer.setForwardSpeedCommand()
-        .andThen(intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos()))
+        intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
         .andThen(intakeRollers.outtakeCommand())
         .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(.125)
-        .andThen(intakeRollers.stopCommand().alongWith(indexer.stopCommand())),
+        .andThen(intakeRollers.stopCommand()),
         inShooter));
+        
       NamedCommands.registerCommand("Eject stuck pieces", 
         new SequentialCommandGroup(
           new ParallelCommandGroup(
@@ -157,14 +142,12 @@ public class RobotContainer {
           new InstantCommand(() -> {
             primer.setSpeed(PrimerConstants.kAmp);
             intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
-            indexer.setSpeed(IndexerConstants.kForward);
           }),
           new WaitCommand(0.5),
           new InstantCommand(() -> {
             pivot.setRequest(ShooterWristConstants.kIntakePos);
             intakeWrist.setRequest(IntakeWristConstants.kStow);
             primer.stop();
-            indexer.stop();
             intakeRollers.stop();
           })
         )
@@ -205,20 +188,17 @@ public class RobotContainer {
         new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
           .withTimeout(5),
         intakeRollers.stopCommand(),
-        indexer.forwardCommand(),
         intakeWrist.indexPosCommand(),
         new ParallelDeadlineGroup(
           primer.intakeCommand(), // Stops primer by itself
           intakeRollers.outtakeCommand()
         ),
         intakeRollers.stopCommand(),
-        indexer.stopCommand(),
         primer.backupCommand()
       )
       .finallyDo(
         () -> {
           intakeRollers.stop();
-          indexer.stop();
           if (stowPivot) {
             pivot.setRequest(ShooterWristConstants.kStartPos);
           }
@@ -239,13 +219,11 @@ public class RobotContainer {
           () -> {
             primer.setSpeed(-1);
             intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
-            indexer.setSpeed(IndexerConstants.kForward);
           },
           () -> {
             pivot.setRequest(ShooterWristConstants.kIntakePos);
             intakeWrist.setRequest(IntakeWristConstants.kStow);
             primer.stop();
-            indexer.stop();
             intakeRollers.stop();
             primer.primerStow = true;
           }
@@ -261,7 +239,6 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           intakeRollers.stop();
-          indexer.stop();
           primer.stop();
         }
       ),
@@ -305,7 +282,6 @@ public class RobotContainer {
     shooter.stop();
     intakeRollers.stop();
     intakeWrist.setRequest(IntakeWristConstants.kStow);
-    indexer.stop();
     primer.stop();
     pivot.setRequest(ShooterWristConstants.kIntakePos);
   }
