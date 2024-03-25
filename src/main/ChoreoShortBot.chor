@@ -922,7 +922,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "3PSouth": {
             "waypoints": [
@@ -2252,7 +2252,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PSouth": {
             "waypoints": [
@@ -4326,7 +4326,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "5PCenterUp": {
             "waypoints": [
@@ -5607,7 +5607,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "5PCenterMid": {
             "waypoints": [
@@ -6983,7 +6983,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "3PUnderStage": {
             "waypoints": [
@@ -8713,7 +8713,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PUnderStage": {
             "waypoints": [
@@ -10753,7 +10753,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PUnderStageMid": {
             "waypoints": [
@@ -13029,7 +13029,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PUnderStageMidAlt": {
             "waypoints": [
@@ -15069,7 +15069,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "5PUnderStage": {
             "waypoints": [
@@ -17872,7 +17872,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "5PCenterFar": {
             "waypoints": [
@@ -19939,7 +19939,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PUnderStageFar": {
             "waypoints": [
@@ -22117,7 +22117,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PNorthFar": {
             "waypoints": [
@@ -24170,8 +24170,283 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-            "eventMarkers": [],
-            "isTrajectoryStale": false
+            "eventMarkers": [
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 13,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 12,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": "first",
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "Intake"
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 0,
+                    "targetTimestamp": null,
+                    "offset": -1,
+                    "command": {
+                        "type": "sequential",
+                        "data": {
+                            "commands": [
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": "pivotSubwoofer"
+                                    }
+                                },
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": "setSubwooferSpeed"
+                                    }
+                                },
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": "stopShooter"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 4,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 3,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "sequential",
+                        "data": {
+                            "commands": [
+                                {
+                                    "type": "parallel",
+                                    "data": {
+                                        "commands": [
+                                            {
+                                                "type": "named",
+                                                "data": {
+                                                    "name": ""
+                                                }
+                                            },
+                                            {
+                                                "type": "named",
+                                                "data": {
+                                                    "name": ""
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": ""
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 3,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 3,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 4,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 2,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 1,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": ""
+                        }
+                    }
+                },
+                {
+                    "name": "Marker",
+                    "target": 3,
+                    "targetTimestamp": null,
+                    "offset": 0,
+                    "command": {
+                        "type": "sequential",
+                        "data": {
+                            "commands": [
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": "confirm"
+                                    }
+                                },
+                                {
+                                    "type": "named",
+                                    "data": {
+                                        "name": ""
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "isTrajectoryStale": true
         }
     },
     "splitTrajectoriesAtStopPoints": false,
