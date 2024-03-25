@@ -65,8 +65,6 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterLeader.setInverted(true);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
-    shooterLeader.getConfigurator().apply(rollerConfig);
-
     //Setting PID values for the top shooting roller
     Slot0Configs pidController = rollerConfig.Slot0;
     pidController.kP = ShooterConstants.kP;
@@ -75,6 +73,9 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
     
+    shooterLeader.getConfigurator().apply(rollerConfig);
+    shooterFollower.getConfigurator().apply(rollerConfig);
+
     // pidController = shooterRoller.getPIDController();
     // pidController.setP(0);
     // pidController.setI(0);
@@ -111,7 +112,13 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return setSpeedCommand(ShooterConstants.kShoot).andThen(StopCommand());
+    return setSpeedCommand(ShooterConstants.kShoot);
+  }
+  public Command tempShooter(){
+    return run(() -> shooterLeader.set(0.5));
+  }
+  public Command tempStop(){
+    return run(() -> shooterLeader.set(0));
   }
   
   public Command ReverseCommand(){
@@ -122,7 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM() {
-    return shooterLeader.getVelocity().getValueAsDouble();
+    return shooterLeader.getVelocity().getValueAsDouble()*60;
   }
 
   public void stop() {
@@ -139,7 +146,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRequest(double RPM) {
     targetVelocity = RPM;
-    shooterLeader.setControl(new VelocityVoltage(RPM, 0, false, 0, 0, false, false, false));
+    shooterLeader.setControl(new VelocityVoltage(RPM/60));
+    // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
     //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
@@ -155,7 +163,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", shooterLeader.getVelocity().getValueAsDouble());  
+    SmartDashboard.putNumber("shooterspeed", getRPM());  
   }
 
 }
