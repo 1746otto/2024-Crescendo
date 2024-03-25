@@ -8,6 +8,9 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -33,7 +36,8 @@ import frc.robot.Constants.ShooterWristConstants;
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
   
-  private TalonFX shooterRoller;
+  private TalonFX shooterLeader;
+  private TalonFX shooterFollower;
   
   /** Analog input for detecting beam breaks. */
   private AnalogInput beamBreak;
@@ -54,12 +58,14 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    shooterRoller = new TalonFX(ShooterConstants.kShooterTopRollerMotorID);
+    shooterLeader = new TalonFX(ShooterConstants.kShooterTopRollerMotorID);
+    shooterFollower = new TalonFX(ShooterConstants.kShooterBottomRollerMotorID);
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    shooterRoller.setInverted(true);
+    shooterLeader.setInverted(true);
+    shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
-    shooterRoller.getConfigurator().apply(rollerConfig);
+    shooterLeader.getConfigurator().apply(rollerConfig);
 
     //Setting PID values for the top shooting roller
     Slot0Configs pidController = rollerConfig.Slot0;
@@ -91,7 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
   public void setOutput(double speed) {
-    shooterRoller.set(speed);
+    shooterLeader.set(speed);
   }
 
   /**
@@ -116,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM() {
-    return shooterRoller.getVelocity().getValueAsDouble();
+    return shooterLeader.getVelocity().getValueAsDouble();
   }
 
   public void stop() {
@@ -133,7 +139,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRequest(double RPM) {
     targetVelocity = RPM;
-    pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
+    shooterLeader.setControl(new VelocityVoltage(RPM, 0, false, 0, 0, false, false, false));
+    //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
   public Command setRequestCommand(double RPM) {
@@ -148,7 +155,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
     // }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", shooterRoller.getVelocity().getValueAsDouble());  
+    SmartDashboard.putNumber("shooterspeed", shooterLeader.getVelocity().getValueAsDouble());  
   }
 
 }
