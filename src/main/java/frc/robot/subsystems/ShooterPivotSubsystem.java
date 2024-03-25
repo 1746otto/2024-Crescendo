@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandcoder.Canandcoder;
@@ -44,24 +45,13 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 
 public class ShooterPivotSubsystem extends SubsystemBase{
-    private SparkPIDController m_pidController;
     private Canandcoder encoder;
 
     public TalonFX master;
     private TalonFX slave;
 
     private double targetPose = ShooterWristConstants.kIntakePos;
-    private final TrapezoidProfile m_profile =
-      new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
-
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State m_current = new TrapezoidProfile.State();
-    private TrapezoidProfile.State m_temporaryState = new TrapezoidProfile.State();
-
-    private double lastTime = 0;
-    private double deltaTime = 0;
-    private double startTime = 0;
-
+  
     public ShooterPivotSubsystem() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
       master = new TalonFX(ShooterWristConstants.kShooterMasterID);
@@ -76,12 +66,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       pidController.kP = ShooterWristConstants.kP;
       pidController.kD = ShooterWristConstants.kD;
       pidController.kS = ShooterWristConstants.kS;
+      master.get(); 
       //master.enableVoltageCompensation(12);
       //slave.enableVoltageCompensation(12);
 
-      double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
-      double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;
-    
+
       SmartDashboard.putNumber("target", targetPose);
       
       setRequest(encoder.getPosition());
@@ -101,6 +90,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     public boolean atSetpoint() {
         return (Math.abs(encoder.getPosition() - targetPose) < ShooterWristConstants.kTolerance); 
+    }
+    public void manualPID() {
+        master.set(Math.abs(encoder.getPosition() - targetPose) * ShooterWristConstants.kP); 
     }
 
     public double getTargetPose(){
@@ -150,7 +142,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
  
         if (!atSetpoint()){
-            m_pidController.setReference(targetPose, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, targetPose - encoder.getPosition()), ArbFFUnits.kVoltage);
+            manualPID();
         }
         else {
             master.set(0);
