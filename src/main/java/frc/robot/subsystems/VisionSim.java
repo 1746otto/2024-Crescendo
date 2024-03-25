@@ -15,8 +15,10 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.VisionConstants;
 
@@ -25,6 +27,7 @@ public class VisionSim {
     private VisionSystemSim visionSystemSim;
     PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     public volatile PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    public volatile double[] lastResultTimestamps = new double[VisionConstants.kCameraCount];
     public volatile Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
     public volatile Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
@@ -61,7 +64,7 @@ public class VisionSim {
             while (true) {
                 getResult();
                 
-                filter2();
+                filter5();
             }
         });
 
@@ -108,6 +111,16 @@ public class VisionSim {
             .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
     }
 
+    private boolean isDataNew(int i) {
+        if (lastResults[i].getTimestampSeconds() == lastResultTimestamps[i]) {
+            return false;
+        }
+        else {
+            lastResultTimestamps[i] = lastResults[i].getTimestampSeconds();
+            return true;
+        }
+    }
+
 
     /**
      * Was it really worth all that effort?
@@ -122,7 +135,8 @@ public class VisionSim {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
+            if (!isDataNew(i))
+                continue;
             for (PhotonTrackedTarget target : lastResults[i].targets) {
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getPoseAmbiguity() > VisionConstants.kAmbiguityCutoff)
                     continue;
@@ -177,7 +191,8 @@ public class VisionSim {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
+            if (!isDataNew(i))
+                continue;
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
@@ -245,8 +260,10 @@ public class VisionSim {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
             SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
-            
+
             SmartDashboard.putNumber("FPGA Timestamp - getTimestamp" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
+            if (!isDataNew(i))
+                continue;
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
@@ -330,7 +347,8 @@ public class VisionSim {
             SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
             
             SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
-
+            if (!isDataNew(i))
+                continue;
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
@@ -422,7 +440,8 @@ public class VisionSim {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
+            if (!isDataNew(i))
+                continue;
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1)

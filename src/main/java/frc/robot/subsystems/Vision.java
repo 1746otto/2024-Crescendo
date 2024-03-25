@@ -4,8 +4,11 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.hal.simulation.SimulatorJNI;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,7 +32,8 @@ public class Vision {
 
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
-
+        if (Utils.isSimulation())
+            return;
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
             cameraPoses[i] = new Pose3d();
