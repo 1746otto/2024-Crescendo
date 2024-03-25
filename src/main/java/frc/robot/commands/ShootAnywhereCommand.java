@@ -264,8 +264,8 @@ public class ShootAnywhereCommand extends Command {
         SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
         SmartDashboard.putNumber("Shooter speed", shooterRPM);
 
-        shooter.setRequest(shooterRPM);
-        pivot.setRequest(shooterAngle);
+        // shooter.setRequest(shooterRPM);
+        // pivot.setRequest(shooterAngle);
 
     }
 
