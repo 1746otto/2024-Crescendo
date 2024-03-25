@@ -5,7 +5,6 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
