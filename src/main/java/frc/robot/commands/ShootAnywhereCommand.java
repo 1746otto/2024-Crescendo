@@ -232,6 +232,7 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
+        swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(swerve.getState().Pose.getTranslation().minus(speakerPose).getAngle()));
 
         // Make sure the values we are homing to are valid
         if (vision.lastResults[0].getTimestampSeconds() < 0
