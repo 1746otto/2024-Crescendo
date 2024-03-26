@@ -3376,7 +3376,7 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 40
+                    "controlIntervalCount": 30
                 }
             ],
             "trajectory": [
@@ -5941,7 +5941,7 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 40
+                    "controlIntervalCount": 30
                 }
             ],
             "constraints": [
@@ -6010,7 +6010,7 @@
                 }
             ],
             "usesControlIntervalGuessing": true,
-            "defaultControlIntervalCount": 40,
+            "defaultControlIntervalCount": 30,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [
@@ -6213,7 +6213,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         }
     },
     "splitTrajectoriesAtStopPoints": true,

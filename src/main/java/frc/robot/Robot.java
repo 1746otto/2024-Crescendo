@@ -164,9 +164,9 @@ public class Robot extends TimedRobot {
     
     Transform3d oneDegreeTransform = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1)));
     simPose = simPose.transformBy(oneDegreeTransform);
-    // for (SwerveModulePosition position: VisionSimConstants.SwerveModulePositions.getValue()) {
-    //   position.distanceMeters = encoderNoise.nextDouble(-0.1, 1);
-    // }
+    for (SwerveModulePosition position: VisionSimConstants.SwerveModulePositions.getValue()) {
+      //position.distanceMeters = encoderNoise.nextDouble(-0.1, .1);
+    }
     SmartDashboard.putNumber("module1 dist", VisionSimConstants.SwerveModulePositions.getValue()[0].distanceMeters);
     poseEstimator.get().update(gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
     visionSim.update(simPose);
@@ -178,10 +178,10 @@ public class Robot extends TimedRobot {
     
 
     if (noiseOverTime.size() % 250 == 0) {
-      System.out.println(noiseOverTime);
+      //System.out.println(noiseOverTime);
       double sum = 0;
       for (double d: noiseOverTime) sum += d;
-      System.out.println(sum / (double) noiseOverTime.size());
+      //System.out.println(sum / (double) noiseOverTime.size());
     }
   }
 }

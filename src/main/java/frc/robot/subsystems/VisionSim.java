@@ -44,6 +44,9 @@ public class VisionSim {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
             cameraPoses[i] = new Pose3d();
             PhotonCameraSim cameraSim = new PhotonCameraSim(cameras[i], cameraProperties);
+            cameraSim.enableDrawWireframe(true);
+            cameraSim.enableProcessedStream(true);
+            cameraSim.setWireframeResolution(.3);
             visionSim.addCamera(cameraSim, VisionConstants.kCameraTransforms[i]);
         }
 
