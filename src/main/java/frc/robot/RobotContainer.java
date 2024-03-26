@@ -342,7 +342,7 @@ public class RobotContainer {
     //Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
     //Command fourP = drivetrain.getAutoPath("4P");
     PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PSouthSub");
-    drivetrain.seedFieldRelative(new Pose2d(path.getPreviewStartingHolonomicPose().getTranslation(), Rotation2d.fromDegrees(-60)));
+    drivetrain.seedFieldRelative(path.getPathPoses().get(0));
     return AutoBuilder.followPath(path);
   }
 }
