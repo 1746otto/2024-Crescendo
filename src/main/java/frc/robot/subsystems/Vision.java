@@ -21,6 +21,7 @@ public class Vision {
     Thread visionThread;
     PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     public volatile PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    public volatile double[] lastResultTimestamps = new double[VisionConstants.kCameraCount];
     public volatile Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
     public volatile Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
@@ -101,6 +102,16 @@ public class Vision {
             .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
     }
 
+    private boolean isDataNew(int i) {
+        if (lastResults[i].getTimestampSeconds() == lastResultTimestamps[i]) {
+            return false;
+        }
+        else {
+            lastResultTimestamps[i] = lastResults[i].getTimestampSeconds();
+            return true;
+        }
+    }
+
     /**
      * Filtering methods used:
      * - ID: The tags with IDs not on the field are discarded.
@@ -116,6 +127,9 @@ public class Vision {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
+
+            if (!isDataNew(i))
+                continue;
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
@@ -186,6 +200,9 @@ public class Vision {
 
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
+
+            if (!isDataNew(i))
+                continue;
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
@@ -262,6 +279,9 @@ public class Vision {
             SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
             
             SmartDashboard.putNumber("FPGA Timestamp - getTimestamp" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
+
+            if (!isDataNew(i))
+                continue;
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
@@ -352,6 +372,9 @@ public class Vision {
             SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
             SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
 
+            if (!isDataNew(i))
+                continue;
+
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getPoseAmbiguity() > VisionConstants.kAmbiguityCutoff)
@@ -391,6 +414,9 @@ public class Vision {
             SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
             
             SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
+
+            if (!isDataNew(i))
+                continue;
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
