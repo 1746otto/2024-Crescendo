@@ -110,6 +110,15 @@ public class Vision {
         }
     }
 
+    public boolean containsSpeakerTag(int cameraIndex) {
+        for (PhotonTrackedTarget target : lastResults[cameraIndex].targets) {
+            if (target.getFiducialId() == speakerID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Filtering methods used:
      * - ID: The tags with IDs not on the field are discarded.
