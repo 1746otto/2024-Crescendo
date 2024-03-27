@@ -217,24 +217,19 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
-      if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 && vision.containsSpeakerTag(0) ) {
+      if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || !vision.containsSpeakerTag(0) ) {
+        // Drive forward with
+        swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6)
+        .withVelocityY(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
+        .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
+      } else {
+        // negative Y (forward)
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
         speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
-      } else {
-        swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6) // Drive forward with
-        // negative Y (forward)
-        .withVelocityY(yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
-        .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
+        return;
       }
-      
-  
-        // Make sure the values we are homing to are valid
-        if (vision.lastResults[0].getTimestampSeconds() < 0
-                || Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) {
-            return;
-        }
         // Find above and below keys
         double distance = speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
@@ -248,10 +243,8 @@ public class ShootAnywhereCommand extends Command {
                 || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
             leds.setToHue(1);
             SmartDashboard.putBoolean("null entry", true);
-            canDriverRotate = true;
             return;
         } else {
-            canDriverRotate = false;
             leds.setToHue(65);
             SmartDashboard.putBoolean("null entry", false);
         }
