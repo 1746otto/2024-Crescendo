@@ -217,7 +217,7 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
-      if (vision.containsSpeakerTag(0) || Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3) {
+      if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 && vision.containsSpeakerTag(0) ) {
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
