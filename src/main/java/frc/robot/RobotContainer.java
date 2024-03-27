@@ -107,33 +107,23 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-      NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
-      NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(
-        new InstantCommand(),
-        intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
-        .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(1.5)
-        .andThen(intakeRollers.stopCommand()),
-        inShooter));
-      NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
-      NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
-      NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
-      NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
-      NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
-      NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
-      NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
-      NamedCommands.registerCommand("confirmShootPiece", new ConditionalCommand(new ParallelCommandGroup(pivot.runPivot(ShooterWristConstants.kSubwooferPos), shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)).andThen(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitCommand(.375)))), new InstantCommand(), () -> intookPiece));
-      NamedCommands.registerCommand("setSubwooferSpeed", new InstantCommand(() -> shooter.setRequest(ShooterConstants.kSubwooferSpeed)));
-      NamedCommands.registerCommand("s", new InstantCommand());
-      NamedCommands.registerCommand("confirmPieceShort", new ConditionalCommand(
-        new InstantCommand(),
-        intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
-        .andThen(intakeRollers.outtakeCommand())
-        .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(.125)
-        .andThen(intakeRollers.stopCommand()),
-        inShooter));
-        
-      NamedCommands.registerCommand("Eject stuck pieces", 
+    NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
+    NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
+    NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
+    
+    NamedCommands.registerCommand("intakeCommand", new ConditionalCommand(
+      intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
+      .andThen(intakeRollers.intakeSpeedCommand()),
+      intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand())
+      .andThen(intakeRollers.outtakeCommand().alongWith(primer.setIntakeSpeed())),
+      () -> intakeRollers.intakeHasPiece()));
+
+    NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
+    NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
+    NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
+    NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
+
+    NamedCommands.registerCommand("Eject stuck pieces", 
         new SequentialCommandGroup(
           new ParallelCommandGroup(
             pivot.goToAmpPose(),
@@ -152,6 +142,26 @@ public class RobotContainer {
           })
         )
       );
+    //NamedCommands.registerCommand("intakeCommand", new InstantCommand(() -> intookPiece = false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()).withTimeout(1.5)).finallyDo((interrupted) -> {intookPiece = !interrupted;}));
+      // NamedCommands.registerCommand("confirmPiece", new ConditionalCommand(
+      //   new InstantCommand(),
+      //   intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
+      //   .andThen(intakeRollers.outtakeCommand())
+      //   .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(1.5)
+      //   .andThen(intakeRollers.stopCommand()),
+      //   inShooter));
+      
+      
+      // NamedCommands.registerCommand("confirmShootPiece", new ConditionalCommand(new ParallelCommandGroup(pivot.runPivot(ShooterWristConstants.kSubwooferPos), shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)).andThen(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitCommand(.375)))), new InstantCommand(), () -> intookPiece));
+      // NamedCommands.registerCommand("confirmPieceShort", new ConditionalCommand(
+      //   new InstantCommand(),
+      //   intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
+      //   .andThen(intakeRollers.outtakeCommand())
+      //   .andThen(new SequentialCommandGroup(primer.intakeCommand())).withTimeout(.125)
+      //   .andThen(intakeRollers.stopCommand()),
+      //   inShooter));
+        
+      
       configureBindings();
       configureDefaultCommands();
       autoChooser = new SendableChooser<>();
