@@ -217,7 +217,7 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
-      if (Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || canDriverRotate) {
+      if (Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || vision.lastResults.length <= 0) {
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
