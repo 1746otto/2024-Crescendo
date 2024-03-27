@@ -2314,5 +2314,42 @@
       "timestamp": 14.269102274186848
     }
   ],
-  "eventMarkers": []
+  "eventMarkers": [
+    {
+      "timestamp": 1.4542593800743808,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 5.227868166497601,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 8.460867119496882,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 11.821006501948846,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    }
+  ]
 }

@@ -104,7 +104,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
     NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
 
-    NamedCommands.registerCommand("Eject stuck pieces", 
+    NamedCommands.registerCommand("ejectStuckPieces", 
         new SequentialCommandGroup(
           new ParallelCommandGroup(
             pivot.goToAmpPose(),

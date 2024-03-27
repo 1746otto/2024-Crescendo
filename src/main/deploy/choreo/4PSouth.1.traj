@@ -1711,5 +1711,33 @@
       "timestamp": 10.800853299132074
     }
   ],
-  "eventMarkers": []
+  "eventMarkers": [
+    {
+      "timestamp": 1.3751234221089543,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 4.746042483084583,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 8.220411691654283,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    }
+  ]
 }

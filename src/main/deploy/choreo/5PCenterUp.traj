@@ -982,5 +982,64 @@
       "timestamp": 6.774646500306782
     }
   ],
-  "eventMarkers": []
+  "eventMarkers": [
+    {
+      "timestamp": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "pivotSubwoofer"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "goToSubwooferSpeed"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "timestamp": 0.5657034639835873,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 1.98762388368618,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 5.020063169202575,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 6.155813227003962,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCommand"
+        }
+      }
+    }
+  ]
 }
