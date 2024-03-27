@@ -28,7 +28,6 @@ public class Vision {
     volatile Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     volatile boolean continueLoop;
-    int speakerID; 
     String tags = new String();
 
 
@@ -57,7 +56,7 @@ public class Vision {
             }
         });
 
-        speakerID = VisionConstants.kSpeakerId;
+    
         visionThread.setName("Vision Thread");
 
         visionThread.start();
@@ -105,7 +104,7 @@ public class Vision {
 
     public boolean containsSpeakerTag(int cameraIndex) {
         for (PhotonTrackedTarget target : lastResults[cameraIndex].targets) {
-            if (target.getFiducialId() == speakerID) {
+            if (target.getFiducialId() == VisionConstants.kSpeakerId) {
                 return true;
             }
         }
@@ -309,7 +308,7 @@ public class Vision {
                     // Transforms from camera to robot pose.
                     tempPose = tempPose.transformBy(VisionConstants.kCameraTransforms[i].inverse());
                     
-                    if (target.getFiducialId() == speakerID) {
+                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
                         cameraPoses[i] = tempPose;
                         
                         SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
@@ -339,7 +338,7 @@ public class Vision {
                     
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
-                    if (target.getFiducialId() == speakerID) {
+                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
                         cameraPoses[i] = tempPose;
                     }
                     
@@ -445,7 +444,7 @@ public class Vision {
 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
-                    if (target.getFiducialId() == speakerID) {
+                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
                         cameraPoses[i] = tempPose;
                     }
                     
@@ -473,7 +472,7 @@ public class Vision {
                     
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
-                    if (target.getFiducialId() == speakerID) {
+                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
                         cameraPoses[i] = tempPose;
                     }
                     

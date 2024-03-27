@@ -62,7 +62,7 @@ public class ShootAnywhereCommand extends Command {
     Translation2d[] pivotPositions = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
     Translation2d[] shooterSpeeds = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
 
-    Translation2d speakerPose;
+    
 
     DoubleSupplier directionSupplier;
     Command drive;
@@ -96,7 +96,7 @@ public class ShootAnywhereCommand extends Command {
                 DynamicShootingConstants.kD);
         request.HeadingController.setTolerance(.0125);
 
-        speakerPose = VisionConstants.kSpeakerPose;
+        
         for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {
             pivotPositions[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(),
                     DynamicShootingConstants.distanceMap.get(i).get_2());
@@ -169,7 +169,7 @@ public class ShootAnywhereCommand extends Command {
   @Override
   public void initialize() {
     // swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
-    // xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(speakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
+    // xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(VisionConstants.kVisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
     
   
   }
@@ -212,6 +212,7 @@ public class ShootAnywhereCommand extends Command {
         System.out.println(shooterString);
         // System.out.println(pivotString);
         // SmartDashboard.putString("pivot", pivotString);
+        
     }
 
     @Override
@@ -227,16 +228,16 @@ public class ShootAnywhereCommand extends Command {
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
-        speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
+        VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
       }
         // Find above and below keys
-        double distance = speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
+        double distance = VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
         Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
         SmartDashboard.putNumber("Distance to speaker", distance);
         SmartDashboard.putNumber("Robot Angle",
-                speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().getDegrees());
+                VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().getDegrees());
         // Find and apply interpolated angle and speed
         if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null
                 || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
