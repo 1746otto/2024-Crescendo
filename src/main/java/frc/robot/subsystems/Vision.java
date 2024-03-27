@@ -28,7 +28,7 @@ public class Vision {
     volatile Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     volatile boolean continueLoop;
-    int speakerID = 7; 
+    int speakerID; 
     String tags = new String();
 
 
@@ -57,14 +57,7 @@ public class Vision {
             }
         });
 
-        if (DriverStation.getAlliance().isPresent())
-            if (DriverStation.getAlliance().get() == Alliance.Blue) {
-                speakerID = 7;
-            }
-            else {
-                speakerID = 4;
-            }
-
+        speakerID = VisionConstants.kSpeakerId;
         visionThread.setName("Vision Thread");
 
         visionThread.start();

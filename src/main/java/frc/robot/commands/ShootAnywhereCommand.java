@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.constants.DynamicShootingConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -95,9 +96,7 @@ public class ShootAnywhereCommand extends Command {
                 DynamicShootingConstants.kD);
         request.HeadingController.setTolerance(.0125);
 
-        speakerPose = (/* DriverStation.getAlliance().get() == Alliance.Blue */true)
-                ? new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY)
-                : new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
+        speakerPose = VisionConstants.kSpeakerPose;
         for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {
             pivotPositions[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(),
                     DynamicShootingConstants.distanceMap.get(i).get_2());
@@ -222,13 +221,13 @@ public class ShootAnywhereCommand extends Command {
         swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6)
         .withVelocityY(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
         .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
+        return;
       } else {
         // negative Y (forward)
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
         speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
-        return;
       }
         // Find above and below keys
         double distance = speakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
