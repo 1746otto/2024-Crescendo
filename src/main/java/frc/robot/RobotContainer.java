@@ -14,18 +14,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
@@ -33,30 +26,18 @@ import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.ShootAnywhereCommand;
-import frc.robot.commands.TeleopIntakeToPrimerCommand;
-import frc.robot.commands.checkPrimerPiece;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import java.util.function.BooleanSupplier;
-
-import javax.swing.GroupLayout.ParallelGroup;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import frc.robot.subsystems.ArmRollerSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 
@@ -164,6 +145,7 @@ public class RobotContainer {
       
       configureBindings();
       configureDefaultCommands();
+
       autoChooser = new SendableChooser<>();
       autoChooser.setDefaultOption("Middle subwoofer two piece", "Middle2P");
       autoChooser.addOption("Top subwoofer (Amp side) two piece", "Top2P");
@@ -175,7 +157,7 @@ public class RobotContainer {
       
   }
  
- 
+
 
   private void configureBindings() {
   
@@ -273,6 +255,7 @@ public class RobotContainer {
     joystick.rightTrigger().whileTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp)).finallyDo(() -> {primer.primerStow = true;}));
     joystick.rightTrigger().onFalse(primer.backupCommand());
     
+        
     
 
     
@@ -285,6 +268,7 @@ public class RobotContainer {
   }
   public void configureDefaultCommands() {
     led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
+    pivot.setDefaultCommand(pivot.gotToStowCommand());
      // check wrist up and intake roller beambreak is triggered
   }
 
@@ -295,7 +279,6 @@ public class RobotContainer {
     primer.stop();
     pivot.setRequest(ShooterWristConstants.kIntakePos);
   }
-  
 
   public Command getAutonomousCommand() {
     // Command auton = drivetrain.getAutoPath("5Piece");

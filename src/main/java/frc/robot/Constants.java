@@ -4,15 +4,7 @@
 
 package frc.robot;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.opencv.core.Mat.Tuple3;
-
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide

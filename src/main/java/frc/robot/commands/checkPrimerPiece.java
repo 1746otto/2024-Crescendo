@@ -1,12 +1,9 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.ShooterPivotSubsystem;
-import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
-import frc.robot.subsystems.ShooterPivotSubsystem;
 
 public class checkPrimerPiece extends Command {
     private PrimerSubsystem m_PrimerSubsystem;
