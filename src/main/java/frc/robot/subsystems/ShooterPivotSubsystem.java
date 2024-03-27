@@ -1,16 +1,21 @@
 package frc.robot.subsystems;
 
 
+import java.security.ProviderException;
 import java.util.function.BooleanSupplier;
 
 import javax.management.openmbean.TabularType;
 
+import org.opencv.core.Mat.Atable;
+
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandcoder.Canandcoder;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
@@ -28,6 +33,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,7 +51,7 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 
 public class ShooterPivotSubsystem extends SubsystemBase{
-    private Canandcoder encoder;
+    private TalonFXConfiguration encoder;
 
     public TalonFX master;
     private TalonFX slave;
@@ -57,23 +63,25 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       master = new TalonFX(ShooterWristConstants.kShooterMasterID);
       slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
       slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
-      encoder = new Canandcoder(0);//Change
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
-      master.getConfigurator().apply(configs);
-      slave.getConfigurator().apply(configs);
+      configs.Feedback.FeedbackRemoteSensorID = 0;//to change
+      configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       Slot0Configs pidController = configs.Slot0;
       pidController.kP = ShooterWristConstants.kP;
       pidController.kD = ShooterWristConstants.kD;
       pidController.kS = ShooterWristConstants.kS;
       master.get(); 
+      master.getConfigurator().apply(configs);
+      slave.getConfigurator().apply(configs);
+
       //master.enableVoltageCompensation(12);
       //slave.enableVoltageCompensation(12);
 
 
       SmartDashboard.putNumber("target", targetPose);
       
-      setRequest(encoder.getPosition());
+      setRequest(master.getPosition().getValueAsDouble());
     }
     public void test() {
         master.set(0.1);
@@ -85,16 +93,13 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     }
     public boolean atPosition(double position) {
-        return (Math.abs(encoder.getPosition() - position) < ShooterWristConstants.kTolerance);
+        return (Math.abs(master.getPosition().getValueAsDouble()- position) < ShooterWristConstants.kTolerance);
     }
 
     public boolean atSetpoint() {
-        return (Math.abs(encoder.getPosition() - targetPose) < ShooterWristConstants.kTolerance); 
+        return (Math.abs(master.getPosition().getValueAsDouble() - targetPose) < ShooterWristConstants.kTolerance); 
     }
-    public void manualPID() {
-        master.set(Math.abs(encoder.getPosition() - targetPose) * ShooterWristConstants.kP); 
-    }
-
+ 
     public double getTargetPose(){
         return targetPose;
     }
@@ -130,6 +135,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToSubCommand() {
         return runPivot(ShooterWristConstants.kSubwooferPos);
     }
+    public Command gotToStowCommand() {
+        return runPivot(ShooterWristConstants.kStowpos);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
@@ -139,15 +147,12 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
-        SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
- 
-        if (!atSetpoint()){
-            manualPID();
-        }
-        else {
-            master.set(0);
-        }
-    }    
-}
+        SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
+        if (atSetpoint()){
+            master.setControl(new PositionDutyCycle(targetPose));
+            } else {
+                master.stopMotor();
+            }
+       }}
     
   
