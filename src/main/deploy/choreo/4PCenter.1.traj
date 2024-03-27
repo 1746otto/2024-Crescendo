@@ -713,7 +713,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCommand"
+          "name": "intakeCommand"
         }
       }
     },

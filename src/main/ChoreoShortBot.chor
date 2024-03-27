@@ -921,7 +921,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "PreLoad",
@@ -958,7 +957,7 @@
                     "command": {
                         "type": "named",
                         "data": {
-                            "name": "IntakeCommand"
+                            "name": "intakeCommand"
                         }
                     }
                 },
@@ -990,10 +989,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "3PSouth": {
             "waypoints": [
@@ -2322,7 +2317,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -2352,10 +2346,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PSouth": {
             "waypoints": [
@@ -4428,7 +4418,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -4471,10 +4460,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "5PCenterUp": {
             "waypoints": [
@@ -5754,7 +5739,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "PreLoad",
@@ -5836,10 +5820,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "5PCenterMid": {
             "waypoints": [
@@ -7214,7 +7194,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "PreLoad",
@@ -7296,10 +7275,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "3PUnderStage": {
             "waypoints": [
@@ -8801,7 +8776,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -8831,10 +8805,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PUnderStage": {
             "waypoints": [
@@ -10873,7 +10843,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -10916,10 +10885,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PUnderStageMid": {
             "waypoints": [
@@ -13194,7 +13159,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -13237,10 +13201,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PUnderStageMidAlt": {
             "waypoints": [
@@ -15279,7 +15239,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -15322,10 +15281,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "5PUnderStage": {
             "waypoints": [
@@ -18127,7 +18082,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -18183,10 +18137,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "5PCenterFar": {
             "waypoints": [
@@ -20259,7 +20209,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -20315,10 +20264,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PUnderStageFar": {
             "waypoints": [
@@ -22495,7 +22440,6 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-<<<<<<< HEAD
             "eventMarkers": [
                 {
                     "name": "IntakeFirstPiece",
@@ -22538,10 +22482,6 @@
                 }
             ],
             "isTrajectoryStale": false
-=======
-            "eventMarkers": [],
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         },
         "4PNorthFar": {
             "waypoints": [
@@ -24596,127 +24536,40 @@
             "circleObstacles": [],
             "eventMarkers": [
                 {
-<<<<<<< HEAD
                     "name": "IntakeFirstPiece",
                     "target": 3,
                     "trajTargetIndex": 3,
                     "targetTimestamp": 1.3888329457437603,
-=======
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeSecondPiece",
                     "target": 7,
                     "trajTargetIndex": 7,
                     "targetTimestamp": 4.8434350230684915,
-=======
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeThirdPiece",
                     "target": 12,
                     "trajTargetIndex": 12,
                     "targetTimestamp": 8.595505427704179,
-=======
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
-                    "offset": 0,
-                    "command": {
-                        "type": "named",
-                        "data": {
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
-                    "offset": 0,
-                    "command": {
-                        "type": "named",
-                        "data": {
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
-                    "offset": 0,
-                    "command": {
-                        "type": "named",
-                        "data": {
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 13,
-                    "targetTimestamp": null,
-                    "offset": 0,
-                    "command": {
-                        "type": "named",
-                        "data": {
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 12,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
-                    "offset": 0,
-                    "command": {
-                        "type": "named",
-                        "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
                         }
                     }
@@ -27542,84 +27395,28 @@
                     "target": 1,
                     "trajTargetIndex": 1,
                     "targetTimestamp": 0.5482270158237414,
-=======
-                            "name": ""
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": "first",
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": "Intake"
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeSecondPiece",
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 2.0523865998615602,
-=======
-                    "name": "Marker",
-                    "target": 0,
-                    "targetTimestamp": null,
-                    "offset": -1,
-                    "command": {
-                        "type": "sequential",
-                        "data": {
-                            "commands": [
-                                {
-                                    "type": "named",
-                                    "data": {
-                                        "name": "pivotSubwoofer"
-                                    }
-                                },
-                                {
-                                    "type": "named",
-                                    "data": {
-                                        "name": "setSubwooferSpeed"
-                                    }
-                                },
-                                {
-                                    "type": "named",
-                                    "data": {
-                                        "name": "stopShooter"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Marker",
-                    "target": 4,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeThirdPiece",
                     "target": 6,
                     "trajTargetIndex": 6,
@@ -30409,55 +30206,26 @@
                     "target": "first",
                     "trajTargetIndex": 0,
                     "targetTimestamp": 0,
-=======
-                    "name": "Marker",
-                    "target": 3,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "sequential",
                         "data": {
                             "commands": [
                                 {
-<<<<<<< HEAD
                                     "type": "named",
                                     "data": {
                                         "name": "pivotSubwoofer"
-=======
-                                    "type": "parallel",
-                                    "data": {
-                                        "commands": [
-                                            {
-                                                "type": "named",
-                                                "data": {
-                                                    "name": ""
-                                                }
-                                            },
-                                            {
-                                                "type": "named",
-                                                "data": {
-                                                    "name": ""
-                                                }
-                                            }
-                                        ]
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                                     }
                                 },
                                 {
                                     "type": "named",
                                     "data": {
-<<<<<<< HEAD
                                         "name": "goToSubwooferSpeed"
-=======
-                                        "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                                     }
                                 }
                             ]
                         }
                     }
-<<<<<<< HEAD
                 }
             ],
             "isTrajectoryStale": false
@@ -34193,119 +33961,67 @@
                     "target": 3,
                     "trajTargetIndex": 3,
                     "targetTimestamp": 2.031444049814255,
-=======
-                },
-                {
-                    "name": "Marker",
-                    "target": 3,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeThirdPiece",
                     "target": 5,
                     "trajTargetIndex": 5,
                     "targetTimestamp": 3.441920400021352,
-=======
-                    "name": "Marker",
-                    "target": 3,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeFourthPiece",
                     "target": 7,
                     "trajTargetIndex": 7,
                     "targetTimestamp": 4.446873319444438,
-=======
-                    "name": "Marker",
-                    "target": 4,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeFifthPiece",
                     "target": 11,
                     "trajTargetIndex": 11,
                     "targetTimestamp": 7.71073626095248,
-=======
-                    "name": "Marker",
-                    "target": 2,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeSixthPiece",
                     "target": 16,
                     "trajTargetIndex": 16,
                     "targetTimestamp": 11.281868985069224,
-=======
-                    "name": "Marker",
-                    "target": 1,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "named",
                         "data": {
-<<<<<<< HEAD
                             "name": "IntakeCommand"
-=======
-                            "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                         }
                     }
                 },
                 {
-<<<<<<< HEAD
                     "name": "IntakeSeventhPiece",
                     "target": 21,
                     "trajTargetIndex": 21,
@@ -34336,11 +34052,6 @@
                     "target": "first",
                     "trajTargetIndex": 0,
                     "targetTimestamp": 0,
-=======
-                    "name": "Marker",
-                    "target": 3,
-                    "targetTimestamp": null,
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                     "offset": 0,
                     "command": {
                         "type": "sequential",
@@ -34349,21 +34060,13 @@
                                 {
                                     "type": "named",
                                     "data": {
-<<<<<<< HEAD
                                         "name": "pivotSubwoofer"
-=======
-                                        "name": "confirm"
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                                     }
                                 },
                                 {
                                     "type": "named",
                                     "data": {
-<<<<<<< HEAD
                                         "name": "goToSubwooferSpeed"
-=======
-                                        "name": ""
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
                                     }
                                 }
                             ]
@@ -34371,7 +34074,6 @@
                     }
                 }
             ],
-<<<<<<< HEAD
             "isTrajectoryStale": false
         },
         "YouveBeenTrolled": {
@@ -35118,9 +34820,6 @@
             "circleObstacles": [],
             "eventMarkers": [],
             "isTrajectoryStale": false
-=======
-            "isTrajectoryStale": true
->>>>>>> f6ab8c3604dc002a05db871c9060775799f9672b
         }
     },
     "splitTrajectoriesAtStopPoints": false,
