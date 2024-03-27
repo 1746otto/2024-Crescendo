@@ -19,6 +19,8 @@ import org.photonvision.simulation.VisionTargetSim;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -31,11 +33,13 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -60,6 +64,9 @@ public class Robot extends TimedRobot {
   private Supplier<Rotation3d> gyro = () -> simPose.getRotation();
   private Random encoderNoise = new Random();
   private ArrayList<Double> noiseOverTime = new ArrayList<Double>();
+  PathPlannerTrajectory autoSimTraj;
+  boolean isAuton = false;
+  double autoStart;
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
@@ -154,16 +161,33 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void simulationInit() {
+    PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PSouthSub");
+    autoSimTraj = thing.getTrajectory(new ChassisSpeeds(), thing.getPreviewStartingHolonomicPose().getRotation());
+  }
+
+  @Override
   public void simulationPeriodic() {
     Transform2d diff = simPose.toPose2d().minus(poseEstimator.get().getEstimatedPosition());
     noiseOverTime.add(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
     if (!visionSimSubsystem.get().isRunning()) {
       visionSimSubsystem.get().startThread();
     }
+    if (DriverStation.isAutonomous() && !isAuton) {
+      isAuton = true;
+      autoStart = Timer.getFPGATimestamp();
+    }
+    if (!DriverStation.isAutonomous() && isAuton) {
+      isAuton = false;
+    }
     
-    
-    Transform3d oneDegreeTransform = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1)));
-    simPose = simPose.transformBy(oneDegreeTransform);
+    if (DriverStation.isAutonomous()) {
+      simPose = new Pose3d(autoSimTraj.sample(Timer.getFPGATimestamp()-autoStart).getTargetHolonomicPose());
+    }
+    else {
+      Transform3d oneDegreeTransform = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.toRadians(1)));
+      simPose = simPose.transformBy(oneDegreeTransform);
+    }
     for (SwerveModulePosition position: VisionSimConstants.SwerveModulePositions.getValue()) {
       //position.distanceMeters = encoderNoise.nextDouble(-0.1, .1);
     }
