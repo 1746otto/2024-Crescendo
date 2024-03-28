@@ -1717,7 +1717,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCommand"
+          "name": "intakeCommand"
         }
       }
     },
@@ -1726,7 +1726,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCommand"
+          "name": "intakeCommand"
         }
       }
     },
@@ -1735,7 +1735,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCommand"
+          "name": "intakeCommand"
         }
       }
     }

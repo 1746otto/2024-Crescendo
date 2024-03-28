@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -110,13 +111,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
     NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
     NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
-    
+    NamedCommands.registerCommand("shootPiece", new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led, () -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), temp).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)));
+
     NamedCommands.registerCommand("intakeCommand", new ConditionalCommand(
-      intakeWrist.indexPosCommand().alongWith(pivot.goToIntakePos())
+      intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos())
       .andThen(intakeRollers.intakeSpeedCommand()),
+
       intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand())
       .andThen(intakeRollers.outtakeCommand().alongWith(primer.setIntakeSpeed())),
-      () -> intakeRollers.intakeHasPiece()));
+      () -> !intakeRollers.intakeHasPiece()));
 
     NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
     NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
