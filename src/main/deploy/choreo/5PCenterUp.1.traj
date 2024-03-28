@@ -1024,11 +1024,24 @@
       }
     },
     {
-      "timestamp": 5.020063169202575,
+      "timestamp": 5.520063169202575,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "intakeCommand"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "shootPiece"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeCommand"
+              }
+            }
+          ]
         }
       }
     },
@@ -1038,6 +1051,33 @@
         "type": "named",
         "data": {
           "name": "intakeCommand"
+        }
+      }
+    },
+    {
+      "timestamp": 1.0326079595732263,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 5.529087324640645,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": ""
+        }
+      }
+    },
+    {
+      "timestamp": 6.774646500306782,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
         }
       }
     }

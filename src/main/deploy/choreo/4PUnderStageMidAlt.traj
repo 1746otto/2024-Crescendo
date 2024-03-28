@@ -1684,6 +1684,33 @@
           "name": "intakeCommand"
         }
       }
+    },
+    {
+      "timestamp": 7.39077305782186,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 3.8574729840717774,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 10.851209904633812,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
     }
   ]
 }

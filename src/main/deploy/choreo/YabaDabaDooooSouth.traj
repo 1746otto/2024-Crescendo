@@ -2309,6 +2309,60 @@
           ]
         }
       }
+    },
+    {
+      "timestamp": 1.0402498571664127,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 2.562219967831394,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 3.842195192660723,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 7.776164783627703,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": ""
+        }
+      }
+    },
+    {
+      "timestamp": 11.262949666621058,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 14.834527646387166,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
     }
   ]
 }
