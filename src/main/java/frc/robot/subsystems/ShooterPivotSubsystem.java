@@ -1,14 +1,6 @@
 package frc.robot.subsystems;
 
 
-import java.security.ProviderException;
-import java.util.function.BooleanSupplier;
-
-import javax.management.openmbean.TabularType;
-
-import org.opencv.core.Mat.Atable;
-
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -17,36 +9,12 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.reduxrobotics.sensors.canandcoder.Canandcoder;
-import com.reduxrobotics.sensors.canandcolor.Canandcolor;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.REVLibError;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.IntakeRollerConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterWristConstants;
-
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 
 
@@ -148,7 +116,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
-        if (atSetpoint()){
+        if (!atSetpoint()){
             master.setControl(new PositionDutyCycle(targetPose));
             } else {
                 master.stopMotor();

@@ -9,29 +9,15 @@ import java.util.function.BooleanSupplier;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
-
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterWristConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
