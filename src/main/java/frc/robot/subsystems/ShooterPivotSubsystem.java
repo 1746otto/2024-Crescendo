@@ -116,7 +116,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
-        if (atSetpoint()){
+        if (!atSetpoint()){
             master.setControl(new PositionDutyCycle(targetPose));
             } else {
                 master.stopMotor();
