@@ -106,6 +106,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command gotToStowCommand() {
         return runPivot(ShooterWristConstants.kStowpos);
     }
+    public Command goToParallelPos() {
+        return runPivot(ShooterWristConstants.kParallelPos);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
@@ -118,9 +121,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
         if (!atSetpoint()){
             master.setControl(new PositionDutyCycle(targetPose));
-            } else {
-                master.stopMotor();
-            }
+        } else {
+            master.stopMotor();
+        }
        }}
     
   

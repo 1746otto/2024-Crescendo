@@ -32,6 +32,7 @@ import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -100,7 +101,13 @@ public class RobotContainer {
 
       intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand())
       .andThen(intakeRollers.outtakeCommand().alongWith(primer.setIntakeSpeed())),
+      
       () -> !intakeRollers.intakeHasPiece()));
+    
+    NamedCommands.registerCommand("intakeCommand",
+    intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos()).andThen(intakeRollers.intakeSpeedCommand())
+    .until(() -> intakeRollers.intakeHasPiece()).andThen(intakeRollers.stowSpeedCommand()).andThen(intakeWrist.indexPosCommand()).alongWith(primer.intakeCommand()).andThen(intakeRollers.outtakeCommand())
+    .until(() -> primer.isPrimerBeamBreakBroken()).andThen(intakeRollers.stopCommand()).alongWith(primer.stopCommand()).alongWith(pivot.goToParallelPos()));
 
     NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
     NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
@@ -170,7 +177,15 @@ public class RobotContainer {
             .withVelocityY(temp * joystick.getLeftX() * Math.pow(Math.abs(joystick.getLeftX()), power - 1) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * Math.pow(Math.abs(joystick.getRightX()), power - 1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
          ));
+    //dumb commands to test
 
+    joystick.y().onTrue(pivot.goToIntakePos());
+    joystick.a().whileTrue(primer.intakeCommand());
+    joystick.a().whileFalse(primer.stopCommand());
+    //joystick.b().whileTrue(shooter.ShootCommand());
+    joystick.x().onTrue(new ParallelDeadlineGroup(intakeWrist.intakePosCommand(), intakeRollers.intakeSpeedCommand()).andThen(intakeRollers.stopCommand()));
+
+     
     joystick.y().onTrue(
       new SequentialCommandGroup(
         new InstantCommand(() -> {primer.primerStow = false;}), // Currently unnecessary may be used if we need to fix stow idk man
@@ -194,22 +209,18 @@ public class RobotContainer {
       .finallyDo(
         () -> {
           intakeRollers.stop();
-          if (stowPivot) {
-            pivot.setRequest(ShooterWristConstants.kStartPos);
-          }
-          primer.primerStow = true;
+          pivot.setRequest(ShooterWristConstants.kParallelPos);
         }
       )
     );
        
-
+    
     joystick.b().whileTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           pivot.goToAmpPose(),
           intakeWrist.intakePosCommand()
         ),
-        new InstantCommand(() -> {primer.primerStow = false;}),
         new StartEndCommand(
           () -> {
             primer.setSpeed(-1);
@@ -220,7 +231,6 @@ public class RobotContainer {
             intakeWrist.setRequest(IntakeWristConstants.kStow);
             primer.stop();
             intakeRollers.stop();
-            primer.primerStow = true;
           }
         )
       )
@@ -251,14 +261,15 @@ public class RobotContainer {
         )
       )
     );
+    
     //pivot
     joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new WaitCommand(100))*/.alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))/*.finallyDo(() -> pivot.setRequest(ShooterWristConstants.kStartPos))*/);
     joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(new InstantCommand(() -> intakeWrist.setRequest(IntakeWristConstants.kIntake))).alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos(); intakeWrist.setRequest(IntakeWristConstants.kStow);}));
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100)).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
-    joystick.rightTrigger().whileTrue(new InstantCommand(() -> {primer.primerStow = false;}).andThen(new handlePrimerShooter(primer,() -> ampPosition == AmpPositionState.Amp)).finallyDo(() -> {primer.primerStow = true;}));
+    joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
     joystick.rightTrigger().onFalse(primer.backupCommand());
     
-        
+    
     
 
     
@@ -271,7 +282,7 @@ public class RobotContainer {
   }
   public void configureDefaultCommands() {
     led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
-    pivot.setDefaultCommand(pivot.gotToStowCommand());
+    pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntake));
      // check wrist up and intake roller beambreak is triggered
   }
 
