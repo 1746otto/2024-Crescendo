@@ -423,8 +423,7 @@ public class Vision {
                     continue;
                 
                 // Transforms to the pose of the camera, not the robot.
-                tempPose = field.getTagPose(target.getFiducialId()).get()
-                    .transformBy(target.getBestCameraToTarget().inverse());
+                tempPose = bestTargetToRobotPose(target, i);
                 
                 /*
                  * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
@@ -433,10 +432,7 @@ public class Vision {
                  * depending on which is smaller the best or alternate tag transform is chosen.
                  */
                 SmartDashboard.putBoolean("tag present", field.getTagPose(i).isPresent());
-                if (Math.abs(tempPose.getZ()) 
-                <= Math.abs(field.getTagPose(target.getFiducialId()).get()
-                .transformBy(target.getAlternateCameraToTarget())
-                .getZ())
+                if (Math.abs(tempPose.getZ()) <= Math.abs(alternateTargetToRobotPose(target, i).getZ())
                     && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                     
                     // Transforms from camera to robot pose.
