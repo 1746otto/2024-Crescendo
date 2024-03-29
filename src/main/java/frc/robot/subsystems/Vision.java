@@ -7,24 +7,28 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.constants.VisionConstants;
 
 public class Vision {
     Thread visionThread;
-    PhotonCamera[] cameras;
-    PhotonPipelineResult[] lastResults;
-    Pose3d[] cameraPoses;
+    PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
+    public PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
     Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
     Pose3d tempPose;
     CommandSwerveDrivetrain swerve;
     boolean continueLoop;
+    int speakerID;
+
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
-        
+
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
         }
@@ -40,15 +44,37 @@ public class Vision {
             SmartDashboard.putString("Vision Error Message", e.getMessage());
         }
 
-        visionThread.setName("Vision Thread");
-
         visionThread = new Thread(() -> {
             while (true) {
                 getResult();
                 
-                filter1();
+                filter3();
             }
         });
+
+        if (DriverStation.getAlliance().isPresent())
+            if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                speakerID = 7;
+            }
+            else {
+                speakerID = 4;
+            }
+
+        visionThread.setName("Vision Thread");
+
+        visionThread.start();
+    }
+
+    public void stopThread() {
+        try {
+        visionThread.join();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void startThread() {
+        visionThread.start();
     }
 
     private void getResult() {
@@ -227,8 +253,8 @@ public class Vision {
     private void filter3() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
-            SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
-            SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
+            SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
+            SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds() - lastResults[i].getLatencyMillis() / 1000.0);
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
@@ -253,12 +279,17 @@ public class Vision {
 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
+                    if (target.getFiducialId() == speakerID) {
+                        cameraPoses[i] = tempPose;
+                    }
+                    
                     // This must be here in order to try until the swerve drive unlocks the pose estimator.
                     do {
                         // Rohan wouldn't let me use for loop :(
                         continueLoop = false;
                         try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            
+                            //swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true;
                         }
@@ -275,12 +306,17 @@ public class Vision {
                     && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                     
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
+                    
+                    if (target.getFiducialId() == speakerID) {
+                        cameraPoses[i] = tempPose;
+                    }
+                    
                     // This must be here in order to try until the swerve drive unlocks the pose estimator.
                     do {
                         continueLoop = false;
                         try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
+                            //cameraPoses[i] = tempPose;
+                            //swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
                         } catch (Exception e) {
                             continueLoop = true; // This could all be fixed with a goto...
                         }

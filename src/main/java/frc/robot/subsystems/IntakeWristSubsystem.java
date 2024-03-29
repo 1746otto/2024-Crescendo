@@ -1,32 +1,51 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
+import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.units.Current;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeRollerConstants;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.IntakeWristConstants;
 
 public class IntakeWristSubsystem extends SubsystemBase{
     /** Motor controller for turning the intake mechanism. */
-    CANSparkMax turningMotor;
+    TalonFX turningMotor;
 
-    /** PID controller for maintaining the turning motor position. */
-    SparkPIDController pidController;
+    
 
     /** The required position for the turning motor. */
     double reqPosition;
     double current;
+    VoltageOut voltageRequest = new VoltageOut(0);
+    TorqueCurrentFOC currentRequest = new TorqueCurrentFOC(0);
+    boolean FOC = false;
+    private SysIdRoutine m_SysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,         // Default ramp rate is acceptable
+                Volts.of((FOC) ? 10 : 4), // Reduce dynamic voltage to 4 to prevent motor brownout
+                null,          // Default timeout is acceptable
+                                       // Log state with Phoenix SignalLogger class
+                (state)->SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts)-> turningMotor.setControl((FOC) ? currentRequest.withOutput(volts.in(Volts)) : voltageRequest.withOutput(volts.in(Volts))),
+                null,
+                this));
 
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
@@ -35,23 +54,30 @@ public class IntakeWristSubsystem extends SubsystemBase{
     public IntakeWristSubsystem() {
 
         // Initialization of motor controllers and PID controller
-        turningMotor = new CANSparkMax(IntakeWristConstants.kIntakeTurnID, MotorType.kBrushless);
-        pidController = turningMotor.getPIDController();
-        pidController.setP(IntakeWristConstants.kP, 0);
-        pidController.setD(IntakeWristConstants.kFF,0);
+        turningMotor = new TalonFX(IntakeWristConstants.kIntakeTurnID);
+        
+        TalonFXConfiguration talonFxConfig = new TalonFXConfiguration();
 
-        // Setting the initial required position to the origin
-        turningMotor.getEncoder().setPosition(IntakeWristConstants.kStow);
-        turningMotor.setIdleMode(IdleMode.kBrake);
-        turningMotor.setSmartCurrentLimit(35);
+        turningMotor.getConfigurator().apply(talonFxConfig);
 
-        pidController.setOutputRange(-0.5, 0.5);
+        BaseStatusSignal.setUpdateFrequencyForAll(250,
+            turningMotor.getPosition(),
+            turningMotor.getVelocity(),
+            turningMotor.getMotorVoltage(),
+            turningMotor.getStatorCurrent(),
+            turningMotor.getSupplyCurrent()
+        );
+        
+        turningMotor.optimizeBusUtilization();
+
+        SignalLogger.start();
+
     }
-    public boolean isCurrentMax() {
-        if (turningMotor.getOutputCurrent() >= 35) {
-            return true;
-        }
-        return false;
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutine.quasistatic(direction);
+    }
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutine.dynamic(direction);
     }
 
     public void testIntake() {
@@ -67,8 +93,8 @@ public class IntakeWristSubsystem extends SubsystemBase{
      *
      * @param req The target position for the turning motor.
      */
-    public void intakeToReq(double req) {
-        pidController.setReference(req, ControlType.kPosition, 0);
+    public void intakeToReq(double req) { 
+        turningMotor.setControl(new PositionDutyCycle(req));  
     }
 
     /**
@@ -86,11 +112,11 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * @return The current position of the turning motor.
      */
     public double getPosition() {
-        return turningMotor.getEncoder().getPosition();
+        return turningMotor.getPosition().getValue();
     }
 
-    public void stopMotor() {
-        turningMotor.stopMotor();
+    public void stop() {
+        turningMotor.set(0);
     }
 
     /**
@@ -110,36 +136,29 @@ public class IntakeWristSubsystem extends SubsystemBase{
         return false;
     }
 
-    /**
-     * COMMANDS
-     */
-    public Command IntakePositionCheck(double requestedPos) {
-        return run(() -> isAtReqPosition(requestedPos)).until(() -> isAtReqPosition(requestedPos) == true);
-    }
-
-    /**
-     * Periodic method for updating the turning motor's position based on the
-     * required position.
-     */
     public Command indexPosCommand() {
-        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kStow)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kStow)).until(() -> isAtReqPosition(IntakeWristConstants.kStow)),stopMotorCommand());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kStow)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kStow))).finallyDo(() -> stop());
     }
     public Command intakePosCommand() {
-        return new SequentialCommandGroup(run(() -> intakeToReq(IntakeWristConstants.kIntake)).withTimeout(0.25),run(() -> intakeToReq(IntakeWristConstants.kIntake)).until(() ->  isAtReqPosition(IntakeWristConstants.kIntake)),stopMotorCommand());
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kIntake))).finallyDo(() -> stop());
     }
     public Command stopMotorCommand(){
-        return runOnce(this::stopMotor);
+        return runOnce(this::stop);
     }
-    
+    /**
+     * Ewww ugly get this out of here
+     * @return bad
+     */
+    public Command intakeTest() {
+        //return run(this::testIntake).finallyDo(() -> stopIntake());
+        return new SequentialCommandGroup(runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() -> isAtReqPosition(IntakeWristConstants.kIntake))));
+    }
+  
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         //System.out.println(getPosition());
-        // intakeToReq(reqPosition);
-        current = turningMotor.getOutputCurrent();
-        if (current > 0) {
-            System.out.println(current);
-        }
         SmartDashboard.putNumber("Pose", getPosition());
         SmartDashboard.putNumber("Current", current);
         

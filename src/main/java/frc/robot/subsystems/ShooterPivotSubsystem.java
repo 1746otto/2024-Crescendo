@@ -1,100 +1,76 @@
 package frc.robot.subsystems;
 
 
-import java.util.function.BooleanSupplier;
-
-import com.reduxrobotics.sensors.canandcolor.Canandcolor;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.REVLibError;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
-
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Timer;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterWristConstants;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 
 
 public class ShooterPivotSubsystem extends SubsystemBase{
-    private SparkPIDController m_pidController;
-    private SparkAbsoluteEncoder encoder;
+    private TalonFXConfiguration encoder;
 
-    public CANSparkMax master;
-    private CANSparkMax slave;
-  
-    //Poses and tolerances
-    private double limit = 0.5 / ( 2 * Math.PI);
-    private static double kDt = 0.02;
+    public TalonFX master;
+    private TalonFX slave;
 
     private double targetPose = ShooterWristConstants.kIntakePos;
-    private final TrapezoidProfile m_profile =
-      new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));//Need to tune and change
-
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State m_start = new TrapezoidProfile.State();
-    private TrapezoidProfile.State m_temporaryState = new TrapezoidProfile.State();
-
-    private double startTime = 0;
-
+  
     public ShooterPivotSubsystem() {
+      TalonFXConfiguration configs = new TalonFXConfiguration();
+      master = new TalonFX(ShooterWristConstants.kShooterMasterID);
+      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
+      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
+      configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
+      configs.Feedback.FeedbackRemoteSensorID = 50;//to change
+      configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+      Slot0Configs pidController = configs.Slot0;
+      pidController.kP = ShooterWristConstants.kP;
+      pidController.kD = ShooterWristConstants.kD;
+      pidController.kS = ShooterWristConstants.kS;
+      master.get(); 
+      master.getConfigurator().apply(configs);
+      slave.getConfigurator().apply(configs);
 
-      master = new CANSparkMax(ShooterWristConstants.kShooterMasterID,MotorType.kBrushless);
-      slave = new CANSparkMax(ShooterWristConstants.kShooterSlaveID,MotorType.kBrushless);
-      slave.follow(master, true);//Might need to have a workaround//Might need to change
-      encoder = master.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+      //master.enableVoltageCompensation(12);
+      //slave.enableVoltageCompensation(12);
 
-      master.setIdleMode(IdleMode.kBrake);
-      slave.setIdleMode(IdleMode.kBrake);
-      master.setSmartCurrentLimit(50);
-      slave.setSmartCurrentLimit(50);
-      m_pidController = master.getPIDController();
-      m_pidController.setFeedbackDevice(encoder);
-      m_pidController.setP(12.8); // 6.4
-      m_pidController.setD(5.0);
 
-      double max = ShooterWristConstants.kIntakePos + ShooterWristConstants.kLimit;//Might need to be changed to be through sparkmax
-      double min = ShooterWristConstants.kIntakePos - ShooterWristConstants.kLimit;
+      SmartDashboard.putNumber("target", targetPose);
       
-      master.setSoftLimit(SoftLimitDirection.kForward, (float) max);
-      master.setSoftLimit(SoftLimitDirection.kReverse, (float) min);
-      
+      setRequest(master.getPosition().getValueAsDouble());
     }
     public void test() {
         master.set(0.1);
     }
 
     public void setRequest(double position) {
-        m_goal = new TrapezoidProfile.State(position, 0); //Skeptical about this
-        m_start = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity()); 
-
-        startTime = Timer.getFPGATimestamp();
+        targetPose = position;
+       
 
     }
     public boolean atPosition(double position) {
-        return (Math.abs(encoder.getPosition() - position) < ShooterWristConstants.kTolerance);
+        return (Math.abs(master.getPosition().getValueAsDouble()- position) < ShooterWristConstants.kTolerance);
     }
 
     public boolean atSetpoint() {
-        return (Math.abs(encoder.getPosition() - m_goal.position) < ShooterWristConstants.kTolerance); 
+        return (Math.abs(master.getPosition().getValueAsDouble() - targetPose) < ShooterWristConstants.kTolerance); 
     }
-
+ 
     public double getTargetPose(){
-        return m_goal.position;
+        return targetPose;
     }
 
     public void stop() {
@@ -102,20 +78,38 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
 
     public Command runPivot(double position) {
-        return run(() -> setRequest(position)).until(() -> atPosition(position));
+        return runOnce(() -> setRequest(position)).andThen(new WaitUntilCommand(() -> atPosition(position)));
     }
 
     public Command goToAmpPose(){
         return runPivot(ShooterWristConstants.kAmpPos);
     }
 
-    public Command goToNormalPos() {
+    /**
+     * Sets the targetPose variable to indexing position and the waits until pivot is at that position.
+     * 
+     * <p> Ends on: pivot within tolerance
+     * 
+     * <p> End behavior: The pivot stop if it is within tolerance,
+     * otherwise the pid will run regardless of whether or not the command is still running.
+     * The pid will renable without a new command if the pivot falls out of tolerance.
+     * @return SequentialCommandGroup
+     */
+    public Command goToIntakePos() {
         return runPivot(ShooterWristConstants.kIntakePos);
     }
     public Command goToPodiumPos() {
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
-    
+    public Command goToSubCommand() {
+        return runPivot(ShooterWristConstants.kSubwooferPos);
+    }
+    public Command gotToStowCommand() {
+        return runPivot(ShooterWristConstants.kStowpos);
+    }
+    public Command goToParallelPos() {
+        return runPivot(ShooterWristConstants.kParallelPos);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
@@ -124,24 +118,14 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     }
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("TargetPose", m_goal.position);
-        SmartDashboard.putNumber("CurrentPose", encoder.getPosition());
-        targetPose = SmartDashboard.getNumber("Setpoint", m_goal.position);
-        if (targetPose != m_goal.position) {
-            setRequest(targetPose);
+        SmartDashboard.putNumber("TargetPose", targetPose);
+        SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
+        if (!atSetpoint()){
+            master.setControl(new PositionVoltage(targetPose));
+        } else {
+            master.stopMotor();
         }
-        //m_setpoint = m_profile.calculate(kDt,m_setpoint,m_goal);
-        //m_pidController.setReference(m_setpoint.position, CANSparkMax.ControlType.kPosition);
-        
-        m_temporaryState = m_profile.calculate(Timer.getFPGATimestamp() - startTime, m_start, m_goal);
-        
-        if (!m_profile.isFinished(Timer.getFPGATimestamp() - startTime)) {
-            master.getPIDController().setReference(m_temporaryState.position, ControlType.kPosition, 0, ShooterWristConstants.kG * Math.sin(encoder.getPosition()*2*Math.PI)+ Math.copySign(ShooterWristConstants.kS, m_temporaryState.velocity), ArbFFUnits.kVoltage);
-        }
-        else {
-            master.set(0);
-        }
-    }    
-}
+       }
+    }
     
   

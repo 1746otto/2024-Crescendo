@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -21,7 +19,7 @@ public class LEDSubsystem extends SubsystemBase {
     led.start();
   }
 
-  public void setLEDToCube() {
+  public void setLEDToShooter() {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, LEDConstants.cubeHValue, LEDConstants.cubeSValue,
           LEDConstants.cubeVValue);
@@ -36,7 +34,7 @@ public class LEDSubsystem extends SubsystemBase {
     led.setData(ledBuffer);
   }
 
-  public void setLedtoCone() {
+  public void setLedtoIntake() {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, LEDConstants.coneHValue, LEDConstants.coneSValue,
           LEDConstants.coneVValue);
@@ -50,11 +48,11 @@ public class LEDSubsystem extends SubsystemBase {
     }
     led.setData(ledBuffer);
   }
-  public Command setLedConeCommand(){
-    return runOnce(() -> setLedtoCone());
+  public Command setLedIntakeCommand(){
+    return run(() -> setLedtoIntake()).finallyDo(() -> setLedOff());
   }
-  public Command setLedCubeCommand(){
-    return runOnce(() -> setLEDToCube());
+  public Command setLedShooter() {
+    return run(() -> setLEDToShooter()).finallyDo(() -> setLedOff());
   }
   public Command turnOffLed(){
     return runOnce(() -> setLedOff());

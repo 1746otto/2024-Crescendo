@@ -6,32 +6,24 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
-
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterWristConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
   
-  /** CANSparkMax motor controller for the top shooting roller with PID control. */
-  private CANSparkMax topRollerNeo;
-  
-  /** CANSparkMax motor controller for the bottom shooting roller (follows top roller). */
-  private CANSparkMax bottomRollerNeo;
+  private TalonFX shooterLeader;
+  private TalonFX shooterFollower;
   
   /** Analog input for detecting beam breaks. */
   private AnalogInput beamBreak;
@@ -44,75 +36,75 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Supplier for maintaining the state of the beam break. */
   private BooleanSupplier beamBreakLastState;
-  
-  private double setpoint = 0;
-  private double temp = 0; // Use in various intermediary steps.
+
+  private double targetVelocity;
 
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
+    shooterLeader = new TalonFX(ShooterConstants.kShooterTopRollerMotorID);
+    shooterFollower = new TalonFX(ShooterConstants.kShooterBottomRollerMotorID);
+    TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    shooterLeader.setInverted(false);
+    shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
-    topRollerNeo.getEncoder().setAverageDepth(2);
-    topRollerNeo.getEncoder().setMeasurementPeriod(16);
+    //Setting PID values for the top shooting roller not how this works
+    Slot0Configs pidController = rollerConfig.Slot0;
+    pidController.kP = ShooterConstants.kP;
+    pidController.kI = ShooterConstants.kI;
+    pidController.kD = ShooterConstants.kD;
+    pidController.kS = ShooterConstants.kS;
+    pidController.kV = ShooterConstants.kV;
     
-    // Likely unneccessary
-    bottomRollerNeo.getEncoder().setAverageDepth(2);
-    bottomRollerNeo.getEncoder().setMeasurementPeriod(16);
+    shooterLeader.getConfigurator().apply(rollerConfig);
+    shooterFollower.getConfigurator().apply(rollerConfig);
 
-    topRollerNeo.enableVoltageCompensation(12);
-    topRollerNeo.enableVoltageCompensation(12);
+    // pidController = shooterRoller.getPIDController();
+    // pidController.setP(0);
+    // pidController.setI(0);
+    // pidController.setD(0);
+    // pidController.setFF(ShooterConstants.kV);
+    
+    
 
-    topRollerNeo.setIdleMode(IdleMode.kCoast);
-    bottomRollerNeo.setIdleMode(IdleMode.kCoast);
-
-    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
-    topRollerNeo.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
-
-    //Setting PID values for the top shooting roller
-    pidController = topRollerNeo.getPIDController();
-    pidController.setP(ShooterConstants.kP);
-    pidController.setI(ShooterConstants.kI);
-    pidController.setD(ShooterConstants.kD);
-    pidController.setFF(ShooterConstants.kV);
-
-    topRollerNeo.setInverted(true);
     // Making the bottom roller follow the top roller
-    bottomRollerNeo.follow(topRollerNeo, true);
-    setRequest(4000);
     
-    //topRollerNeo.set(.02);
 
-    CANSparkMax.enableExternalUSBControl(true);
+    // Initialization of analog input for beam break detection
+    // Also in the wrong spot but i have to commit.
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    SmartDashboard.putNumber("Speed", targetVelocity);
+
   }
 
   /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
-  public void setSpeed(double speed) {
-    topRollerNeo.set(speed);
+  public void setOutput(double speed) {
+    shooterLeader.set(speed);
   }
 
   /**
    * Returns a BooleanSupplier representing the state of the beam break.
-   */
+   */ 
   public BooleanSupplier isBeamBreakBroken() {
     return beamBreakLastState;
-  }
-
-  public void setRequest(double RPM) {
-    setpoint = RPM;
-    pidController.setReference(RPM, ControlType.kVelocity, 0, Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
 
   /**
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return setSpeedCommand(ShooterConstants.kShoot).andThen(StopCommand());
+    return setSpeedCommand(ShooterConstants.kShoot);
+  }
+  public Command tempShooter(){
+    return run(() -> shooterLeader.set(0.5));
+  }
+  public Command tempStop(){
+    return run(() -> shooterLeader.set(0));
   }
   
   public Command ReverseCommand(){
@@ -122,21 +114,42 @@ public class ShooterSubsystem extends SubsystemBase {
     return setSpeedCommand(ShooterConstants.kStop);
   }
 
+  public double getRPM() {
+    return shooterLeader.getVelocity().getValueAsDouble()*60;
+  }
+
+  public void stop() {
+    setRequest(0);
+  }
+
+  public boolean isAtReq() {
+    return Math.abs(targetVelocity - getRPM()) < ShooterConstants.kTolerance;
+  }
+
   public Command setSpeedCommand(double speed) {
-    return runOnce(() -> setSpeed(speed));
+    return runOnce(() -> setRequest(speed));
+  }
+
+  public void setRequest(double RPM) {
+    targetVelocity = RPM;
+    shooterLeader.setControl(new VelocityVoltage(RPM/60));
+    // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
+    //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
+  }
+
+  public Command setRequestCommand(double RPM) {
+    return runOnce(() -> setRequest(RPM));
   }
 
   /**
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    SmartDashboard.putNumber("Velocity", topRollerNeo.getEncoder().getVelocity());
-    temp = SmartDashboard.getNumber("Request velocity", setpoint);
-    if (temp != setpoint) {
-      setRequest(temp);
-    }
-
-    beamBreakLastState = () -> ((Math.floor(beamBreak.getVoltage()) > 0));
+    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
+    //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
+    // }
+    //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
+    SmartDashboard.putNumber("shooterspeed", getRPM());  
   }
 
 }

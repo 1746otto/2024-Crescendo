@@ -52,7 +52,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     Alliance alliance;
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
-    boolean enableSignalLogging = true;
+    boolean enableSignalLogging = false;
     private final VoltageOut m_sysidControl = new VoltageOut(0);
     SwerveRequest.SysIdSwerveSteerGains sysidSteerRequest = new SwerveRequest.SysIdSwerveSteerGains();
     SwerveRequest.SysIdSwerveTranslation sysidTranslationRequest = new SwerveRequest.SysIdSwerveTranslation();
@@ -144,7 +144,12 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                                             TunerConstants.kSpeedAt12VoltsMps,
                                             driveBaseRadius,
                                             new ReplanningConfig()),
-            ()->(DriverStation.getAlliance().get() == Alliance.Red), // Change this if the path needs to be flipped on red vs blue
+            ()->{
+                    if (DriverStation.getAlliance().isPresent())
+                        return DriverStation.getAlliance().get() == Alliance.Red;
+                    else
+                        return false;
+                }, // Change this if the path needs to be flipped on red vs blue
             this); // Subsystem for requirements
         for (SwerveModule module : Modules) {
             module.getDriveMotor().setNeutralMode(NeutralModeValue.Coast);

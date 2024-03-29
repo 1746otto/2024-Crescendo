@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.94487718605067,
-        "y": 4.256765658501499
+        "x": 1.9395255364584805,
+        "y": 3.5690605038617487
       },
       "isLocked": false,
       "linkedName": null
@@ -20,12 +20,12 @@
         "y": 4.092054465887407
       },
       "prevControl": {
-        "x": 2.034957935640859,
-        "y": 4.090329899000676
+        "x": 2.160350580781314,
+        "y": 4.057741749232231
       },
       "nextControl": {
-        "x": 2.8587797535764565,
-        "y": 4.094792236194642
+        "x": 2.8904475818210895,
+        "y": 4.187548801023528
       },
       "isLocked": false,
       "linkedName": null
@@ -132,22 +132,28 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
+      "name": "shootPiece",
       "waypointRelativePos": 0,
       "command": {
-        "type": "deadline",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "primeShooter"
+                "name": "pivotSubwoofer"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.1
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "pivotSubwoofer"
+                "name": "primeShooter"
               }
             }
           ]
@@ -155,16 +161,22 @@
       }
     },
     {
-      "name": "New Event Marker",
+      "name": "intake piece",
       "waypointRelativePos": 0.35,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "intakeCommand"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "indexCommand"
               }
             }
           ]
@@ -181,7 +193,13 @@
             {
               "type": "named",
               "data": {
-                "name": "shootCommand"
+                "name": "goToSubwooferSpeed"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "primeShooter"
               }
             }
           ]
