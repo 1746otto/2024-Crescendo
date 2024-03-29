@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -119,11 +120,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
-        // if (!atSetpoint()){
-        //     master.setControl(new PositionDutyCycle(targetPose));
-        // } else {
-        //     master.stopMotor();
-        // }
+        if (!atSetpoint()){
+            master.setControl(new PositionVoltage(targetPose));
+        } else {
+            master.stopMotor();
+        }
        }
     }
     
