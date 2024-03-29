@@ -168,7 +168,7 @@ public final class Constants {
     public static double kParallelPos = 0 -kFlat + kOldFlat;// To change
     public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
     public static double kBackPackPos = -0.616455;
-    public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI );
+    public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI ); // Just divide by 360.0???
     public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
     public static int kShooterBeambreak = 1;
