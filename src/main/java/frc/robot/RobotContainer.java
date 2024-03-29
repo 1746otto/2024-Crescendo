@@ -215,18 +215,18 @@ public class RobotContainer {
         }
       )
     );
-    // joystick.y().and(notInIntakeDown).onTrue(  Change for toggling
-    //   new SequentialCommandGroup(
-    //     intakeWrist.indexPosCommand(),
-    //   new ParallelDeadlineGroup(
-    //       primer.intakeCommand(), // Stops primer by itself
-    //       intakeRollers.outtakeCommand()
-    //     )).finallyDo(
-    //     () -> {
-    //       intakeRollers.stop();
-    //       pivot.setRequest(ShooterWristConstants.kParallelPos);
-    //     }
-    //   ));
+    joystick.y().and(notInIntakeDown).onTrue(  //Change for toggling
+      new SequentialCommandGroup(
+        intakeWrist.indexPosCommand(),
+      new ParallelDeadlineGroup(
+          primer.intakeCommand(), // Stops primer by itself
+          intakeRollers.outtakeCommand()
+        )).finallyDo(
+        () -> {
+          intakeRollers.stop();
+          pivot.setRequest(ShooterWristConstants.kParallelPos);
+        }
+      ));
        
     
     joystick.b().whileTrue(
