@@ -48,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterFollower = new TalonFX(ShooterConstants.kShooterBottomRollerMotorID);
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    shooterLeader.setInverted(true);
+    shooterLeader.setInverted(false);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
     //Setting PID values for the top shooting roller

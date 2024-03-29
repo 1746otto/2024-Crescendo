@@ -37,7 +37,7 @@ public class PrimerSubsystem extends SubsystemBase{
     primerRoller.getConfigurator().apply(configs);
 
     
-    primerRoller.setInverted(true);
+    primerRoller.setInverted(false);
     speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -145,7 +145,7 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
-    SmartDashboard.putNumber("Primer output voltage", primerRoller.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putBoolean("Beambreak", isPrimerBeamBreakBroken());
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }

@@ -29,7 +29,7 @@ public final class Constants {
   public static class IntakeRollerConstants
   {
     public static final int kIntakeRollerID = 11;
-    public static final double kIntake = 0.4;
+    public static final double kIntake = 0.8;
     public static final double kOuttake = -kIntake;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
@@ -45,7 +45,7 @@ public final class Constants {
     public static final double kFF = 0.01;
 
     // Positions
-    public static final double kIntake = 14;
+    public static final double kIntake = 14.438;
     public static final double kStow = 0.0;
     public static final double kHalf = kIntake / 2;
 
@@ -98,7 +98,7 @@ public final class Constants {
 
     public static final int kCurrentLimit = 60;
     // public static final double kFF = 0.0001654579973546788;
-    public static final int kShooterAnalogInputChannel = 0;
+    public static final int kShooterAnalogInputChannel = 1;
 
     public static final double kTolerance = 200;
 
@@ -116,7 +116,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.3;
+    public static final double kIntake = 0.8;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
@@ -145,16 +145,17 @@ public final class Constants {
     public static int kShooterSlaveID = 51;
     public static double kPivotReduction = 60;
     public static double kOldFlat = 0.377481;
-    public static double kFlat = 0.377481;
+    public static double kFlat = -0.224365;
     public static double k4PPreloadShot = 0;
     public static double k4PLastShot = kFlat + Rotation2d.fromDegrees(32.4238401).getRotations();
     public static double kStartPos = 0.207 - kFlat + kOldFlat;
     public static double kPodiumPos = kFlat + 0.5 - Rotation2d.fromDegrees(21.8).getRotations();//0.801; // To change
-    public static double kSubwooferPos = 0.55-kFlat+kOldFlat; // To change 0.541
-    public static double kIntakePos = 0.526-kFlat+kOldFlat; // To change
+    public static double kSubwooferPos = -0.389404; // To change 0.541
+    public static double kIntakePos = -0.348389; // To change
     public static double kAmpPos = 0.748-kFlat + kOldFlat;// To change
     public static double kParallelPos = 0 -kFlat + kOldFlat;// To change
     public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
+    public static double kBackPackPos = -0.616455;
     public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI );
     public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
     public static double kDt = 0.02;// To change

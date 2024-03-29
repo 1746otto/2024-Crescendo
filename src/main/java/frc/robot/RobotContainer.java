@@ -80,6 +80,7 @@ public class RobotContainer {
 
   public BooleanSupplier inIntakeUp = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
+  public BooleanSupplier notInIntakeDown = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece() && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   public boolean isIndexing = false;
@@ -104,10 +105,10 @@ public class RobotContainer {
       
       () -> !intakeRollers.intakeHasPiece()));
     
-    NamedCommands.registerCommand("intakeCommand",
-    intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos()).andThen(intakeRollers.intakeSpeedCommand())
-    .until(() -> intakeRollers.intakeHasPiece()).andThen(intakeRollers.stowSpeedCommand()).andThen(intakeWrist.indexPosCommand()).alongWith(primer.intakeCommand()).andThen(intakeRollers.outtakeCommand())
-    .until(() -> primer.isPrimerBeamBreakBroken()).andThen(intakeRollers.stopCommand()).alongWith(primer.stopCommand()).alongWith(pivot.goToParallelPos()));
+    // NamedCommands.registerCommand("intakeCommand",
+    // intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos()).andThen(intakeRollers.intakeSpeedCommand())
+    // .until(() -> intakeRollers.intakeHasPiece()).andThen(intakeRollers.stowSpeedCommand()).andThen(intakeWrist.indexPosCommand()).alongWith(primer.intakeCommand()).andThen(intakeRollers.outtakeCommand())
+    // .until(() -> primer.isPrimerBeamBreakBroken()).andThen(intakeRollers.stopCommand()).alongWith(primer.stopCommand()).alongWith(pivot.goToParallelPos()));
 
     NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
     NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
@@ -179,11 +180,12 @@ public class RobotContainer {
          ));
     //dumb commands to test
 
-    joystick.y().onTrue(pivot.goToIntakePos());
-    joystick.a().whileTrue(primer.intakeCommand());
-    joystick.a().whileFalse(primer.stopCommand());
-    //joystick.b().whileTrue(shooter.ShootCommand());
-    joystick.x().onTrue(new ParallelDeadlineGroup(intakeWrist.intakePosCommand(), intakeRollers.intakeSpeedCommand()).andThen(intakeRollers.stopCommand()));
+    // joystick.y().onTrue(pivot.goToIntakePos());
+    // joystick.a().whileTrue(primer.intakeCommand());
+    // joystick.a().whileFalse(primer.stopCommand());
+    // joystick.b().whileTrue(shooter.ShootCommand());
+    // joystick.b().whileFalse(shooter.StopCommand());
+    // joystick.x().onTrue(new ParallelDeadlineGroup(intakeWrist.intakePosCommand(), intakeRollers.intakeSpeedCommand()));
 
      
     joystick.y().onTrue(
@@ -213,6 +215,18 @@ public class RobotContainer {
         }
       )
     );
+    // joystick.y().and(notInIntakeDown).onTrue(  Change for toggling
+    //   new SequentialCommandGroup(
+    //     intakeWrist.indexPosCommand(),
+    //   new ParallelDeadlineGroup(
+    //       primer.intakeCommand(), // Stops primer by itself
+    //       intakeRollers.outtakeCommand()
+    //     )).finallyDo(
+    //     () -> {
+    //       intakeRollers.stop();
+    //       pivot.setRequest(ShooterWristConstants.kParallelPos);
+    //     }
+    //   ));
        
     
     joystick.b().whileTrue(
@@ -282,7 +296,7 @@ public class RobotContainer {
   }
   public void configureDefaultCommands() {
     led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
-    pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntake));
+    //pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntake));
      // check wrist up and intake roller beambreak is triggered
   }
 

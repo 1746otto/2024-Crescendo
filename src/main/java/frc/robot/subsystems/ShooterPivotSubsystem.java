@@ -33,7 +33,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
-      configs.Feedback.FeedbackRemoteSensorID = 0;//to change
+      configs.Feedback.FeedbackRemoteSensorID = 50;//to change
       configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       Slot0Configs pidController = configs.Slot0;
       pidController.kP = ShooterWristConstants.kP;
@@ -119,11 +119,12 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
-        if (!atSetpoint()){
-            master.setControl(new PositionDutyCycle(targetPose));
-        } else {
-            master.stopMotor();
-        }
-       }}
+        // if (!atSetpoint()){
+        //     master.setControl(new PositionDutyCycle(targetPose));
+        // } else {
+        //     master.stopMotor();
+        // }
+       }
+    }
     
   
