@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -36,8 +38,21 @@ public class PrimerSubsystem extends SubsystemBase{
       .withStatorCurrentLimit(PrimerConstants.kStatorLimit)
       .withSupplyCurrentLimit(PrimerConstants.kSupplyLimit);
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    /*configs.Slot0 = new Slot0Configs()
-      .withKP(PrimerConstants.kVelocityP)*/
+    configs.Slot0 = new Slot0Configs()
+      .withKP(PrimerConstants.kVelocityP)
+      .withKI(PrimerConstants.kVelocityI)
+      .withKD(PrimerConstants.kVelocityD)
+      .withKS(PrimerConstants.kVelocityS)
+      .withKV(PrimerConstants.kVelocityV)
+      .withKA(PrimerConstants.kVelocityA);
+    configs.Slot1 = new Slot1Configs()
+      .withKP(PrimerConstants.kPositionP)
+      .withKI(PrimerConstants.kPositionI)
+      .withKD(PrimerConstants.kPositionD)
+      .withKS(PrimerConstants.kPositionS)
+      .withKV(PrimerConstants.kPositionV)
+      .withKA(PrimerConstants.kPositionA);
+
     primerRoller.getConfigurator().apply(configs);
 
     

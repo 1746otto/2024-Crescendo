@@ -33,13 +33,19 @@ public final class Constants {
     public static final double kOuttake = -kIntake; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kIntakeCurrentLimit = 5;
+    public static final double kStatorLimit = 5;
+    public static final double kSupplyLimit = 10;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
   public static class IntakeWristConstants
   {
     public static final int kIntakeTurnID = 12;
+    
+    // Limits
+    public static final double kStatorLimit = 60;
+    public static final double kSupplyLimit = 40;
+
     // PID constants
     public static final double kP = 0.3;
     public static final double kFF = 0.01;
@@ -94,10 +100,10 @@ public final class Constants {
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
 
-    
-
+    // Limits
     public static final int kStatorLimit = 60;
     public static final int kSupplyLimit = 40;
+
     // public static final double kFF = 0.0001654579973546788;
     public static final int kShooterAnalogInputChannel = 1;
 
@@ -143,7 +149,7 @@ public final class Constants {
 
   public static class LEDConstants {
     public static final int PWMPortLeft = 9;
-    public static final int LEDLength = 18;
+    public static final int LEDLength = 13;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;
     public static final int coneVValue = 130;
@@ -155,6 +161,11 @@ public final class Constants {
   public static class ShooterWristConstants {
     public static int kShooterMasterID = 52;
     public static int kShooterSlaveID = 51;
+
+    // Limits
+    public static final double kStatorLimit = 60;
+    public static final double kSupplyLimit = 40;
+
     public static double kPivotReduction = 60;
     public static double kOldFlat = 0.377481;
     public static double kFlat = -0.224365;

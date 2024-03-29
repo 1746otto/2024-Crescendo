@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -23,10 +25,7 @@ import com.revrobotics.SparkPIDController;
  */
 public class IntakeRollerSubsystem extends SubsystemBase {
     /** Motor controller for controlling the intake. */
-    TalonFX rollerMotor; 
-
-    /** PID controller for maintaining the turning motor position. */
-    SparkPIDController pidController;
+    TalonFX rollerMotor;
 
     /** Flag indicating whether the intake is outside or not. */
     boolean outside;
@@ -34,6 +33,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
  
 
     double buttonLastTrigger = 0;
+
+    VoltageOut voltage = new VoltageOut(0);
+    
 
     /**
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
@@ -46,7 +48,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
         TalonFXConfiguration configs = new TalonFXConfiguration();
-        configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(IntakeRollerConstants.kIntakeCurrentLimit);
+        configs.CurrentLimits = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
+        .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
@@ -55,11 +59,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     
     public void setSpeed(double speed) {
-        rollerMotor.set(speed);
+        rollerMotor.setControl(voltage.withOutput(speed * 12));
     }
 
     public void stop() {
-        rollerMotor.set(0); // I would use stop motor, but it hasn't been tested and I don't want any weird behavior.
+        rollerMotor.setControl(new NeutralOut()); // I would use stop motor, but it hasn't been tested and I don't want any weird behavior.
     }
 
     /**
@@ -125,6 +129,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         if (!buttonPressed()) {
             buttonLastTrigger = Timer.getFPGATimestamp();
         }
-        SmartDashboard.putNumber("roller Voltage", rollerSensor.getVoltage());
+        SmartDashboard.putNumber("Intake button voltage", rollerSensor.getVoltage());
     }
 }

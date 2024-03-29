@@ -33,7 +33,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
       slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
+      configs.CurrentLimits = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(ShooterWristConstants.kStatorLimit)
+        .withSupplyCurrentLimit(ShooterWristConstants.kSupplyLimit);
       configs.Feedback.FeedbackRemoteSensorID = 50;//to change
       configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       Slot0Configs pidController = configs.Slot0;
