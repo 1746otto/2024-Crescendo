@@ -32,8 +32,12 @@ public class PrimerSubsystem extends SubsystemBase{
   public PrimerSubsystem() {
     primerRoller = new TalonFX(PrimerConstants.kPrimerRollerMotorID);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(PrimerConstants.kPrimerCurrentLimit);
+    configs.CurrentLimits = new CurrentLimitsConfigs()
+      .withStatorCurrentLimit(PrimerConstants.kStatorLimit)
+      .withSupplyCurrentLimit(PrimerConstants.kSupplyLimit);
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    /*configs.Slot0 = new Slot0Configs()
+      .withKP(PrimerConstants.kVelocityP)*/
     primerRoller.getConfigurator().apply(configs);
 
     

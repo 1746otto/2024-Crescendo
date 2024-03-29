@@ -30,7 +30,7 @@ public final class Constants {
   {
     public static final int kIntakeRollerID = 11;
     public static final double kIntake = 0.8;
-    public static final double kOuttake = -kIntake;
+    public static final double kOuttake = -kIntake; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
     public static final double kIntakeCurrentLimit = 5;
@@ -121,11 +121,22 @@ public final class Constants {
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
-    public static final double kPrimerCurrentLimit = 30;
+    public static final double kStatorLimit = 80;
+    public static final double kSupplyLimit = 30;
 
     // PID values
-    public static final double kP = 0.1;
-    public static final double kI = 0.0;
+    public static final double kVelocityP = 0.1;
+    public static final double kVelocityI = 0.0;
+    public static final double kVelocityD = 0.0;
+    public static final double kVelocityS = 0.0;
+    public static final double kVelocityV = 0.0;
+    public static final double kVelocityA = 0.0;
+    public static final double kPositionP = 0.1;
+    public static final double kPositionI = 0.0;
+    public static final double kPositionD = 0.0;
+    public static final double kPositionS = 0.0;
+    public static final double kPositionV = 0.0;
+    public static final double kPositionA = 0.0;
     public static final double kFF = 0.0;
   }// Should go away for final competition code
 
