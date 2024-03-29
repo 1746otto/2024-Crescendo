@@ -355,11 +355,13 @@ public class VisionSim {
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
-                    continue;
+                    continue;;
                 
                 // Transforms to the pose of the camera, not the robot.
-                Pose3d tempPose = field.getTagPose(target.getFiducialId()).get()
-                    .transformBy(target.getBestCameraToTarget().inverse());
+                Pose3d tempPose = bestTargetToRobotPose(target, i);
+
+                SmartDashboard.putString("best", tempPose.toString());
+                SmartDashboard.putString("alt", alternateTargetToRobotPose(target, i).toString());
                 
                 /*
                  * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
@@ -368,14 +370,8 @@ public class VisionSim {
                  * depending on which is smaller the best or alternate tag transform is chosen.
                  */
                 SmartDashboard.putBoolean("tag present", field.getTagPose(i).isPresent());
-                if (Math.abs(tempPose.getZ()) 
-                <= Math.abs(field.getTagPose(target.getFiducialId()).get()
-                .transformBy(target.getAlternateCameraToTarget())
-                .getZ())
+                if (Math.abs(tempPose.getZ()) <= Math.abs(alternateTargetToRobotPose(target, i).getZ())
                     && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    // Transforms from camera to robot pose.
-                    tempPose = tempPose.transformBy(VisionConstants.kCameraTransforms[i].inverse());
 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
