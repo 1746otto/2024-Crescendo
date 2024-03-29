@@ -110,7 +110,7 @@ public class VisionSim {
 
     private Pose3d alternateTargetToRobotPose(PhotonTrackedTarget target, int cameraNumber) {
         return field.getTagPose(target.getFiducialId()).get()
-            .transformBy(target.getBestCameraToTarget().inverse())
+            .transformBy(target.getAlternateCameraToTarget().inverse())
             .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
     }
 
