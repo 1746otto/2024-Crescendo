@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterLeader.setInverted(false);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
-    //Setting PID values for the top shooting roller
+    //Setting PID values for the top shooting roller not how this works
     Slot0Configs pidController = rollerConfig.Slot0;
     pidController.kP = ShooterConstants.kP;
     pidController.kI = ShooterConstants.kI;
@@ -74,8 +74,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
 
     // Initialization of analog input for beam break detection
+    // Also in the wrong spot but i have to commit.
     rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
-    rollerConfig.CurrentLimits.StatorCurrentLimit = 40;
     SmartDashboard.putNumber("Speed", targetVelocity);
 
   }
