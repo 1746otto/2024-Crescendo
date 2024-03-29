@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.IntakeWristConstants;
+import frc.robot.RobotContainer.currentMechanism;
 
 public class IntakeWristSubsystem extends SubsystemBase{
     /** Motor controller for turning the intake mechanism. */
@@ -51,7 +52,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      * Creates a new IntakeSubsystem with initialized motor controllers and PID
      * controller.
      */
-    public IntakeWristSubsystem() {
+    public IntakeWristSubsystem(currentMechanism currMech) {
 
         // Initialization of motor controllers and PID controller
         turningMotor = new TalonFX(IntakeWristConstants.kIntakeTurnID);
@@ -60,6 +61,12 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
         turningMotor.getConfigurator().apply(talonFxConfig);
 
+        if (currMech == currentMechanism.intakeWrist)
+            setupSysId();
+
+    }
+
+    private void setupSysId() {
         BaseStatusSignal.setUpdateFrequencyForAll(250,
             turningMotor.getPosition(),
             turningMotor.getVelocity(),
@@ -71,8 +78,8 @@ public class IntakeWristSubsystem extends SubsystemBase{
         turningMotor.optimizeBusUtilization();
 
         SignalLogger.start();
-
     }
+
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return m_SysIdRoutine.quasistatic(direction);
     }

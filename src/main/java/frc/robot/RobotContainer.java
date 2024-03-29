@@ -52,6 +52,9 @@ public class RobotContainer {
 
   public double power = 4;
 
+  public enum currentMechanism {swerve, intakeWrist, intakeRollers, primer, shooterPivot, shooterRollers};
+  currentMechanism sysidMech = currentMechanism.intakeWrist;
+
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
@@ -60,7 +63,7 @@ public class RobotContainer {
   // private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   // private final ShooterSubsystem shooter = new ShooterSubsystem();
   // private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
-  private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
+  private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem(sysidMech);
   // private final PrimerSubsystem primer = new PrimerSubsystem();
   // private final IndexerSubsystem indexer = new IndexerSubsystem();
   
@@ -109,7 +112,17 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    intakeWrist();
+    switch (sysidMech) {
+      case swerve:
+        swerveButtons();
+        break;
+      case intakeWrist:
+        intakeWristButtons();
+        break;
+      default:
+        break;
+    }
+    intakeWristButtons();
   }
 
   private void swerveButtons() {
@@ -124,7 +137,7 @@ public class RobotContainer {
     joystick.start().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(Math.atan2(-joystick.getLeftX(), -joystick.getLeftY())))));
   }
 
-  private void intakeWrist() {
+  private void intakeWristButtons() {
     joystick.a().whileTrue(new ConditionalCommand(intakeWrist.sysIdQuasistatic(Direction.kForward), intakeWrist.sysIdQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
     joystick.b().whileTrue(new ConditionalCommand(intakeWrist.sysIdDynamic(Direction.kForward), intakeWrist.sysIdDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
     joystick.rightStick().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
