@@ -131,9 +131,9 @@ public final class Constants {
     public static final double kVelocityS = 0.0;
     public static final double kVelocityV = 0.0;
     public static final double kVelocityA = 0.0;
-    public static final double kPositionP = 0.1;
+    public static final double kPositionP = 50.0;
     public static final double kPositionI = 0.0;
-    public static final double kPositionD = 0.0;
+    public static final double kPositionD = 0.1;
     public static final double kPositionS = 0.0;
     public static final double kPositionV = 0.0;
     public static final double kPositionA = 0.0;
