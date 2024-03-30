@@ -2352,7 +2352,7 @@
       }
     },
     {
-      "timestamp": 4.188148513305813,
+      "timestamp": 4.143148513305813,
       "command": {
         "type": "named",
         "data": {
@@ -2361,7 +2361,7 @@
       }
     },
     {
-      "timestamp": 7.677501094515198,
+      "timestamp": 7.632501094515198,
       "command": {
         "type": "named",
         "data": {
@@ -2370,7 +2370,7 @@
       }
     },
     {
-      "timestamp": 11.046553674732145,
+      "timestamp": 11.001553674732145,
       "command": {
         "type": "named",
         "data": {
@@ -2379,7 +2379,16 @@
       }
     },
     {
-      "timestamp": 14.28220444733768,
+      "timestamp": 14.23720444733768,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    },
+    {
+      "timestamp": 0,
       "command": {
         "type": "named",
         "data": {

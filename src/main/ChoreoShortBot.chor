@@ -992,7 +992,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 1.6334504966824717,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -1005,7 +1005,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 3.7322500245068486,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -1018,7 +1018,7 @@
                     "target": 8,
                     "trajTargetIndex": 8,
                     "targetTimestamp": 4.753098153515013,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -2388,7 +2388,7 @@
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 3.7875620315043523,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -2401,6 +2401,19 @@
                     "target": 8,
                     "trajTargetIndex": 8,
                     "targetTimestamp": 7.17771680205673,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -4528,7 +4541,7 @@
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 3.805507017685048,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -4541,7 +4554,7 @@
                     "target": 8,
                     "trajTargetIndex": 8,
                     "targetTimestamp": 7.277162176681618,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -4554,6 +4567,19 @@
                     "target": 14,
                     "trajTargetIndex": 14,
                     "targetTimestamp": 10.800853299132074,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5940,7 +5966,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 1.0326079595732263,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -5953,7 +5979,7 @@
                     "target": 8,
                     "trajTargetIndex": 8,
                     "targetTimestamp": 5.529087324640645,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -5966,7 +5992,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 6.774646500306782,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -7434,7 +7460,7 @@
                     "target": 1,
                     "trajTargetIndex": 1,
                     "targetTimestamp": 0.8213405072160986,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -7447,7 +7473,7 @@
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 4.33311106464337,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -7460,7 +7486,7 @@
                     "target": 7,
                     "trajTargetIndex": 7,
                     "targetTimestamp": 6.063550501064219,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -7473,7 +7499,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.318643021899227,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -9016,7 +9042,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.006616269957807,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -9029,6 +9055,19 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.35960195575415,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -11122,7 +11161,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 3.896077104792923,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -11135,7 +11174,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.2382940096998265,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -11148,6 +11187,19 @@
                     "target": 14,
                     "trajTargetIndex": 14,
                     "targetTimestamp": 10.450860349479106,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "shootPiece",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -13477,7 +13529,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 3.940678712864342,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -13490,7 +13542,7 @@
                     "target": 12,
                     "trajTargetIndex": 12,
                     "targetTimestamp": 7.6519466333369754,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -13503,6 +13555,19 @@
                     "target": 16,
                     "trajTargetIndex": 16,
                     "targetTimestamp": 10.942538091381557,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -15596,7 +15661,7 @@
                     "target": 11,
                     "trajTargetIndex": 11,
                     "targetTimestamp": 7.39077305782186,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -15609,7 +15674,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 3.8574729840717774,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -15622,6 +15687,19 @@
                     "target": 15,
                     "trajTargetIndex": 15,
                     "targetTimestamp": 10.851209904633812,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -18504,7 +18582,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.188148513305813,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -18517,7 +18595,7 @@
                     "target": 12,
                     "trajTargetIndex": 12,
                     "targetTimestamp": 7.677501094515198,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -18530,7 +18608,7 @@
                     "target": 16,
                     "trajTargetIndex": 16,
                     "targetTimestamp": 11.046553674732145,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -18543,6 +18621,19 @@
                     "target": 20,
                     "trajTargetIndex": 20,
                     "targetTimestamp": 14.28220444733768,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -20683,7 +20774,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 1.1776953620796429,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -20696,7 +20787,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.70276233027772,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -20709,7 +20800,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.988519301454191,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -20722,6 +20813,19 @@
                     "target": 16,
                     "trajTargetIndex": 16,
                     "targetTimestamp": 11.565100781914866,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -22953,7 +23057,7 @@
                     "target": 5,
                     "trajTargetIndex": 5,
                     "targetTimestamp": 4.030675912394878,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -22966,7 +23070,7 @@
                     "target": 9,
                     "trajTargetIndex": 9,
                     "targetTimestamp": 7.353634063062077,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -22979,6 +23083,19 @@
                     "target": 15,
                     "trajTargetIndex": 15,
                     "targetTimestamp": 10.877451143162451,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -25086,7 +25203,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.177294306161433,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -25099,7 +25216,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.482793967764239,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -25112,6 +25229,19 @@
                     "target": 16,
                     "trajTargetIndex": 16,
                     "targetTimestamp": 11.049738250230499,
+                    "offset": -0.045,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                },
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -28045,7 +28175,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 1.0402498571664127,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -28058,7 +28188,7 @@
                     "target": 5,
                     "trajTargetIndex": 5,
                     "targetTimestamp": 2.562219967831394,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -28071,7 +28201,7 @@
                     "target": 7,
                     "trajTargetIndex": 7,
                     "targetTimestamp": 3.842195192660723,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -28084,7 +28214,7 @@
                     "target": 13,
                     "trajTargetIndex": 13,
                     "targetTimestamp": 7.776164783627703,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -28097,7 +28227,7 @@
                     "target": 18,
                     "trajTargetIndex": 18,
                     "targetTimestamp": 11.262949666621058,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -28110,7 +28240,7 @@
                     "target": 23,
                     "trajTargetIndex": 23,
                     "targetTimestamp": 14.834527646387166,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30856,7 +30986,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 0.9536916950313347,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30869,7 +30999,7 @@
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 2.600964090280757,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30882,7 +31012,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.175406720151307,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30895,7 +31025,7 @@
                     "target": 11,
                     "trajTargetIndex": 11,
                     "targetTimestamp": 7.784085482348939,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30908,7 +31038,7 @@
                     "target": 15,
                     "trajTargetIndex": 15,
                     "targetTimestamp": 11.090157472785883,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -30921,7 +31051,7 @@
                     "target": 21,
                     "trajTargetIndex": 21,
                     "targetTimestamp": 14.512324740369065,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34780,7 +34910,7 @@
                     "target": 2,
                     "trajTargetIndex": 2,
                     "targetTimestamp": 1.079943554814858,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34793,7 +34923,7 @@
                     "target": 4,
                     "trajTargetIndex": 4,
                     "targetTimestamp": 2.6129768570458736,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34806,7 +34936,7 @@
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 3.804975098072578,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34819,7 +34949,7 @@
                     "target": 10,
                     "trajTargetIndex": 10,
                     "targetTimestamp": 7.04644198798076,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34832,7 +34962,7 @@
                     "target": 14,
                     "trajTargetIndex": 14,
                     "targetTimestamp": 10.301795770659183,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34845,7 +34975,7 @@
                     "target": 20,
                     "trajTargetIndex": 20,
                     "targetTimestamp": 13.748726276331066,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34858,7 +34988,7 @@
                     "target": 24,
                     "trajTargetIndex": 24,
                     "targetTimestamp": 17.05247204859822,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -34871,7 +35001,7 @@
                     "target": 28,
                     "trajTargetIndex": 28,
                     "targetTimestamp": 20.29262666185627,
-                    "offset": 0,
+                    "offset": -0.045,
                     "command": {
                         "type": "named",
                         "data": {
@@ -35624,7 +35754,21 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-            "eventMarkers": [],
+            "eventMarkers": [
+                {
+                    "name": "PreLoad",
+                    "target": 0,
+                    "trajTargetIndex": 0,
+                    "targetTimestamp": 0,
+                    "offset": 0,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "shootPiece"
+                        }
+                    }
+                }
+            ],
             "isTrajectoryStale": false
         }
     },

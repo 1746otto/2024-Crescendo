@@ -32,6 +32,7 @@ import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;

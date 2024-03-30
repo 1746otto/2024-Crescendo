@@ -604,5 +604,15 @@
       "timestamp": 4.239808520801961
     }
   ],
-  "eventMarkers": []
+  "eventMarkers": [
+    {
+      "timestamp": 0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootPiece"
+        }
+      }
+    }
+  ]
 }
