@@ -52,7 +52,7 @@ public class Vision {
             while (true) {
                 try {
                 getResult();
-                    filter5();
+                    filter3();
                 } catch (Exception e) {
                     SmartDashboard.putString("filter error", e.getMessage());
                 }
