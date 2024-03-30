@@ -6,8 +6,10 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,23 +26,26 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public TalonFX master;
     private TalonFX slave;
 
-    private double targetPose = ShooterWristConstants.kIntakePos;
+    private double targetPose = ShooterWristConstants.kFlat;
   
     public ShooterPivotSubsystem() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
       master = new TalonFX(ShooterWristConstants.kShooterMasterID);
-      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
-      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
+      
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(50);
-      configs.Feedback.FeedbackRemoteSensorID = 0;//to change
+      configs.CurrentLimits = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(ShooterWristConstants.kStatorLimit)
+        .withSupplyCurrentLimit(ShooterWristConstants.kSupplyLimit);
+      configs.Feedback.FeedbackRemoteSensorID = 50;//to change
       configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       Slot0Configs pidController = configs.Slot0;
       pidController.kP = ShooterWristConstants.kP;
       pidController.kD = ShooterWristConstants.kD;
       pidController.kS = ShooterWristConstants.kS;
-      master.get(); 
+      configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       master.getConfigurator().apply(configs);
+      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
+      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
       slave.getConfigurator().apply(configs);
 
       //master.enableVoltageCompensation(12);
@@ -49,7 +54,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
       SmartDashboard.putNumber("target", targetPose);
       
-      setRequest(master.getPosition().getValueAsDouble());
+      //setRequest(master.getPosition().getValueAsDouble());
     }
     public void test() {
         master.set(0.1);
@@ -101,10 +106,13 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
     public Command goToSubCommand() {
-        return runPivot(ShooterWristConstants.kSubwooferPos);
+        return runPivot(ShooterWristConstants.kIntakePos); //It all works now with every position
     }
     public Command gotToStowCommand() {
         return runPivot(ShooterWristConstants.kStowpos);
+    }
+    public Command goToParallelPos() {
+        return runPivot(ShooterWristConstants.kFlat);
     }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
@@ -117,10 +125,11 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
         if (!atSetpoint()){
-            master.setControl(new PositionDutyCycle(targetPose));
-            } else {
-                master.stopMotor();
-            }
-       }}
+            master.setControl(new PositionVoltage(targetPose));
+        } else {
+            master.stopMotor();
+        }
+       }
+    }
     
   

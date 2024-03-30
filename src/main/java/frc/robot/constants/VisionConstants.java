@@ -15,7 +15,7 @@ public class VisionConstants {
     public static final double kDistanceCutoff = 4; // TODO: Tune the distance cutoff for this robot.
     public static final double kAmbiguityCutoff = 0.2; // TODO: Tune the ambiguity cutoff for this robot. It is probably fine, but we need to test it.
     public static final String[] kCameraNames = {
-        "front_camera"
+       // "front_camera"
     };
     public static final int k3DAruco = 0;
     public static final int k3DAprilTag = 1;

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -19,13 +21,12 @@ import edu.wpi.first.wpilibj2.command.Command;
  * Class for PrimerSubsystem to move game pieces from indexer to a holding space near the shooter.
  */
 public class PrimerSubsystem extends SubsystemBase{
-  /** CANSparkMax motor controller for the priming roller. */
+
   private TalonFX primerRoller;
   private AnalogInput speakerBeamBreak;
   public boolean primerStow;
 
-  /** CANSparkMan pid controller */
-  //private SparkPIDController pidController;
+ 
 
   /**
    * Creates a new PrimerSubsystem with initialized motor controller.
@@ -33,12 +34,29 @@ public class PrimerSubsystem extends SubsystemBase{
   public PrimerSubsystem() {
     primerRoller = new TalonFX(PrimerConstants.kPrimerRollerMotorID);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimit(PrimerConstants.kPrimerCurrentLimit);
+    configs.CurrentLimits = new CurrentLimitsConfigs()
+      .withStatorCurrentLimit(PrimerConstants.kStatorLimit)
+      .withSupplyCurrentLimit(PrimerConstants.kSupplyLimit);
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.Slot0 = new Slot0Configs()
+      .withKP(PrimerConstants.kVelocityP)
+      .withKI(PrimerConstants.kVelocityI)
+      .withKD(PrimerConstants.kVelocityD)
+      .withKS(PrimerConstants.kVelocityS)
+      .withKV(PrimerConstants.kVelocityV)
+      .withKA(PrimerConstants.kVelocityA);
+    configs.Slot1 = new Slot1Configs()
+      .withKP(PrimerConstants.kPositionP)
+      .withKI(PrimerConstants.kPositionI)
+      .withKD(PrimerConstants.kPositionD)
+      .withKS(PrimerConstants.kPositionS)
+      .withKV(PrimerConstants.kPositionV)
+      .withKA(PrimerConstants.kPositionA);
+
     primerRoller.getConfigurator().apply(configs);
 
     
-    primerRoller.setInverted(true);
+    primerRoller.setInverted(false);
     speakerBeamBreak = new AnalogInput(ShooterConstants.kShooterAnalogInputChannel);
     // pidController.setP(PrimerConstants.kP);
     // pidController.setI(PrimerConstants.kI);
@@ -146,7 +164,7 @@ public class PrimerSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     //System.out.println(isObjectPinchedInPrimer()); //To change
-    SmartDashboard.putNumber("Primer output voltage", primerRoller.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putBoolean("Beambreak", isPrimerBeamBreakBroken());
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
