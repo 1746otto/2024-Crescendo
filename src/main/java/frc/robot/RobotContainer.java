@@ -40,6 +40,7 @@ import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -58,7 +59,7 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  private final Vision vision = new Vision(drivetrain);
+  public final Vision vision = new Vision(drivetrain);
   private final LEDSubsystem led = new LEDSubsystem();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
@@ -96,19 +97,19 @@ public class RobotContainer {
  
   //pathplanner testing
   public RobotContainer() {
-    NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
-    NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
-    NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
+    NamedCommands.registerCommand("primeShooter", new PrintCommand("primeShooter")/*new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375)*/);
+    NamedCommands.registerCommand("goToSubwooferSpeed", new PrintCommand("subwooferSpeed")/*shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))*/); // Might want to have a check for is at request instead of just calling this over again.
+    NamedCommands.registerCommand("stopShooter", new PrintCommand("stopShooter")/*shooter.setRequestCommand(0)*/);
    
 
-    NamedCommands.registerCommand("intakeCommand", new ConditionalCommand(
+    NamedCommands.registerCommand("intakeCommand", new PrintCommand("intakeCommand")/*  new ConditionalCommand(
       intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos())
       .andThen(intakeRollers.intakeSpeedCommand()),
 
       intakeRollers.holdCommand().alongWith(intakeWrist.indexPosCommand())
       .andThen(intakeRollers.outtakeCommand().alongWith(primer.setIntakeSpeed())),
       
-      () -> !intakeRollers.intakeHasPiece()));
+      () -> !intakeRollers.intakeHasPiece())*/);
     
     // NamedCommands.registerCommand("intakeCommand",
     // intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos()).andThen(intakeRollers.intakeSpeedCommand())
@@ -118,7 +119,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
     NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
     NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
-    NamedCommands.registerCommand("pivotSubwoofer", pivot.runPivot(ShooterWristConstants.kSubwooferPos));
+    NamedCommands.registerCommand("pivotSubwoofer", new PrintCommand("pivotSubwoofer")/*pivot.runPivot(ShooterWristConstants.kSubwooferPos)*/);
 
     NamedCommands.registerCommand("ejectStuckPieces", 
         new SequentialCommandGroup(
@@ -329,8 +330,9 @@ public class RobotContainer {
     //Command baseAuton4 = drivetrain.getAutoPath("4Piece");
     //Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
     //Command fourP = drivetrain.getAutoPath("4P");
-    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PSouthSub");
-    drivetrain.seedFieldRelative(path.getPathPoses().get(0));
-    return AutoBuilder.followPath(path);
+    // PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PUnderStage").flipPath();
+    // drivetrain.seedFieldRelative(path.getPathPoses().get(0));
+    Command test = drivetrain.getAutoPath("testAuto");
+    return test;
   }
 }

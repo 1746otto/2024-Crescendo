@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +53,7 @@ public class PrimerSubsystem extends SubsystemBase{
       .withKS(PrimerConstants.kPositionS)
       .withKV(PrimerConstants.kPositionV)
       .withKA(PrimerConstants.kPositionA);
-
+    
     primerRoller.getConfigurator().apply(configs);
 
     
@@ -108,7 +109,10 @@ public class PrimerSubsystem extends SubsystemBase{
   // }
 
 
-
+  public void holdPosition() {
+    double tempPosition = primerRoller.getPosition().getValueAsDouble();
+    primerRoller.setControl(new PositionVoltage(tempPosition));
+  }
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
   }

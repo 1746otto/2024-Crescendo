@@ -50,16 +50,20 @@ public class Vision {
 
         visionThread = new Thread(() -> {
             while (true) {
+                try {
                 getResult();
+                    filter5();
+                } catch (Exception e) {
+                    SmartDashboard.putString("filter error", e.getMessage());
+                }
                 
-                filter5();
             }
         });
 
     
         visionThread.setName("Vision Thread");
 
-        visionThread.start();
+    //visionThread.start();
     }
 
     public void stopThread() {
@@ -77,6 +81,7 @@ public class Vision {
     private void getResult() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             lastResults[i] = cameras[i].getLatestResult();
+            SmartDashboard.putNumber("cameratimestamp", lastResults[i].getTimestampSeconds());
         }
     }
 
