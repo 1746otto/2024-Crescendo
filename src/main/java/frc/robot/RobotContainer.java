@@ -15,6 +15,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -211,22 +212,22 @@ public class RobotContainer {
       .finallyDo(
         () -> {
           intakeRollers.stop();
-          pivot.setRequest(ShooterWristConstants.kParallelPos);
+          pivot.setRequest(ShooterWristConstants.kFlat);
         }
       )
     );
-    joystick.y().and(notInIntakeDown).onTrue(  //Change for toggling
-      new SequentialCommandGroup(
-        intakeWrist.indexPosCommand(),
-      new ParallelDeadlineGroup(
-          primer.intakeCommand(), // Stops primer by itself
-          intakeRollers.outtakeCommand()
-        )).finallyDo(
-        () -> {
-          intakeRollers.stop();
-          pivot.setRequest(ShooterWristConstants.kParallelPos);
-        }
-      ));
+    // joystick.y().and(notInIntakeDown).onTrue(  //Change for toggling
+    //   new SequentialCommandGroup(
+    //     intakeWrist.indexPosCommand(),
+    //   new ParallelDeadlineGroup(
+    //       primer.intakeCommand(), // Stops primer by itself
+    //       intakeRollers.outtakeCommand()
+    //     )).finallyDo(
+    //     () -> {
+    //       intakeRollers.stop();
+    //       pivot.setRequest(ShooterWristConstants.kFlat);
+    //     }
+    //   ));
        
     
     joystick.b().whileTrue(
@@ -277,13 +278,14 @@ public class RobotContainer {
     );
     
     //pivot
-    joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new WaitCommand(100))*/.alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))/*.finallyDo(() -> pivot.setRequest(ShooterWristConstants.kStartPos))*/);
-    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(new InstantCommand(() -> intakeWrist.setRequest(IntakeWristConstants.kIntake))).alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos(); intakeWrist.setRequest(IntakeWristConstants.kStow);}));
+    //joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new WaitCommand(100))*/.alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))/*.finallyDo(() -> pivot.setRequest(ShooterWristConstants.kStartPos))*/);
+    //joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(new InstantCommand(() -> intakeWrist.setRequest(IntakeWristConstants.kIntake))).alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos(); intakeWrist.setRequest(IntakeWristConstants.kStow);}));
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100)).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
-    joystick.rightTrigger().whileTrue(new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp));
+    joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot));
     joystick.rightTrigger().onFalse(primer.backupCommand());
     
-    
+    joystick.povLeft().whileTrue(new StartEndCommand(() -> pivot.test(), () -> pivot.stop(), pivot));
+    joystick.povRight().onTrue(pivot.goToIntakePos());
     
 
     
@@ -296,7 +298,7 @@ public class RobotContainer {
   }
   public void configureDefaultCommands() {
     led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
-    //pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntake));
+    //pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntakeDown));
      // check wrist up and intake roller beambreak is triggered
   }
 
@@ -305,7 +307,7 @@ public class RobotContainer {
     intakeRollers.stop();
     intakeWrist.setRequest(IntakeWristConstants.kStow);
     primer.stop();
-    pivot.setRequest(ShooterWristConstants.kIntakePos);
+    pivot.setRequest(ShooterWristConstants.kFlat);
   }
 
   public Command getAutonomousCommand() {

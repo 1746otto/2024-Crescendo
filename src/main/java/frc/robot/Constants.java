@@ -30,7 +30,7 @@ public final class Constants {
   {
     public static final int kIntakeRollerID = 11;
     public static final double kIntake = 0.8;
-    public static final double kOuttake = -kIntake; // This needs to be slower than primer.
+    public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
     public static final double kStatorLimit = 5;
@@ -123,7 +123,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.8;
+    public static final double kIntake = 0.4;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
@@ -168,15 +168,13 @@ public final class Constants {
 
     public static double kPivotReduction = 60;
     public static double kOldFlat = 0.377481;
-    public static double kFlat = -0.224365;
+    public static double kFlat = -0.213379;
     public static double k4PPreloadShot = 0;
     public static double k4PLastShot = kFlat + Rotation2d.fromDegrees(32.4238401).getRotations();
-    public static double kStartPos = 0.207 - kFlat + kOldFlat;
     public static double kPodiumPos = kFlat + 0.5 - Rotation2d.fromDegrees(21.8).getRotations();//0.801; // To change
     public static double kSubwooferPos = -0.389404; // To change 0.541
     public static double kIntakePos = -0.348389; // To change
-    public static double kAmpPos = 0.748-kFlat + kOldFlat;// To change
-    public static double kParallelPos = 0 -kFlat + kOldFlat;// To change
+    public static double kAmpPos = 0.748;// To change
     public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
     public static double kBackPackPos = -0.616455;
     public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI ); // Just divide by 360.0???
@@ -189,7 +187,7 @@ public final class Constants {
     public static double maxAcceleration = 0.75; // TODO: Units and true value
     public static final double kG = 0; // Units of Volts. Calculated by voltage required to hold vertical position.
     public static final double kS = 0; // Units of Volts.
-    public static final double kP = 6.4;
+    public static final double kP = 12*6.4;
     public static final double kD = 0.0;
     public static final double kStowpos = kFlat;
   }

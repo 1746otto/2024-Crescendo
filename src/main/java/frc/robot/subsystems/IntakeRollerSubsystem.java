@@ -114,11 +114,12 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      * @return
      */
     public boolean intakeHasPiece() {
-        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125;
+        
+        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125 || rollerMotor.getVelocity().getValueAsDouble() <= 1.0;
     }
 
     public boolean buttonPressed() {
-        return rollerSensor.getVoltage() <= 0.2;
+        return rollerSensor.getVoltage() <= 0.2; 
     }
 
     
@@ -130,5 +131,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
             buttonLastTrigger = Timer.getFPGATimestamp();
         }
         SmartDashboard.putNumber("Intake button voltage", rollerSensor.getVoltage());
+        SmartDashboard.putNumber("Roller speed", rollerMotor.getVelocity().getValueAsDouble());
     }
 }

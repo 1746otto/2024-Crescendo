@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,13 +26,12 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public TalonFX master;
     private TalonFX slave;
 
-    private double targetPose = ShooterWristConstants.kIntakePos;
+    private double targetPose = ShooterWristConstants.kFlat;
   
     public ShooterPivotSubsystem() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
       master = new TalonFX(ShooterWristConstants.kShooterMasterID);
-      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
-      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
+      
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       configs.CurrentLimits = new CurrentLimitsConfigs()
         .withStatorCurrentLimit(ShooterWristConstants.kStatorLimit)
@@ -42,8 +42,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       pidController.kP = ShooterWristConstants.kP;
       pidController.kD = ShooterWristConstants.kD;
       pidController.kS = ShooterWristConstants.kS;
-      master.get(); 
+      configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       master.getConfigurator().apply(configs);
+      slave = new TalonFX(ShooterWristConstants.kShooterSlaveID);
+      slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
       slave.getConfigurator().apply(configs);
 
       //master.enableVoltageCompensation(12);
@@ -52,7 +54,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
       SmartDashboard.putNumber("target", targetPose);
       
-      setRequest(master.getPosition().getValueAsDouble());
+      //setRequest(master.getPosition().getValueAsDouble());
     }
     public void test() {
         master.set(0.1);
@@ -104,13 +106,13 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kPodiumPos);
     }
     public Command goToSubCommand() {
-        return runPivot(ShooterWristConstants.kSubwooferPos);
+        return runPivot(ShooterWristConstants.kIntakePos); //It all works now with every position
     }
     public Command gotToStowCommand() {
         return runPivot(ShooterWristConstants.kStowpos);
     }
     public Command goToParallelPos() {
-        return runPivot(ShooterWristConstants.kParallelPos);
+        return runPivot(ShooterWristConstants.kFlat);
     }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
