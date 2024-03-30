@@ -155,7 +155,7 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   public Command backupCommand() {
-    return runOnce(() -> setSpeed(-.1)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
+    return runOnce(() -> setSpeed(-.3)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
   }
 
   public Command setSpeedCommand(double speed) {

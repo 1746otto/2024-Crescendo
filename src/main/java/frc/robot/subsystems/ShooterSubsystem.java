@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -48,7 +49,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterFollower = new TalonFX(ShooterConstants.kShooterBottomRollerMotorID);
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    shooterLeader.setInverted(false);
+    rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    shooterLeader.getConfigurator().apply(rollerConfig);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
     //Setting PID values for the top shooting roller not how this works
@@ -59,8 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
     
-    shooterLeader.getConfigurator().apply(rollerConfig);
-    shooterFollower.getConfigurator().apply(rollerConfig);
+    
 
     // pidController = shooterRoller.getPIDController();
     // pidController.setP(0);
