@@ -98,6 +98,9 @@ public class PrimerSubsystem extends SubsystemBase{
   public boolean isObjectPinchedInPrimer() {
     return (isPrimerBeamBreakBroken());
   }
+  public boolean priming(){
+    return (primerRoller.getVelocity().getValueAsDouble() != 0);
+  }
 
   /** Returns the velocity of the motor */
   // public double getVelocity() {
@@ -152,7 +155,7 @@ public class PrimerSubsystem extends SubsystemBase{
   }
 
   public Command backupCommand() {
-    return runOnce(() -> setSpeed(-.3)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
+    return runOnce(() -> setSpeed(-.1)).andThen(new WaitUntilCommand(() -> isPrimerBeamBreakBroken()).withTimeout(0.15)).finallyDo(() -> setSpeed(0));
   }
 
   public Command setSpeedCommand(double speed) {
@@ -168,6 +171,7 @@ public class PrimerSubsystem extends SubsystemBase{
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
+  
   }
   
 }
