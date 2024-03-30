@@ -50,16 +50,18 @@ public class ShooterSubsystem extends SubsystemBase {
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    shooterLeader.getConfigurator().apply(rollerConfig);
-    shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
-
-    //Setting PID values for the top shooting roller not how this works
     Slot0Configs pidController = rollerConfig.Slot0;
     pidController.kP = ShooterConstants.kP;
     pidController.kI = ShooterConstants.kI;
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    shooterLeader.getConfigurator().apply(rollerConfig);
+    shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
+
+    //Setting PID values for the top shooting roller not how this works
+   
     
     
 
@@ -76,7 +78,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Initialization of analog input for beam break detection
     // Also in the wrong spot but i have to commit.
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    
     SmartDashboard.putNumber("Speed", targetVelocity);
 
   }
