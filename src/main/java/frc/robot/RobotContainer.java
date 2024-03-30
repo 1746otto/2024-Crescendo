@@ -10,7 +10,9 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.IntakeRollerSubsystem;
@@ -72,6 +75,7 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+
   private enum AmpPositionState {Amp, Normal};
   private AmpPositionState ampPosition = AmpPositionState.Normal;
   public SendableChooser<String> autoChooser;
@@ -95,7 +99,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
     NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5))); // Might want to have a check for is at request instead of just calling this over again.
     NamedCommands.registerCommand("stopShooter", shooter.setRequestCommand(0));
-    NamedCommands.registerCommand("shootPiece", new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led, () -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), temp).andThen(new WaitUntilCommand((() -> shooter.isAtReq())).withTimeout(.5)));
+   
 
     NamedCommands.registerCommand("intakeCommand", new ConditionalCommand(
       intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos())
@@ -172,7 +176,8 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-  
+    ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
+
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY() * Math.pow(Math.abs(joystick.getLeftY()), power - 1) * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
@@ -283,6 +288,7 @@ public class RobotContainer {
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100)).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
     joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot));
     joystick.rightTrigger().onFalse(primer.backupCommand());
+  
     
     joystick.povLeft().whileTrue(new StartEndCommand(() -> pivot.test(), () -> pivot.stop(), pivot));
     joystick.povRight().onTrue(pivot.goToIntakePos());
@@ -323,6 +329,8 @@ public class RobotContainer {
     //Command baseAuton4 = drivetrain.getAutoPath("4Piece");
     //Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
     //Command fourP = drivetrain.getAutoPath("4P");
-    return autonCommand;
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PSouthSub");
+    drivetrain.seedFieldRelative(path.getPathPoses().get(0));
+    return AutoBuilder.followPath(path);
   }
 }

@@ -10,7 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 public class DynamicShootingConstants {
 
-  public static final double kP = 2.8;
+  public static final double kP = 20;
   public static final double kI = 0;
   public static final double kD = 0;
 
@@ -48,7 +48,7 @@ public class DynamicShootingConstants {
     distanceMapLength = tempMap.size();
     distanceToIndex = new TreeMap<>();
 
-    for (int i = 0; i < distanceMap.size(); i++)
+    for (int i = 1; i < distanceMap.size() - 1; i++)
       distanceToIndex.put(distanceMap.get(i).get_0(), i);
     
   };

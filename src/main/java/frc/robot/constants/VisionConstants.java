@@ -5,6 +5,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -22,9 +23,12 @@ public class VisionConstants {
     public static final int k2DAprilTag = 2;
     public static final int kCameraCount = kCameraNames.length;
     public static final Transform3d[] kCameraTransforms = {
-        new Transform3d(new Translation3d(Units.inchesToMeters(6.519899), 0, Units.inchesToMeters(20.927357)), new Rotation3d(0, Units.degreesToRadians(20), Units.degreesToRadians(180))), 
+        new Transform3d(new Translation3d(Units.inchesToMeters(-6.519899), 0, Units.inchesToMeters(20.927357)), new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(180))), 
         new Transform3d(new Pose3d(), new Pose3d(-0.5, 0, 0.5, new Rotation3d()))
     }; // TODO: Get the actual transforms for the cameras.
-    public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(0.9, 0.9, 0.9); // TODO: Tune these values for our robot.
+    public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(0.9, 0.9, 10); // TODO: Tune these values for our robot.
+
+    public static Translation2d kSpeakerPose = new Translation2d();
+    public static int kSpeakerId = 7;
     
 }

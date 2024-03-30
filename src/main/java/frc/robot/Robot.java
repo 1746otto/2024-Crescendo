@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.VisionConstants;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -50,6 +53,18 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        VisionConstants.kSpeakerId = 7;
+        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+      } else {
+        VisionConstants.kSpeakerId = 12;
+        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
+      } 
+    } else {
+      VisionConstants.kSpeakerId = 7;
+      VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+    }
   }
 
   @Override
@@ -63,11 +78,24 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    if (DriverStation.getAlliance().isPresent())
-      m_robotContainer.temp = (DriverStation.getAlliance().get() == Alliance.Blue) ? -1 : 1;
-    else
+    
+    
+  
+  if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        m_robotContainer.temp = -1;
+        VisionConstants.kSpeakerId = 7;
+        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+      } else {
+        m_robotContainer.temp = 1;
+        VisionConstants.kSpeakerId = 12;
+        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
+      } 
+    } else {
       m_robotContainer.temp = -1;
-
+      VisionConstants.kSpeakerId = 7;
+      VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+    }
     m_robotContainer.setTeleopInitState();
   }
 
