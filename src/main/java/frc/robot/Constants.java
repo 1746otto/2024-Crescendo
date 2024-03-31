@@ -33,8 +33,8 @@ public final class Constants {
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kStatorLimit = 5;
-    public static final double kSupplyLimit = 10;
+    public static final double kStatorLimit = 40;
+    public static final double kSupplyLimit = 40;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
@@ -96,7 +96,7 @@ public final class Constants {
     public static final double kShoot = 4000;//0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kSubwooferShot = 0.8;
-    public static final double kSubwooferSpeed = 1/kV;//4640;
+    public static final double kSubwooferSpeed = 4500;//4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
 
