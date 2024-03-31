@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.VisionConstants;
+import frc.robot.constants.VisionSimConstants;
 
 public class VisionSim {
     Thread visionThread;
@@ -55,7 +56,7 @@ public class VisionSim {
             cameraSim.enableDrawWireframe(true);
             cameraSim.enableProcessedStream(true);
             cameraSim.setWireframeResolution(.3);
-            visionSim.addCamera(cameraSim, VisionConstants.kCameraTransforms[i]);
+            visionSim.addCamera(cameraSim, VisionSimConstants.kTrueCameraTransforms[i]);
         }
 
         alternateObjects = visionSim.getDebugField().getObject("Alternates");

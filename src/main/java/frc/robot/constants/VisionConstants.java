@@ -24,7 +24,7 @@ public class VisionConstants {
     public static final int kCameraCount = kCameraNames.length;
     public static final Transform3d[] kCameraTransforms = {
         // new Transform3d(new Translation3d(Units.inchesToMeters(-11), 0, Units.inchesToMeters(20.927357)), new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(-180))), 
-        new Transform3d(new Translation3d(Units.inchesToMeters(16.8), .0, Units.inchesToMeters(12.6)), new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)))
+        new Transform3d(new Translation3d(Units.inchesToMeters(-6.868435), 0, Units.inchesToMeters(-12.907907)), new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(180)))
     }; // TODO: Get the actual transforms for the cameras.
     public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(.9, .9, 10); // TODO: Tune these values for our robot.
     

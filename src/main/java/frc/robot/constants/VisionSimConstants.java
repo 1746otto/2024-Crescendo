@@ -10,9 +10,13 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 
 public class VisionSimConstants {
     static {
@@ -47,6 +51,9 @@ public class VisionSimConstants {
     public static Lazy<Translation2d[]> SwerveModuleLocations;
     public static Lazy<SwerveDriveKinematics> Kinematics = new Lazy<SwerveDriveKinematics>(
             () -> new SwerveDriveKinematics(VisionSimConstants.SwerveModuleLocations.getValue()));
+    public static final Transform3d[] kTrueCameraTransforms = {
+        new Transform3d(new Translation3d(Units.inchesToMeters(-6.868435), 0, Units.inchesToMeters(12.907907)), new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(180)))
+    };
 
     public static Lazy<SimCameraProperties> CameraProperties = new Lazy<SimCameraProperties>(() -> {
         SimCameraProperties cameraProperties = new SimCameraProperties();
