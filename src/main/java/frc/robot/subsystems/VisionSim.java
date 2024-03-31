@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
@@ -12,6 +13,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.VisionConstants;
 
@@ -36,7 +39,12 @@ public class VisionSim {
     volatile boolean continueLoop;
     int speakerID = 7; 
     String tags = new String();
-
+    FieldObject2d alternateObjects;
+    FieldObject2d bestObjects;
+    FieldObject2d usedObjects;
+    ArrayList<Pose2d> alternateList = new ArrayList<>();
+    ArrayList<Pose2d> bestList = new ArrayList<>();
+    ArrayList<Pose2d> usedList = new ArrayList<>();
 
     public VisionSim(SwerveDrivePoseEstimator poseEstimator, Supplier<Rotation3d> gyro, VisionSystemSim visionSim, SimCameraProperties cameraProperties) {
         visionSystemSim = visionSim;
@@ -49,6 +57,10 @@ public class VisionSim {
             cameraSim.setWireframeResolution(.3);
             visionSim.addCamera(cameraSim, VisionConstants.kCameraTransforms[i]);
         }
+
+        alternateObjects = visionSim.getDebugField().getObject("Alternates");
+        bestObjects = visionSim.getDebugField().getObject("Bests");
+        usedObjects = visionSim.getDebugField().getObject("Useds");
 
         getResult();
 
@@ -68,6 +80,9 @@ public class VisionSim {
                 getResult();
                 
                 filter5();
+                alternateObjects.setPoses(alternateList);
+                bestObjects.setPoses(bestList);
+                usedObjects.setPoses(usedList);
             }
         });
 
@@ -345,23 +360,35 @@ public class VisionSim {
 
 
     private void filter5() {
+
+
+
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
 
             SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
             
             SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
-            if (!isDataNew(i))
+            if (!isDataNew(i) || Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds() > 1.5 || Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds() < 0)
                 continue;
+            
+            alternateList.clear();
+            bestList.clear();
+            usedList.clear();
+
+
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
                 if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
-                    continue;;
+                    continue;
                 
                 // Transforms to the pose of the camera, not the robot.
                 Pose3d tempPose = bestTargetToRobotPose(target, i);
 
                 SmartDashboard.putString("best", tempPose.toString());
+                
                 SmartDashboard.putString("alt", alternateTargetToRobotPose(target, i).toString());
+                
+                
                 
                 /*
                  * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
@@ -369,16 +396,20 @@ public class VisionSim {
                  * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
                  * depending on which is smaller the best or alternate tag transform is chosen.
                  */
-                SmartDashboard.putBoolean("tag present", field.getTagPose(i).isPresent());
                 if (Math.abs(tempPose.getZ()) <= Math.abs(alternateTargetToRobotPose(target, i).getZ())
                     && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
 
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
                     
+                    usedList.add(tempPose.toPose2d());
+                    bestList.add(tempPose.toPose2d());
+                    alternateList.add(alternateTargetToRobotPose(target, i).toPose2d());
+
                     if (target.getFiducialId() == speakerID) {
                         cameraPoses[i] = tempPose;
                     }
                     
+
                     // This must be here in order to try until the swerve drive unlocks the pose estimator.
                     do {
                         // Rohan wouldn't let me use for loop :(
@@ -402,7 +433,10 @@ public class VisionSim {
                     && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
                     
                     SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-                    
+                    usedList.add(tempPose.toPose2d());
+                    bestList.add(bestTargetToRobotPose(target, i).toPose2d());
+                    alternateList.add(tempPose.toPose2d());
+
                     if (target.getFiducialId() == speakerID) {
                         cameraPoses[i] = tempPose;
                     }
@@ -420,6 +454,8 @@ public class VisionSim {
                 }
             }
         }
+
+
     }
 
 
