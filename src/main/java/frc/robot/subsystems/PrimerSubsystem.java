@@ -148,7 +148,7 @@ public class PrimerSubsystem extends SubsystemBase {
   }
 
   public Command setIntakeSpeed() {
-    return runOnce(() -> setSpeed(PrimerConstants.kIntake));
+    return setSpeedCommand(PrimerConstants.kIntake);
   }
 
   public Command outtakeCommand() {
@@ -164,7 +164,7 @@ public class PrimerSubsystem extends SubsystemBase {
   }
 
   public Command setOuttakeSpeed() {
-    return runOnce(() -> setSpeed(PrimerConstants.kOuttake));
+    return setSpeedCommand(PrimerConstants.kOuttake);
   }
 
   public Command backupCommand() {
@@ -173,7 +173,10 @@ public class PrimerSubsystem extends SubsystemBase {
   }
 
   public Command setSpeedCommand(double speed) {
-    return runOnce(() -> setSpeed(speed));
+    return runOnce(() -> {
+      primerStow = false;
+      setSpeed(speed);
+    });
   }
 
   public boolean isPrimerBeamBreakBroken() { // To change
