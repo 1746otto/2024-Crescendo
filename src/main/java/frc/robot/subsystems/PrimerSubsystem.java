@@ -186,13 +186,9 @@ public class PrimerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // System.out.println(isObjectPinchedInPrimer()); //To change
     SmartDashboard.putBoolean("Beambreak", isPrimerBeamBreakBroken());
-    if (primerStow && isPrimerBeamBreakBroken()) {
-      // setSpeed(PrimerConstants.kIntake);
-    }
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("primer beambreak pos", tempPosition);
+    SmartDashboard.putNumber("stow pos", tempPosition);
     if (primerStow) {
       primerRoller.setControl(new PositionVoltage(tempPosition).withSlot(1));
     }
