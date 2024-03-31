@@ -206,9 +206,9 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {
     Transform2d diff = simPose.toPose2d().minus(poseEstimator.get().getEstimatedPosition());
     noiseOverTime.add(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
-    // if (!visionSimSubsystem.get().isRunning()) {
-    //   visionSimSubsystem.get().startThread();
-    // }
+    if (!visionSimSubsystem.get().isRunning()) {
+      visionSimSubsystem.get().startThread();
+    }
     
     if (DriverStation.isAutonomous() && !isAuton) {
       isAuton = true;
