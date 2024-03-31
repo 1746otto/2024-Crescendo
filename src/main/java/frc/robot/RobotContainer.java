@@ -321,7 +321,7 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new handleLEDCommand(led, inIntakeDown, inShooter));  
+    led.setDefaultCommand(new handleLEDCommand(led, () -> true, inShooter));  
     //pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntakeDown));
      // check wrist up and intake roller beambreak is triggered
   }

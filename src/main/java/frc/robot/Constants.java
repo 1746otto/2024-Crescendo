@@ -148,7 +148,7 @@ public final class Constants {
   }// Should go away for final competition code
 
   public static class LEDConstants {
-    public static final int PWMPortLeft = 9;
+    public static final int PWMPortLeft = 0;
     public static final int LEDLength = 13;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;
