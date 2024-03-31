@@ -27,6 +27,7 @@ public class PrimerSubsystem extends SubsystemBase{
   private TalonFX primerRoller;
   private AnalogInput speakerBeamBreak;
   public boolean primerStow = false;
+  public double tempPosition;
 
  
 
@@ -110,12 +111,7 @@ public class PrimerSubsystem extends SubsystemBase{
   // }
 
 
-  public void holdPosition() {
-    if (primerStow) {
-      double tempPosition = primerRoller.getPosition().getValueAsDouble();
-      primerRoller.setControl(new PositionVoltage(tempPosition));
-    }
-  }
+ 
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
   }
@@ -169,6 +165,7 @@ public class PrimerSubsystem extends SubsystemBase{
     return runOnce(() -> setSpeed(speed));
   }
   public boolean isPrimerBeamBreakBroken() { //To change 
+    
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
 }
   @Override
@@ -178,8 +175,10 @@ public class PrimerSubsystem extends SubsystemBase{
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
-    holdPosition();
-  
+    tempPosition = (isPrimerBeamBreakBroken()) ? primerRoller.getPosition().getValueAsDouble() : 0;
+    if (primerStow) {
+      new PositionVoltage(tempPosition).withSlot(1);
+    }
   }
   
 }

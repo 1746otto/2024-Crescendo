@@ -210,10 +210,11 @@ public class RobotContainer {
         intakeWrist.indexPosCommand(),
         new ParallelDeadlineGroup(
           primer.intakeCommand(), // Stops primer by itself
-          intakeRollers.outtakeCommand()
+          intakeRollers.outtakeCommand(),
+          new InstantCommand(() -> primer.primerStow = true)
         ),
-        intakeRollers.stopCommand(),
-        primer.backupCommand()
+        intakeRollers.stopCommand()
+        
       )
       .finallyDo(
         () -> {
@@ -287,7 +288,7 @@ public class RobotContainer {
     //joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new WaitCommand(100))*/.alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Amp))/*.finallyDo(() -> pivot.setRequest(ShooterWristConstants.kStartPos))*/);
     //joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToPodiumPos().alongWith(new InstantCommand(() -> intakeWrist.setRequest(IntakeWristConstants.kIntake))).alongWith(shooter.setRequestCommand(ShooterConstants.kShoot).alongWith(new WaitUntilCommand(100))).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos(); intakeWrist.setRequest(IntakeWristConstants.kStow);}));
     joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed()).whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed)).alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100)).finallyDo(() -> {shooter.stop(); pivot.goToIntakePos();}));
-    joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot));
+    joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new ConditionalCommand(new InstantCommand(() -> primer.primerStow = true),new InstantCommand(() -> primer.primerStow = false), () -> primer.isPrimerBeamBreakBroken())));
     joystick.rightTrigger().onFalse(primer.backupCommand());
   
     
