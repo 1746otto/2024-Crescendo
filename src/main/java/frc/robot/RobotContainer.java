@@ -362,7 +362,7 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
             .finallyDo(() -> {
               shooter.stop();
-              pivot.goToIntakePos();
+              pivot.setRequest(ShooterWristConstants.kFlat);
             }));
     joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new RunCommand(() -> {
     })).finallyDo(() -> {
