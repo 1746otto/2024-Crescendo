@@ -176,6 +176,8 @@ public class PrimerSubsystem extends SubsystemBase{
       //setSpeed(PrimerConstants.kIntake);
     }
     tempPosition = (isPrimerBeamBreakBroken()) ? primerRoller.getPosition().getValueAsDouble() : 0;
+    SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("primer beambreak pos", tempPosition);
     if (primerStow) {
        primerRoller.setControl(new PositionVoltage(tempPosition).withSlot(1));
     }
