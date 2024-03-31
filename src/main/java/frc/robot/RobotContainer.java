@@ -179,12 +179,12 @@ public class RobotContainer {
   private void configureBindings() {
     ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
 
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+    /*drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY() * Math.pow(Math.abs(joystick.getLeftY()), power - 1) * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(temp * joystick.getLeftX() * Math.pow(Math.abs(joystick.getLeftX()), power - 1) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * Math.pow(Math.abs(joystick.getRightX()), power - 1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
-         ));
+         ));*/
     //dumb commands to test
 
     // joystick.y().onTrue(pivot.goToIntakePos());
@@ -317,7 +317,7 @@ public class RobotContainer {
     pivot.setRequest(ShooterWristConstants.kFlat);
   }
 
-  public Command getAutonomousCommand() {
+  //public Command getAutonomousCommand() {
     // Command auton = drivetrain.getAutoPath("5Piece");
     //Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
     //Command middle2P = drivetrain.getAutoPath("Middle2P");
@@ -332,7 +332,7 @@ public class RobotContainer {
     //Command fourP = drivetrain.getAutoPath("4P");
     // PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("4PUnderStage").flipPath();
     // drivetrain.seedFieldRelative(path.getPathPoses().get(0));
-    Command test = drivetrain.getAutoPath("testAuto");
-    return test;
+    //Command test = drivetrain.getAutoPath("testAuto");
+    //return test;
+  //}
   }
-}

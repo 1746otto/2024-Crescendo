@@ -16,6 +16,7 @@ import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
 /**
@@ -25,7 +26,7 @@ public class PrimerSubsystem extends SubsystemBase{
 
   private TalonFX primerRoller;
   private AnalogInput speakerBeamBreak;
-  public boolean primerStow;
+  public boolean primerStow = false;
 
  
 
@@ -110,8 +111,10 @@ public class PrimerSubsystem extends SubsystemBase{
 
 
   public void holdPosition() {
-    double tempPosition = primerRoller.getPosition().getValueAsDouble();
-    primerRoller.setControl(new PositionVoltage(tempPosition));
+    if (primerStow) {
+      double tempPosition = primerRoller.getPosition().getValueAsDouble();
+      primerRoller.setControl(new PositionVoltage(tempPosition));
+    }
   }
   public Command ampCommand() {
     return setSpeedCommand(PrimerConstants.kAmp);
@@ -133,7 +136,7 @@ public class PrimerSubsystem extends SubsystemBase{
     if (Utils.isSimulation()) {
       return new WaitCommand(2.5);
     }
-    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(new InstantCommand(() -> primerStow = true)).finallyDo(() -> setSpeed(0));
   }
 
   public Command fastIntakeCommand() {
@@ -175,6 +178,7 @@ public class PrimerSubsystem extends SubsystemBase{
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
+    holdPosition();
   
   }
   
