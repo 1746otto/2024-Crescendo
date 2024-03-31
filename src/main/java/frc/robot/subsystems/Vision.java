@@ -25,7 +25,6 @@ public class Vision {
     PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     public volatile PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
     public volatile double[] lastResultTimestamps = new double[VisionConstants.kCameraCount];
-    public volatile double[] lastResultTimestamps = new double[VisionConstants.kCameraCount];
     public volatile Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
     public volatile Pose3d robotPose; // Might use this in other filter methods later
     AprilTagFieldLayout field;
@@ -270,6 +269,10 @@ public class Vision {
                 }
             }
         }
+    }
+
+    public boolean containsSpeakerTag(int cameraId) {
+        return false;
     }
 
     /**

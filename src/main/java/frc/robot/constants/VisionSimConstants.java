@@ -57,10 +57,10 @@ public class VisionSimConstants {
         cameraProperties.setCalibError(3.25, 0.25);
         // Set the camera image capture framerate (Note: this is limited by robot loop
         // rate).
-        cameraProperties.setFPS(20);
+        cameraProperties.setFPS(24);
         // The average and standard deviation in milliseconds of image data latency.
-        cameraProperties.setAvgLatencyMs(35);
-        cameraProperties.setLatencyStdDevMs(9);
+        cameraProperties.setAvgLatencyMs(39);
+        cameraProperties.setLatencyStdDevMs(2);
         return cameraProperties;
     });
 
