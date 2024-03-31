@@ -137,10 +137,10 @@ public class PrimerSubsystem extends SubsystemBase {
       return new WaitCommand(2.5);
     }
     return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken))
-        .andThen(new InstantCommand(() -> {
+        .finallyDo(() -> {
           primerStow = true;
           tempPosition = primerRoller.getPosition().getValueAsDouble();
-        }));
+        });
   }
 
   public Command fastIntakeCommand() {
