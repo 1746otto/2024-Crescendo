@@ -27,7 +27,7 @@ public class VisionSimConstants {
     public static double kDistanceEncoderStandardDev = .012;
 
     public static double kAngleEncoderErrorMean = 0;
-    public static double kAngleEncoderStandardDev = Math.toRadians(0.6);
+    public static double kAngleEncoderStandardDev = Math.toRadians(0.);
 
     public static class Lazy<T> {
         private Optional<T> value = Optional.empty();

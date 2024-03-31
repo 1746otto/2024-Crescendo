@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PSouth");
+    PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PUnderStage");
     autoSimTraj = thing.getTrajectory(new ChassisSpeeds(), thing.getPreviewStartingHolonomicPose().getRotation());
   }
 
