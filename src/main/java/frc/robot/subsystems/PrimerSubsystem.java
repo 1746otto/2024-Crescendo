@@ -177,7 +177,7 @@ public class PrimerSubsystem extends SubsystemBase{
     }
     tempPosition = (isPrimerBeamBreakBroken()) ? primerRoller.getPosition().getValueAsDouble() : 0;
     if (primerStow) {
-      new PositionVoltage(tempPosition).withSlot(1);
+       primerRoller.setControl(new PositionVoltage(tempPosition).withSlot(1));
     }
   }
   

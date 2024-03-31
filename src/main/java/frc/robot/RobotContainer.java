@@ -195,7 +195,7 @@ public class RobotContainer {
     // joystick.x().onTrue(new ParallelDeadlineGroup(intakeWrist.intakePosCommand(), intakeRollers.intakeSpeedCommand()));
 
      
-    joystick.y().onTrue(
+    /*joystick.y().onTrue(
       new SequentialCommandGroup(
         new InstantCommand(() -> {primer.primerStow = false;}), // Currently unnecessary may be used if we need to fix stow idk man
         new ParallelDeadlineGroup(
@@ -222,7 +222,23 @@ public class RobotContainer {
           pivot.setRequest(ShooterWristConstants.kFlat);
         }
       )
+    );*/
+
+//Temporary test button for autonomous
+    joystick.leftTrigger().onTrue(
+      new SequentialCommandGroup(
+              new ParallelDeadlineGroup(
+          primer.intakeCommand()
+        ),
+        new InstantCommand(() -> {primer.primerStow = true;})
+      )
+      .finallyDo(
+        () -> {
+          pivot.setRequest(ShooterWristConstants.kFlat);
+        }
+      )
     );
+
     // joystick.y().and(notInIntakeDown).onTrue(  //Change for toggling
     //   new SequentialCommandGroup(
     //     intakeWrist.indexPosCommand(),
