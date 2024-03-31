@@ -1,13 +1,13 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -57,7 +57,13 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
     rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     shooterLeader.getConfigurator().apply(rollerConfig);
+    TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+    followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    followerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    shooterFollower.getConfigurator().apply(followerConfig);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
     //Setting PID values for the top shooting roller not how this works
