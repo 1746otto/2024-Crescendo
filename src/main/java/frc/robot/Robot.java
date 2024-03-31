@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PCenter");
+    PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PSouth");
     autoSimTraj = thing.getTrajectory(new ChassisSpeeds(), thing.getPreviewStartingHolonomicPose().getRotation());
   }
 
@@ -244,8 +244,10 @@ public class Robot extends TimedRobot {
     SwerveModuleState[] newStates = VisionSimConstants.Kinematics.getValue().toSwerveModuleStates(speeds);
     int constantMultiplier = 1;
     for (int i = 0; i < 4; i++) {
-      VisionSimConstants.SwerveModulePositions.getValue()[i].angle = newStates[i].angle;
-      VisionSimConstants.SwerveModulePositions.getValue()[i].distanceMeters += newStates[i].speedMetersPerSecond * timeDelta  * constantMultiplier;
+      double distanceError = encoderNoise.nextGaussian(VisionSimConstants.kDistanceEncoderErrorMean, VisionSimConstants.kDistanceEncoderStandardDev);
+      double angleError = encoderNoise.nextGaussian(VisionSimConstants.kAngleEncoderErrorMean, VisionSimConstants.kAngleEncoderStandardDev);
+      VisionSimConstants.SwerveModulePositions.getValue()[i].angle = newStates[i].angle.plus(new Rotation2d(angleError));
+      VisionSimConstants.SwerveModulePositions.getValue()[i].distanceMeters += newStates[i].speedMetersPerSecond * timeDelta  * constantMultiplier + distanceError;
       System.out.println(VisionSimConstants.SwerveModulePositions.getValue()[i]);
     }
     poseEstimator.get().updateWithTime(Timer.getFPGATimestamp(), gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
