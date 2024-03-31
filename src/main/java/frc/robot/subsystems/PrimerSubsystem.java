@@ -132,7 +132,7 @@ public class PrimerSubsystem extends SubsystemBase{
     if (Utils.isSimulation()) {
       return new WaitCommand(2.5);
     }
-    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(new InstantCommand(() -> primerStow = true)).finallyDo(() -> setSpeed(0));
+    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(new InstantCommand(() -> {primerStow = true; tempPosition = primerRoller.getPosition().getValueAsDouble();})).finallyDo(() -> setSpeed(0));
   }
 
   public Command fastIntakeCommand() {
@@ -175,7 +175,6 @@ public class PrimerSubsystem extends SubsystemBase{
     if (primerStow && isPrimerBeamBreakBroken()) {
       //setSpeed(PrimerConstants.kIntake);
     }
-    tempPosition = (isPrimerBeamBreakBroken()) ? primerRoller.getPosition().getValueAsDouble() : 0;
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("primer beambreak pos", tempPosition);
     if (primerStow) {
