@@ -81,6 +81,7 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
+    pidController.kA = ShooterConstants.kA;
     
     shooterLeader.getConfigurator().apply(rollerConfig);
     shooterFollower.getConfigurator().apply(rollerConfig);
@@ -191,9 +192,10 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
-    //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
-    // }
+    if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
+      targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
+      setRequest(targetVelocity);
+    }
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
     SmartDashboard.putNumber("shooterspeed", getRPM());  
   }

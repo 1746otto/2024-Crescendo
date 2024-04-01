@@ -125,7 +125,6 @@ public class RobotContainer {
       default:
         break;
     }
-    intakeWristButtons();
   }
 
   private void swerveButtons() {
@@ -148,8 +147,8 @@ public class RobotContainer {
   }
 
   private void shooterRollerButtons() {
-    joystick.a().whileTrue(new ConditionalCommand(shooter.sysIdQuasistatic(Direction.kForward), intakeWrist.sysIdQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
-    joystick.b().whileTrue(new ConditionalCommand(intakeWrist.sysIdDynamic(Direction.kForward), intakeWrist.sysIdDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.a().whileTrue(new ConditionalCommand(shooter.sysIdQuasistatic(Direction.kForward), shooter.sysIdQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.b().whileTrue(new ConditionalCommand(shooter.sysIdDynamic(Direction.kForward), shooter.sysIdDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
     joystick.povUp().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
     joystick.povDown().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
   }
