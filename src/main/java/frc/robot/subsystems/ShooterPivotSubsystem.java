@@ -55,6 +55,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
 
       SmartDashboard.putNumber("target", targetPose);
+      SmartDashboard.putNumber("Target Position", targetPose);
       
       //setRequest(master.getPosition().getValueAsDouble());
     }
@@ -126,6 +127,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
+
+        // if (SmartDashboard.getNumber("Target Position", targetPose) != targetPose) {
+        //     targetPose = SmartDashboard.getNumber("Target Position", targetPose);
+        // }
         if (!atSetpoint()){
             master.setControl(new PositionVoltage(targetPose));
         } else {

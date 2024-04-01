@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
         VisionConstants.kSpeakerId = 7;
         VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
       } else {
-        VisionConstants.kSpeakerId = 4;
+        VisionConstants.kSpeakerId = 3;
         VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
       } 
     } else {
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
         VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
       } else {
         m_robotContainer.temp = 1;
-        VisionConstants.kSpeakerId = 4;
+        VisionConstants.kSpeakerId = 3;
         VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
       } 
     } else {

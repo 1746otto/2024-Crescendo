@@ -61,6 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
+    pidController.kA = ShooterConstants.kA;
     
     rollerConfig.CurrentLimits
       .withStatorCurrentLimit(ShooterConstants.kStatorLimit)
@@ -153,7 +154,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRequest(double RPM) {
     targetVelocity = RPM;
-    shooterLeader.setControl(new VelocityVoltage(RPM/60));
+    shooterLeader.setControl(new VelocityVoltage(RPM/60.0));
     // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
     //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
@@ -166,11 +167,15 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
+    //  if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
+      
     // }
+
+    //setRequest(targetVelocity);
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", getRPM());  
+    SmartDashboard.putNumber("shooterspeed", getRPM());
+    SmartDashboard.putNumber("shooter target", targetVelocity);
   }
 
 }

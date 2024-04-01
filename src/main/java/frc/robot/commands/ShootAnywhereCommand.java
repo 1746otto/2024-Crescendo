@@ -69,7 +69,7 @@ public class ShootAnywhereCommand extends Command {
         xAxisSupplier = xAxis;
         yAxisSupplier = yAxis;
         rightXAxis = angularRequest;
-        addRequirements(shooter, pivot, leds);
+        addRequirements(shooter, pivot, swerve, leds);
 
         this.directionSupplier = directionSupplier;
 
@@ -244,7 +244,7 @@ public class ShootAnywhereCommand extends Command {
         SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
         SmartDashboard.putNumber("Shooter speed", shooterRPM);
 
-        // shooter.setRequest(shooterRPM);
+        //shooter.setRequest(shooterRPM);
         // pivot.setRequest(shooterAngle);
 
     }

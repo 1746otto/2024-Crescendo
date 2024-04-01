@@ -216,21 +216,20 @@ public class RobotContainer {
     ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,
         () -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
 
-    /*
-     * drivetrain.setDefaultCommand( // Drivetrain will execute this command
-     * periodically
-     * drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY()
-     * * Math.pow(Math.abs(joystick.getLeftY()), power - 1) * MaxSpeed) // Drive
-     * forward with
-     * // negative Y (forward)
-     * .withVelocityY(temp * joystick.getLeftX() *
-     * Math.pow(Math.abs(joystick.getLeftX()), power - 1) * MaxSpeed) // Drive left
-     * with negative X (left)
-     * .withRotationalRate(-joystick.getRightX() *
-     * Math.pow(Math.abs(joystick.getRightX()), power - 1) * MaxAngularRate) //
-     * Drive counterclockwise with negative X (left)
-     * ));
-     */
+    
+     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+     drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY() *
+     Math.pow(Math.abs(joystick.getLeftY()), power - 1) * MaxSpeed) // Drive
+     //forward with
+     // negative Y (forward)
+     .withVelocityY(temp * joystick.getLeftX() *
+     Math.pow(Math.abs(joystick.getLeftX()), power - 1) * MaxSpeed) // Drive left
+     //with negative X (left)
+     .withRotationalRate(-joystick.getRightX() *
+     Math.pow(Math.abs(joystick.getRightX()), power - 1) * MaxAngularRate) //
+    // Drive counterclockwise with negative X (left)
+     ));
+     
     // dumb commands to test
 
     // joystick.y().onTrue(pivot.goToIntakePos());
@@ -270,14 +269,8 @@ public class RobotContainer {
     );
 
     // Temporary test button for autonomous
-    joystick.leftTrigger().onTrue(
-        new SequentialCommandGroup(
-            new ParallelDeadlineGroup(
-                primer.intakeCommand()))
-            .finallyDo(
-                () -> {
-                  pivot.setRequest(ShooterWristConstants.kFlat);
-                }));
+    joystick.leftTrigger().whileTrue(
+        shootAnywhereCommand);
 
     // joystick.y().and(notInIntakeDown).onTrue( //Change for toggling
     // new SequentialCommandGroup(

@@ -86,11 +86,12 @@ public final class Constants {
     public static final int kShooterBottomRollerMotorID = 22;
     
     // PID constants (top shooting roller)
-    public static final double kP = 0.11200000118743628;
+    public static final double kP = 0.4;
     public static final double kI = 0;
-    public static final double kD = 0.0002500000118743628;
-    public static final double kS = 0.17;
-    public static final double kV = 0.0001654583333333333;
+    public static final double kD = 0.0;
+    public static final double kS = 0.23738;
+    public static final double kV = 0.11924;
+    public static final double kA = 0.0054329;
     
     // speed constants
     public static final double kShoot = 4000;//0.2 and 1.0
@@ -99,6 +100,8 @@ public final class Constants {
     public static final double kSubwooferSpeed = 4500;//4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
+    public static final double kFerry = 5200;
+    public static final double kAngleFerry = -0.345;
 
     // Limits
     public static final int kStatorLimit = 60;
