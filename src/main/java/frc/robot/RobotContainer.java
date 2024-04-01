@@ -273,15 +273,15 @@ public class RobotContainer {
       )
     );
 
-    // // Temporary test button for autonomous
-    // joystick.leftTrigger().onTrue(
-    //     new SequentialCommandGroup(
-    //         new ParallelDeadlineGroup(
-    //             primer.intakeCommand()))
-    //         .finallyDo(
-    //             () -> {
-    //               pivot.setRequest(ShooterWristConstants.kFlat);
-    //             }));
+    // Temporary test button for autonomous
+    joystick.leftTrigger().onTrue(
+        new SequentialCommandGroup(
+            new ParallelDeadlineGroup(
+                primer.intakeCommand()))
+            .finallyDo(
+                () -> {
+                  pivot.setRequest(ShooterWristConstants.kFlat);
+                }));
 
     // joystick.y().and(notInIntakeDown).onTrue( //Change for toggling
     // new SequentialCommandGroup(

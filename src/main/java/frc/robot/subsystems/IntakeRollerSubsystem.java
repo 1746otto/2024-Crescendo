@@ -51,9 +51,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         
         configs.CurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
-            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true);
+            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            // .withStatorCurrentLimitEnable(true)
+            // .withSupplyCurrentLimitEnable(true);
 
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
