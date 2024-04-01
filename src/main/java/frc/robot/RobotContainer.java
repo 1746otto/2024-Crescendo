@@ -282,10 +282,7 @@ public class RobotContainer {
     joystick.leftTrigger().onTrue(
         new SequentialCommandGroup(
             new ParallelDeadlineGroup(
-                primer.intakeCommand()),
-            new InstantCommand(() -> {
-              primer.primerStow = true;
-            }))
+                primer.intakeCommand()))
             .finallyDo(
                 () -> {
                   pivot.setRequest(ShooterWristConstants.kFlat);

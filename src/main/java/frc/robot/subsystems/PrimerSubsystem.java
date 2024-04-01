@@ -137,7 +137,7 @@ public class PrimerSubsystem extends SubsystemBase {
       return new WaitCommand(2.5);
     }
     return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken))
-        //.andThen(stopCommand())
+        .andThen(stopCommand())
         .finallyDo(() -> {
           primerStow = true;
           tempPosition = primerRoller.getPosition().getValueAsDouble();
@@ -182,6 +182,8 @@ public class PrimerSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Beambreak", isPrimerBeamBreakBroken());
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("stow pos", tempPosition);
+    SmartDashboard.putBoolean("primerStow", primerStow);
+    SmartDashboard.putBoolean("is primer running command", this.getCurrentCommand() != null);
     if (primerStow) {
       primerRoller.setControl(new PositionVoltage(tempPosition).withSlot(1));
     }
