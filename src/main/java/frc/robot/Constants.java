@@ -33,8 +33,8 @@ public final class Constants {
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kStatorLimit = 40;
-    public static final double kSupplyLimit = 40;
+    public static final double kStatorLimit = 10;
+    public static final double kSupplyLimit = 10;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 

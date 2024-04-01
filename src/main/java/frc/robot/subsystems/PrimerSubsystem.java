@@ -38,7 +38,10 @@ public class PrimerSubsystem extends SubsystemBase {
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.CurrentLimits = new CurrentLimitsConfigs()
         .withStatorCurrentLimit(PrimerConstants.kStatorLimit)
-        .withSupplyCurrentLimit(PrimerConstants.kSupplyLimit);
+        .withSupplyCurrentLimit(PrimerConstants.kSupplyLimit)
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true);
+
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     configs.Slot0 = new Slot0Configs()
         .withKP(PrimerConstants.kVelocityP)
