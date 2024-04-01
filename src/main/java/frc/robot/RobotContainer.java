@@ -246,47 +246,42 @@ public class RobotContainer {
     // joystick.x().onTrue(new ParallelDeadlineGroup(intakeWrist.intakePosCommand(),
     // intakeRollers.intakeSpeedCommand()));
 
-    /*
-     * joystick.y().onTrue(
-     * new SequentialCommandGroup(
-     * new InstantCommand(() -> {primer.primerStow = false;}), // Currently
-     * unnecessary may be used if we need to fix stow idk man
-     * new ParallelDeadlineGroup(
-     * intakeWrist.intakePosCommand(),
-     * intakeRollers.intakeSpeedCommand(),
-     * pivot.goToIntakePos(),
-     * new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
-     * ),
-     * new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-     * .withTimeout(5),
-     * intakeRollers.stopCommand(),
-     * intakeWrist.indexPosCommand(),
-     * new ParallelDeadlineGroup(
-     * primer.intakeCommand(), // Stops primer by itself
-     * intakeRollers.outtakeCommand(),
-     * new InstantCommand(() -> primer.primerStow = true)
-     * ),
-     * intakeRollers.stopCommand()
-     * 
-     * )
-     * .finallyDo(
-     * () -> {
-     * intakeRollers.stop();
-     * pivot.setRequest(ShooterWristConstants.kFlat);
-     * }
-     * )
-     * );
-     */
+    
+    joystick.y().onTrue(
+    new SequentialCommandGroup(
+    new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
+    new ParallelDeadlineGroup(
+    intakeWrist.intakePosCommand(),
+    intakeRollers.intakeSpeedCommand(),
+    pivot.goToIntakePos(),
+    new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+    ),
+    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    .withTimeout(5),
+    intakeRollers.stopCommand(),
+    intakeWrist.indexPosCommand(),
+    new ParallelDeadlineGroup(
+    primer.intakeCommand(), // Stops primer by itself
+    intakeRollers.outtakeCommand()),
+    intakeRollers.stopCommand()
+    )
+     .finallyDo(
+    () -> {
+    intakeRollers.stop();
+    pivot.setRequest(ShooterWristConstants.kFlat);
+        }
+      )
+    );
 
-    // Temporary test button for autonomous
-    joystick.leftTrigger().onTrue(
-        new SequentialCommandGroup(
-            new ParallelDeadlineGroup(
-                primer.intakeCommand()))
-            .finallyDo(
-                () -> {
-                  pivot.setRequest(ShooterWristConstants.kFlat);
-                }));
+    // // Temporary test button for autonomous
+    // joystick.leftTrigger().onTrue(
+    //     new SequentialCommandGroup(
+    //         new ParallelDeadlineGroup(
+    //             primer.intakeCommand()))
+    //         .finallyDo(
+    //             () -> {
+    //               pivot.setRequest(ShooterWristConstants.kFlat);
+    //             }));
 
     // joystick.y().and(notInIntakeDown).onTrue( //Change for toggling
     // new SequentialCommandGroup(
