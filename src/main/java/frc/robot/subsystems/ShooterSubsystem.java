@@ -56,8 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
-    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rollerConfig.CurrentLimits.withStatorCurrentLimit(ShooterConstants.kStatorLimit);
     shooterLeader.getConfigurator().apply(rollerConfig);
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;

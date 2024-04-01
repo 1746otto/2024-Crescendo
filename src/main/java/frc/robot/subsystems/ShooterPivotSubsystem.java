@@ -35,7 +35,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       configs.CurrentLimits = new CurrentLimitsConfigs()
         .withStatorCurrentLimit(ShooterWristConstants.kStatorLimit)
-        .withSupplyCurrentLimit(ShooterWristConstants.kSupplyLimit);
+        .withSupplyCurrentLimit(ShooterWristConstants.kSupplyLimit)
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true);
       configs.Feedback.FeedbackRemoteSensorID = 50;//to change
       configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       Slot0Configs pidController = configs.Slot0;
