@@ -140,7 +140,7 @@ public final class Constants {
     public static final double kVelocityA = 0.0;
     public static final double kPositionP = 10.0;
     public static final double kPositionI = 0.0;
-    public static final double kPositionD = 0.0;
+    public static final double kPositionD = 0.05;
     public static final double kPositionS = 0.0;
     public static final double kPositionV = 0.0;
     public static final double kPositionA = 0.0;
