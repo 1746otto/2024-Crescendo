@@ -138,10 +138,10 @@ public class PrimerSubsystem extends SubsystemBase {
       return new WaitCommand(2.5);
     }
     return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken))
-        .andThen(stopCommand())
         .finallyDo(() -> {
           primerStow = true;
           tempPosition = primerRoller.getPosition().getValueAsDouble();
+          primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
         });
   }
 
@@ -178,9 +178,6 @@ public class PrimerSubsystem extends SubsystemBase {
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
   }
 
-  private boolean isCommandRunning() {
-    return this.getCurrentCommand() != null;
-  }
 
   @Override
   public void periodic() {
@@ -188,19 +185,15 @@ public class PrimerSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("stow pos", tempPosition);
     SmartDashboard.putBoolean("primerStow", primerStow);
-    SmartDashboard.putBoolean("is primer running command", isCommandRunning());
-    if (primerStow && isCommandRunning() ) {
-      primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
-    }
+    SmartDashboard.putString("primerMode", primerRoller.getControlMode().getName());
   }
 
-  @Override
-  public Command getDefaultCommand() {
-    return runOnce(() -> {
-      tempPosition = primerRoller.getPosition().getValueAsDouble();
-    }).andThen(runOnce(() -> {
-      primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
-    })).andThen(new RunCommand(() -> {}));
-  }
+  
+  // @Override
+  // public Command getDefaultCommand() {
+  //   return runOnce(() -> {
+  //     primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
+  //   }).andThen(new RunCommand(() -> {})).onlyIf(() -> primerStow);
+  // }
 
 }
