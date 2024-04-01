@@ -10,6 +10,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -40,6 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private double targetVelocity;
 
+
+  private VoltageOut voltageRequest = new VoltageOut(0);
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
@@ -56,9 +61,17 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
-    rollerConfig.CurrentLimits.withStatorCurrentLimit(ShooterConstants.kStatorLimit);
+    
+    rollerConfig.CurrentLimits
+      .withStatorCurrentLimit(ShooterConstants.kStatorLimit)
+      .withSupplyCurrentLimit(ShooterConstants.kSupplyLimit)
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimitEnable(true);
+    
     shooterLeader.getConfigurator().apply(rollerConfig);
+    
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+    
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     followerConfig.CurrentLimits.SupplyCurrentLimit = 40;
     followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -92,7 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
   public void setOutput(double speed) {
-    shooterLeader.set(speed);
+    shooterLeader.setControl(voltageRequest.withOutput(speed * 12));
   }
 
   /**
@@ -127,7 +140,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    setRequest(0);
+    shooterLeader.setControl(new NeutralOut());
   }
 
   public boolean isAtReq() {
