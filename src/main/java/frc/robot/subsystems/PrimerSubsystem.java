@@ -137,6 +137,7 @@ public class PrimerSubsystem extends SubsystemBase {
       return new WaitCommand(2.5);
     }
     return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken))
+        //.andThen(stopCommand())
         .finallyDo(() -> {
           primerStow = true;
           tempPosition = primerRoller.getPosition().getValueAsDouble();
@@ -149,14 +150,6 @@ public class PrimerSubsystem extends SubsystemBase {
 
   public Command setIntakeSpeed() {
     return setSpeedCommand(PrimerConstants.kIntake);
-  }
-
-  public Command outtakeCommand() {
-    return setSpeedCommand(PrimerConstants.kOuttake).finallyDo(() -> setSpeed(0));
-  }
-
-  public Command shootCommand() {
-    return setSpeedCommand(PrimerConstants.kShoot).finallyDo(() -> setSpeed(0));
   }
 
   public Command stopCommand() {
