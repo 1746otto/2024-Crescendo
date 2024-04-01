@@ -42,8 +42,11 @@ public class IntakeWristSubsystem extends SubsystemBase{
         // motionMagic.MotionMagicCruiseVelocity = ShooterConstants.kMotionMagicCruiseVelocity;
         // motionMagic.MotionMagicAcceleration = ShooterConstants.kMotionMagicCruiseAcceleration;
         // motionMagic.MotionMagicJerk = ShooterConstants.kMotionMagicJerk;
-        talonFxConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        talonFxConfig.CurrentLimits.StatorCurrentLimit = 60;
+        talonFxConfig.CurrentLimits
+            .withStatorCurrentLimit(IntakeWristConstants.kStatorLimit)
+            .withSupplyCurrentLimit(IntakeWristConstants.kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true);
         
         turningMotor.getConfigurator().apply(talonFxConfig);
         turningMotor.setNeutralMode(NeutralModeValue.Brake);

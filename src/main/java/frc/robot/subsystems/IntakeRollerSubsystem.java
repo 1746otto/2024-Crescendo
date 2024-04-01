@@ -48,9 +48,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
         TalonFXConfiguration configs = new TalonFXConfiguration();
+        
         configs.CurrentLimits = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
-        .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
+            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true);
+
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
