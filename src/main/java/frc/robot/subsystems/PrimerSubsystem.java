@@ -185,7 +185,7 @@ public class PrimerSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("stow pos", tempPosition);
     SmartDashboard.putBoolean("primerStow", primerStow);
-    SmartDashboard.putString("primerMode", primerRoller.getControlMode().getValue());
+    SmartDashboard.putString("primerMode", primerRoller.getControlMode().getValue().toString());
   }
 
   
