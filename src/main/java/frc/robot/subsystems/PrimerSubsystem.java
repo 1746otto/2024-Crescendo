@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 /**
  * Class for PrimerSubsystem to move game pieces from indexer to a holding space
@@ -177,16 +178,29 @@ public class PrimerSubsystem extends SubsystemBase {
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
   }
 
+  private boolean isCommandRunning() {
+    return this.getCurrentCommand() != null;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Beambreak", isPrimerBeamBreakBroken());
     SmartDashboard.putNumber("actual primer pos", primerRoller.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("stow pos", tempPosition);
     SmartDashboard.putBoolean("primerStow", primerStow);
-    SmartDashboard.putBoolean("is primer running command", this.getCurrentCommand() != null);
-    if (primerStow) {
-      primerRoller.setControl(new PositionVoltage(tempPosition).withSlot(1));
+    SmartDashboard.putBoolean("is primer running command", isCommandRunning());
+    if (primerStow && isCommandRunning() ) {
+      primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
     }
+  }
+
+  @Override
+  public Command getDefaultCommand() {
+    return runOnce(() -> {
+      tempPosition = primerRoller.getPosition().getValueAsDouble();
+    }).andThen(runOnce(() -> {
+      primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
+    })).andThen(new RunCommand(() -> {}));
   }
 
 }
