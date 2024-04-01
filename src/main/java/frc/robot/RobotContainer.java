@@ -285,22 +285,6 @@ public class RobotContainer {
     // }
     // ));
 
-    joystick.b().whileTrue(
-        new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                pivot.goToAmpPose(),
-                intakeWrist.intakePosCommand()),
-            new StartEndCommand(
-                () -> {
-                  primer.setSpeed(-1);
-                  intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
-                },
-                () -> {
-                  pivot.setRequest(ShooterWristConstants.kIntakePos);
-                  intakeWrist.setRequest(IntakeWristConstants.kStow);
-                  primer.stop();
-                  intakeRollers.stop();
-                })));
     // joystick.a().whileTrue(primer.setIntakeSpeed().finallyDo(() ->
     // primer.setSpeed(0)));
 
