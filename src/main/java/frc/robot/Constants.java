@@ -123,7 +123,7 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.25;
+    public static final double kIntake = 0.15;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
