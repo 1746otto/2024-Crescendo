@@ -104,20 +104,15 @@ public class RobotContainer {
 
   // pathplanner testing
   public RobotContainer() {
-    NamedCommands.registerCommand("primeShooter", new PrintCommand("primeShooter")/*
-                                                                                   * new handlePrimerShooter(primer, ()
-                                                                                   * -> ampPosition ==
-                                                                                   * AmpPositionState.Amp).withTimeout(.
-                                                                                   * 375)
-                                                                                   */);
-    NamedCommands.registerCommand("goToSubwooferSpeed", new PrintCommand("subwooferSpeed")/*
-                                                                                           * shooter.setRequestCommand(
-                                                                                           * ShooterConstants.
-                                                                                           * kSubwooferSpeed).andThen(
-                                                                                           * new WaitUntilCommand((() ->
-                                                                                           * shooter.isAtReq())).
-                                                                                           * withTimeout(.5))
-                                                                                           */); // Might want to have a
+    NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
+    NamedCommands.registerCommand("goToSubwooferSpeed", 
+                                                                                            shooter.setRequestCommand(
+                                                                                            ShooterConstants.
+                                                                                            kSubwooferSpeed).andThen(
+                                                                                            new WaitUntilCommand((() ->
+                                                                                            shooter.isAtReq())).
+                                                                                            withTimeout(.5))
+                                                                                           ); // Might want to have a
                                                                                                 // check for is at
                                                                                                 // request instead of
                                                                                                 // just calling this
@@ -259,11 +254,12 @@ public class RobotContainer {
     new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
     .withTimeout(5),
     intakeRollers.stopCommand(),
-    intakeWrist.indexPosCommand(),
+    
     new ParallelDeadlineGroup(
-    primer.intakeCommand(), // Stops primer by itself
-    intakeRollers.outtakeCommand()),
-    intakeRollers.stopCommand()
+    primer.intakeCommand(),
+    intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
+    )
+   
     )
      .finallyDo(
     () -> {
@@ -335,7 +331,33 @@ public class RobotContainer {
                 new Pose2d(
                     drivetrain.getState().Pose.getTranslation(),
                     Rotation2d.fromDegrees(/* (temp == 1) ? 180 : */0)))));
-
+     
+    joystick.a().onTrue( //Test button
+    new SequentialCommandGroup(
+    new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
+    new ParallelDeadlineGroup(
+    intakeWrist.intakePosCommand(),
+    intakeRollers.intakeSpeedCommand(),
+    pivot.goToIntakePos(),
+    new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+    ),
+    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    .withTimeout(5),
+    intakeRollers.stopCommand(),
+    intakeWrist.indexPosCommand(),
+    shooter.ShootCommand(),
+    new ParallelDeadlineGroup(
+    primer.intakeCommand(), // Stops primer by itself
+    intakeRollers.outtakeCommand()),
+    intakeRollers.stopCommand()
+    )
+     .finallyDo(
+    () -> {
+    intakeRollers.stop();
+    pivot.setRequest(ShooterWristConstants.kFlat);
+        }
+      )
+    );
     // pivot
     // joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() ||
     // joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new
@@ -373,7 +395,7 @@ public class RobotContainer {
   }
 
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new handleLEDCommand(led, intakeRollers::intakeHasPiece, inShooter));
+    led.setDefaultCommand(new handleLEDCommand(led, inIntakeUp, inShooter));
     // pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntakeDown));
     // check wrist up and intake roller beambreak is triggered
   }

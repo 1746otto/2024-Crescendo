@@ -140,10 +140,10 @@ public class PrimerSubsystem extends SubsystemBase {
     if (Utils.isSimulation()) {
       return new WaitCommand(2.5);
     }
-    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken))
+    return setSpeedCommand(PrimerConstants.kIntake).andThen(new WaitUntilCommand(this::isPrimerBeamBreakBroken)).andThen(setSpeedCommand(PrimerConstants.kSlowSpeed).until(() -> primerRoller.getPosition().getValueAsDouble() >= (tempPosition + PrimerConstants.kEncoderOffset)))
         .finallyDo(() -> {
           primerStow = true;
-          tempPosition = primerRoller.getPosition().getValueAsDouble();
+          
           primerRoller.setControl(new PositionVoltage(tempPosition + PrimerConstants.kEncoderOffset).withSlot(1));
         });
   }
@@ -177,7 +177,7 @@ public class PrimerSubsystem extends SubsystemBase {
   }
 
   public boolean isPrimerBeamBreakBroken() { // To change
-
+    tempPosition = primerRoller.getPosition().getValueAsDouble();
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
   }
 

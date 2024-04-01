@@ -130,6 +130,7 @@ public final class Constants {
     public static final double kShoot = 1.0;//1.0
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
+    public static final double kSlowSpeed = 0.05;
 
     // PID values
     public static final double kVelocityP = 0.1;
@@ -145,7 +146,7 @@ public final class Constants {
     public static final double kPositionV = 0.0;
     public static final double kPositionA = 0.0;
     public static final double kFF = 0.0;
-    public static final double kEncoderOffset = 0;
+    public static final double kEncoderOffset = 0.0;
   }// Should go away for final competition code
 
   public static class LEDConstants {

@@ -119,7 +119,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      */
     public boolean intakeHasPiece() {
         
-        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125 || rollerMotor.getVelocity().getValueAsDouble() <= 1.0;
+        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125; //|| rollerMotor.getVelocity().getValueAsDouble() <= 1.0;
     }
 
     public boolean buttonPressed() {
