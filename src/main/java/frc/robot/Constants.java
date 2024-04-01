@@ -138,14 +138,14 @@ public final class Constants {
     public static final double kVelocityS = 0.0;
     public static final double kVelocityV = 0.0;
     public static final double kVelocityA = 0.0;
-    public static final double kPositionP = 25.0;
+    public static final double kPositionP = 10.0;
     public static final double kPositionI = 0.0;
     public static final double kPositionD = 0.0;
     public static final double kPositionS = 0.0;
     public static final double kPositionV = 0.0;
     public static final double kPositionA = 0.0;
     public static final double kFF = 0.0;
-    public static final double kEncoderOffset = -0.25;
+    public static final double kEncoderOffset = 0;
   }// Should go away for final competition code
 
   public static class LEDConstants {
