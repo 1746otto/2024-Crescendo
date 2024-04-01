@@ -53,7 +53,7 @@ public class RobotContainer {
   public double power = 4;
 
   public enum currentMechanism {swerve, intakeWrist, intakeRollers, primer, shooterPivot, shooterRollers};
-  currentMechanism sysidMech = currentMechanism.intakeWrist;
+  currentMechanism sysidMech = currentMechanism.shooterRollers;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -61,7 +61,7 @@ public class RobotContainer {
   // private final Vision vision = new Vision(drivetrain);
   // private final LEDSubsystem led = new LEDSubsystem();
   // private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
-  // private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem(sysidMech);
   // private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem(sysidMech);
   // private final PrimerSubsystem primer = new PrimerSubsystem();
@@ -119,6 +119,9 @@ public class RobotContainer {
       case intakeWrist:
         intakeWristButtons();
         break;
+      case shooterRollers:
+        shooterRollerButtons();
+        break;
       default:
         break;
     }
@@ -142,6 +145,13 @@ public class RobotContainer {
     joystick.b().whileTrue(new ConditionalCommand(intakeWrist.sysIdDynamic(Direction.kForward), intakeWrist.sysIdDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
     joystick.rightStick().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
     joystick.leftStick().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
+  }
+
+  private void shooterRollerButtons() {
+    joystick.a().whileTrue(new ConditionalCommand(shooter.sysIdQuasistatic(Direction.kForward), intakeWrist.sysIdQuasistatic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.b().whileTrue(new ConditionalCommand(intakeWrist.sysIdDynamic(Direction.kForward), intakeWrist.sysIdDynamic(Direction.kReverse), () -> runDirection == Direction.kForward));
+    joystick.povUp().onTrue(new InstantCommand(() -> runDirection = Direction.kForward));
+    joystick.povDown().onTrue(new InstantCommand(() -> runDirection = Direction.kReverse));
   }
 
   public void configureDefaultCommands() {

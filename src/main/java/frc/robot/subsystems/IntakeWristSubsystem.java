@@ -67,6 +67,8 @@ public class IntakeWristSubsystem extends SubsystemBase{
     }
 
     private void setupSysId() {
+        SignalLogger.setPath("/media/sda1/ctre-logs/");
+
         BaseStatusSignal.setUpdateFrequencyForAll(250,
             turningMotor.getPosition(),
             turningMotor.getVelocity(),
@@ -75,7 +77,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
             turningMotor.getSupplyCurrent()
         );
         
-        turningMotor.optimizeBusUtilization();
+        TalonFX.optimizeBusUtilizationForAll();
 
         SignalLogger.start();
     }
