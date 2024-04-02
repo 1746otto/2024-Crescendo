@@ -106,8 +106,7 @@ public class RobotContainer {
       new ParallelDeadlineGroup(
       intakeWrist.intakePosCommand(),
       intakeRollers.intakeSpeedCommand(),
-      pivot.goToIntakePos(),
-      new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+      pivot.goToIntakePos()
       ),
       new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
       .withTimeout(2),//change this
@@ -125,8 +124,9 @@ public class RobotContainer {
           }
         )
       );
-    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(vision, shooter, pivot, led, primer).withTimeout(2));
-    
+    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(vision, shooter, pivot, led, primer).until(() -> primer.isPrimerBeamBreakBroken()).withTimeout(2));
+    //static positions
+
 
     NamedCommands.registerCommand("ejectStuckPieces",
         new SequentialCommandGroup(
