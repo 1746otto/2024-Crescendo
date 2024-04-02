@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 
 /**
@@ -26,8 +29,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  public static class IntakeRollerConstants
-  {
+  public static class IntakeRollerConstants {
     public static final int kIntakeRollerID = 11;
     public static final double kIntake = 0.8;
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
@@ -38,10 +40,9 @@ public final class Constants {
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
-  public static class IntakeWristConstants
-  {
+  public static class IntakeWristConstants {
     public static final int kIntakeTurnID = 12;
-    
+
     // Limits
     public static final double kStatorLimit = 60;
     public static final double kSupplyLimit = 40;
@@ -59,8 +60,6 @@ public final class Constants {
     public static final double kTolerance = 0.5;
 
   }
-  
-  
 
   /**
    * Constants for the IndexerSubsystem.
@@ -80,11 +79,11 @@ public final class Constants {
    * IDs, speeds, and PID values are included.
    */
   public static class ShooterConstants {
-    
+
     // device IDs
     public static final int kShooterTopRollerMotorID = 21;
     public static final int kShooterBottomRollerMotorID = 22;
-    
+
     // PID constants (top shooting roller)
     public static final double kP = 0.4;
     public static final double kI = 0;
@@ -92,12 +91,12 @@ public final class Constants {
     public static final double kS = 0.23738;
     public static final double kV = 0.11924;
     public static final double kA = 0.0054329;
-    
+
     // speed constants
-    public static final double kShoot = 4000;//0.2 and 1.0
+    public static final double kShoot = 4000;// 0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kSubwooferShot = 0.8;
-    public static final double kSubwooferSpeed = 4500;//4640;
+    public static final double kSubwooferSpeed = 4500;// 4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
     public static final double kFerry = 5200;
@@ -130,7 +129,7 @@ public final class Constants {
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
-    public static final double kShoot = 1.0;//1.0
+    public static final double kShoot = 1.0;// 1.0
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
     public static final double kSlowSpeed = 0.05;
@@ -176,14 +175,14 @@ public final class Constants {
     public static double kFlat = -0.213379;
     public static double k4PPreloadShot = 0;
     public static double k4PLastShot = kFlat + Rotation2d.fromDegrees(32.4238401).getRotations();
-    public static double kPodiumPos = kFlat + 0.5 - Rotation2d.fromDegrees(21.8).getRotations();//0.801; // To change
+    public static double kPodiumPos = kFlat + 0.5 - Rotation2d.fromDegrees(21.8).getRotations();// 0.801; // To change
     public static double kSubwooferPos = -0.389404; // To change 0.541
     public static double kIntakePos = -0.348389; // To change
     public static double kAmpPos = 0.748;// To change
-    public static double kSideSubPos = Math.toRadians(67) / ( 2 * Math.PI ) + 0.372;
+    public static double kSideSubPos = Math.toRadians(67) / (2 * Math.PI) + 0.372;
     public static double kBackPackPos = -0.616455;
-    public static double kTolerance = Math.toRadians(1) / ( 2 * Math.PI ); // Just divide by 360.0???
-    public static double kLimit = 0.5/*5.52380952383*/ / (2 * Math.PI);
+    public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
+    public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
     public static int kShooterBeambreak = 1;
 
@@ -192,8 +191,19 @@ public final class Constants {
     public static double maxAcceleration = 0.75; // TODO: Units and true value
     public static final double kG = 0; // Units of Volts. Calculated by voltage required to hold vertical position.
     public static final double kS = 0; // Units of Volts.
-    public static final double kP = 12*6.4;
+    public static final double kP = 12 * 6.4;
     public static final double kD = 0.0;
     public static final double kStowpos = kFlat;
+  }
+
+  public static class TeleopSwerveConstants {
+    public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
+    public static double MaxAngularRateRotPerSec = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+    public static double SwerveMagnitudeExponent = 4;
+
+    public static final SwerveRequest.FieldCentric TeleopDriveRequest = new SwerveRequest.FieldCentric()
+        .withDeadband(MaxSpeedMetersPerSec * Math.pow(.1, 4))
+        .withRotationalDeadband(MaxAngularRateRotPerSec * Math.pow(.1, 4)) // Add a 10% deadband.
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric driving in open loop
   }
 }

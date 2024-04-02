@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CommandSwerveDrivetrain;
+import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.constants.DynamicShootingConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
@@ -79,8 +80,7 @@ public class ShootAnywhereCommand extends Command {
         request = new SwerveRequest.FieldCentricFacingAngle()
                 .withDeadband(6 * 0.1).withRotationalDeadband(0) // Add a 10% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        request2 = new SwerveRequest.FieldCentric().withDeadband(6 * 0.1).withRotationalDeadband(0) // Add a 10% deadband
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);//Should fix
+        request2 = TeleopSwerveConstants.TeleopDriveRequest;
         request.HeadingController = new PhoenixPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD);
         request.HeadingController.setTolerance(.0125);

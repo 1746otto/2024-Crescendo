@@ -35,6 +35,7 @@ import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
+import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.handleLEDCommand;
@@ -56,7 +57,7 @@ public class RobotContainer {
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-  public double power = 4;
+  public double power = TeleopSwerveConstants.SwerveMagnitudeExponent;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -69,15 +70,10 @@ public class RobotContainer {
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * Math.pow(.1, power)).withRotationalDeadband(MaxAngularRate * Math.pow(.1, 4)) // Add a
-                                                                                                             // 10%
-                                                                                                             // deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
+  private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final Telemetry logger = new Telemetry(TeleopSwerveConstants.MaxSpeedMetersPerSec);
 
   private enum AmpPositionState {
     Amp, Normal
@@ -219,14 +215,14 @@ public class RobotContainer {
     
      drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
      drivetrain.applyRequest(() -> drive.withVelocityX(temp * joystick.getLeftY() *
-     Math.pow(Math.abs(joystick.getLeftY()), power - 1) * MaxSpeed) // Drive
+     Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec) // Drive
      //forward with
      // negative Y (forward)
      .withVelocityY(temp * joystick.getLeftX() *
-     Math.pow(Math.abs(joystick.getLeftX()), power - 1) * MaxSpeed) // Drive left
+     Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec) // Drive left
      //with negative X (left)
      .withRotationalRate(-joystick.getRightX() *
-     Math.pow(Math.abs(joystick.getRightX()), power - 1) * MaxAngularRate) //
+     Math.pow(Math.abs(joystick.getRightX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxAngularRateRotPerSec) //
     // Drive counterclockwise with negative X (left)
      ));
      
