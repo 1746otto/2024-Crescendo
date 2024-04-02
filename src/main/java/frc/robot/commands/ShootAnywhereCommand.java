@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CommandSwerveDrivetrain;
+import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.constants.DynamicShootingConstants;
 import frc.robot.constants.FieldConstants;
@@ -56,7 +57,7 @@ public class ShootAnywhereCommand extends Command {
     Command drive;
     boolean canDriverRotate;
 
-    // This is so jank the entire class needs to be rewritten;
+    // This is so jank the entire class needs to be rewritten.
     public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem,
             ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem,
             DoubleSupplier xAxis, DoubleSupplier yAxis, DoubleSupplier angularRequest,
@@ -217,16 +218,17 @@ public class ShootAnywhereCommand extends Command {
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
-        VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180))));
+        VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
       }
         // Find above and below keys
-        double distance = VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
+
+        double distance = VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
         Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
         SmartDashboard.putNumber("Distance to speaker", distance);
         SmartDashboard.putNumber("Robot Angle",
-                VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().getDegrees());
+                VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().getDegrees());
         // Find and apply interpolated angle and speed
         if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null
                 || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
@@ -246,15 +248,17 @@ public class ShootAnywhereCommand extends Command {
         SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
         SmartDashboard.putNumber("Shooter speed", shooterRPM);
 
-        //shooter.setRequest(shooterRPM);
-        // pivot.setRequest(shooterAngle);
+        shooter.setRequest(shooterRPM);
+        pivot.setRequest(shooterAngle);
 
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (CommandScheduler.getInstance().isScheduled(drive))
-            CommandScheduler.getInstance().cancel(drive);
+        // if (CommandScheduler.getInstance().isScheduled(drive))
+        //     CommandScheduler.getInstance().cancel(drive);
+        shooter.stop();
+        pivot.setRequest(ShooterWristConstants.kFlat);
     }
 
 }
