@@ -343,13 +343,11 @@ public class RobotContainer {
   // Command theory = drivetrain.getAutoPath("Bottom4P");
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
-  // Command tune = drivetrain.getAutoPath("PathPlanTest");
-  // Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-  // Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
-  // Command fourP = drivetrain.getAutoPath("4P");
-  // PathPlannerPath path =
-  // PathPlannerPath.fromChoreoTrajectory("4PUnderStage").flipPath();
-  // drivetrain.seedFieldRelative(path.getPathPoses().get(0));
+  Command tune = drivetrain.getAutoPath("PathPlanTest");
+  Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+  Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
+  Command fourP = drivetrain.getAutoPath("4P");
+ 
   Command test = drivetrain.getAutoPath("testAuto");
   return test;
   }
