@@ -117,6 +117,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToParallelPos() {
         return runPivot(ShooterWristConstants.kFlat);
     }
+    public Command goToAmpPosition() {
+        return runPivot(ShooterWristConstants.kAmpPosition);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }

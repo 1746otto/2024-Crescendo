@@ -105,6 +105,9 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public Command outtakeCommand() {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kOuttake));
     }
+    public Command ampCommand() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kAmp));
+    }
 
     public Command stowSpeedCommand() {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kHold));

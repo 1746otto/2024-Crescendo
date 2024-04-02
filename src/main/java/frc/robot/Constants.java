@@ -32,6 +32,7 @@ public final class Constants {
   public static class IntakeRollerConstants {
     public static final int kIntakeRollerID = 11;
     public static final double kIntake = 0.8;
+    public static final double kAmp = -0.475;
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
@@ -54,7 +55,7 @@ public final class Constants {
     // Positions
     public static final double kIntake = 14.438;
     public static final double kStow = 0.0;
-    public static final double kAmp = 0.0;
+    public static final double kAmp = 3.471008;
     public static final double kHalf = kIntake / 2;
 
     // tolerance
@@ -176,6 +177,7 @@ public final class Constants {
     public static double kSubwooferPos = -0.389404; // To change 0.541
     public static double kIntakePos = -0.348389; // To change
     public static double kBackPackPos = -0.616455;
+    public static double kAmpPosition = -0.137695;
     public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
     public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
     public static double kDt = 0.02;// To change

@@ -306,13 +306,24 @@ public class RobotContainer {
                     drivetrain.getState().Pose.getTranslation(),
                     Rotation2d.fromDegrees(/* (temp == 1) ? 180 : */0)))));
     
-    joystick.b().onTrue(
-      new SequentialCommandGroup(
-        intakeWrist.ampPosCommand(),
-        intakeRollers.outtakeCommand()
-      )
-      .andThen(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()))
-    );
+    // joystick.b().onTrue(
+    //   new SequentialCommandGroup(
+    //     pivot.goToAmpPosition(),
+    //     intakeWrist.ampPosCommand(),
+    //     intakeRollers.ampCommand().andThen(new WaitUntilCommand(() -> joystick.getHID().getBButtonReleased()))
+    //   )
+    //   .andThen(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()))
+    // );
+    // joystick.b().whileTrue(
+    //   new SequentialCommandGroup(
+    //     pivot.goToAmpPosition(),
+    //     intakeWrist.ampPosCommand(),
+    //     intakeRollers.ampCommand())
+    //   );
+    // joystick.b().onFalse(
+    //   intakeWrist.indexPosCommand().andThen(intakeRollers.stopCommand())
+    // );
+  
      
     joystick.a().onTrue( //Test button
     new SequentialCommandGroup(
@@ -390,7 +401,7 @@ public class RobotContainer {
     pivot.setRequest(ShooterWristConstants.kFlat);
   }
 
-  // public Command getAutonomousCommand() {
+  public Command getAutonomousCommand() {
   // Command auton = drivetrain.getAutoPath("5Piece");
   // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
   // Command middle2P = drivetrain.getAutoPath("Middle2P");
@@ -406,7 +417,7 @@ public class RobotContainer {
   // PathPlannerPath path =
   // PathPlannerPath.fromChoreoTrajectory("4PUnderStage").flipPath();
   // drivetrain.seedFieldRelative(path.getPathPoses().get(0));
-  // Command test = drivetrain.getAutoPath("testAuto");
-  // return test;
-  // }
+  Command test = drivetrain.getAutoPath("testAuto");
+  return test;
+  }
 }
