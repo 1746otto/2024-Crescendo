@@ -369,7 +369,7 @@ public class RobotContainer {
   }
 
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new handleLEDCommand(led, inIntakeUp, inShooter));
+    led.setDefaultCommand(new handleLEDCommand(led, () -> intakeRollers.intakeHasPiece(), inShooter).ignoringDisable(true));
     // pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntakeDown));
     // check wrist up and intake roller beambreak is triggered
   }

@@ -56,6 +56,7 @@ public class ShootAnywhereCommand extends Command {
     DoubleSupplier directionSupplier;
     Command drive;
     boolean canDriverRotate;
+    int blinking = 0;
 
     // This is so jank the entire class needs to be rewritten.
     public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem,
@@ -236,7 +237,7 @@ public class ShootAnywhereCommand extends Command {
             SmartDashboard.putBoolean("null entry", true);
             return;
         } else {
-            leds.setToHue(65);
+            
             SmartDashboard.putBoolean("null entry", false);
         }
 
@@ -250,6 +251,16 @@ public class ShootAnywhereCommand extends Command {
 
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
+        if (shooter.isAtReq()) {
+           if (blinking % 16 <= 7) {
+                leds.setToHue(55);
+           } else {
+                leds.setLedOff();
+           }
+           blinking ++;
+           
+        }
+         
 
     }
 
