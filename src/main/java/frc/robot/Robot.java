@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
   private Optional<VisionSim> visionSimSubsystem;
   private Optional<SwerveDrivePoseEstimator> poseEstimator;
   private VisionSystemSim visionSim = new VisionSystemSim("photonSim2");
-  private Pose3d simPose = new Pose3d(new Pose2d(new Translation2d(14, 5.585), new Rotation2d(0)));
+  private Pose3d simPose = new Pose3d(new Pose2d(new Translation2d(2.446, 5.854), new Rotation2d(0)));
   private Pose3d badStartPose = new Pose3d();
   private TargetModel model36h11 = TargetModel.kAprilTag36h11;
   private VisionTargetSim visionTargetSim = new VisionTargetSim(new Pose3d(), model36h11);
@@ -120,13 +120,7 @@ public class Robot extends TimedRobot {
   public void disabledExit() {
   }
 
-  @Override
-  public void autonomousInit() {
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+  private void setVisionConstants() {
     if (DriverStation.getAlliance().isPresent()) {
       if (DriverStation.getAlliance().get() == Alliance.Blue) {
         VisionConstants.kSpeakerId = 7;
@@ -139,6 +133,17 @@ public class Robot extends TimedRobot {
       VisionConstants.kSpeakerId = 7;
       VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
     }
+  }
+
+  @Override
+  public void autonomousInit() {
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
+    setVisionConstants();
+
   }
 
   @Override
@@ -155,21 +160,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get() == Alliance.Blue) {
-        m_robotContainer.temp = -1;
-        VisionConstants.kSpeakerId = 7;
-        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
-      } else {
-        m_robotContainer.temp = 1;
-        VisionConstants.kSpeakerId = 3;
-        VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY);
-      }
-    } else {
-      m_robotContainer.temp = -1;
-      VisionConstants.kSpeakerId = 7;
-      VisionConstants.kSpeakerPose = new Translation2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
-    }
+    setVisionConstants();
     m_robotContainer.setTeleopInitState();
   }
 
@@ -198,18 +189,49 @@ public class Robot extends TimedRobot {
   public void simulationInit() {
     PathPlannerPath thing = PathPlannerPath.fromChoreoTrajectory("4PUnderStage");
     autoSimTraj = thing.getTrajectory(new ChassisSpeeds(), thing.getPreviewStartingHolonomicPose().getRotation());
+
   }
 
   private double lastTimestamp = Timer.getFPGATimestamp();
 
   @Override
   public void simulationPeriodic() {
+    boolean simLocalization = false;
+    setVisionConstants();
+    if (simLocalization) {
+      localizationSimulation();
+    } else {
+      shootAnywhereSimulation();
+    }
+  }
+
+  private void shootAnywhereSimulation() {
+    visionSim.update(simPose);
+    if (!visionSimSubsystem.get().isRunning()) {
+      visionSimSubsystem.get().startThread();
+    }
+    if (Timer.getFPGATimestamp() - visionSimSubsystem.get().lastResults[0].getTimestampSeconds() > .3
+        || !visionSimSubsystem.get().containsSpeakerTag(0)) {
+      return;
+    } else {
+      Rotation2d calculatedAngle = VisionConstants.kSpeakerPose.minus(visionSimSubsystem.get().cameraPoses[0].getTranslation().toTranslation2d())
+              .getAngle().plus(Rotation2d.fromDegrees(180));
+              Rotation2d actualAngle = VisionConstants.kSpeakerPose.minus(simPose.getTranslation().toTranslation2d())
+              .getAngle().plus(Rotation2d.fromDegrees(180));
+      System.out.println("Calculated angle: " + 
+          calculatedAngle);
+      System.out.println("Actual angle: " + actualAngle);
+      System.out.println("Error (deg): " + calculatedAngle.minus(actualAngle).getDegrees());
+    }
+  }
+
+  private void localizationSimulation() {
     Transform2d diff = simPose.toPose2d().minus(poseEstimator.get().getEstimatedPosition());
     noiseOverTime.add(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
     if (!visionSimSubsystem.get().isRunning()) {
       visionSimSubsystem.get().startThread();
     }
-    
+
     if (DriverStation.isAutonomous() && !isAuton) {
       isAuton = true;
       autoStart = Timer.getFPGATimestamp();
@@ -239,18 +261,24 @@ public class Robot extends TimedRobot {
     System.out.println("calculated x: " + difference.getX() / timeDelta);
     System.out.println("given y: " + sample.velocityMps * sample.heading.getSin());
     System.out.println("calculated y: " + difference.getY() / timeDelta);
-    ChassisSpeeds speeds = new ChassisSpeeds(-difference.getX() / timeDelta, -difference.getY() / timeDelta, calculated);
+    ChassisSpeeds speeds = new ChassisSpeeds(-difference.getX() / timeDelta, -difference.getY() / timeDelta,
+        calculated);
     System.out.println(speeds);
     SwerveModuleState[] newStates = VisionSimConstants.Kinematics.getValue().toSwerveModuleStates(speeds);
     int constantMultiplier = 1;
     for (int i = 0; i < 4; i++) {
-      double distanceError = encoderNoise.nextGaussian(VisionSimConstants.kDistanceEncoderErrorMean, VisionSimConstants.kDistanceEncoderStandardDev);
-      double angleError = encoderNoise.nextGaussian(VisionSimConstants.kAngleEncoderErrorMean, VisionSimConstants.kAngleEncoderStandardDev);
-      VisionSimConstants.SwerveModulePositions.getValue()[i].angle = newStates[i].angle.plus(new Rotation2d(angleError));
-      VisionSimConstants.SwerveModulePositions.getValue()[i].distanceMeters += newStates[i].speedMetersPerSecond * timeDelta  * constantMultiplier + distanceError;
+      double distanceError = encoderNoise.nextGaussian(VisionSimConstants.kDistanceEncoderErrorMean,
+          VisionSimConstants.kDistanceEncoderStandardDev);
+      double angleError = encoderNoise.nextGaussian(VisionSimConstants.kAngleEncoderErrorMean,
+          VisionSimConstants.kAngleEncoderStandardDev);
+      VisionSimConstants.SwerveModulePositions.getValue()[i].angle = newStates[i].angle
+          .plus(new Rotation2d(angleError));
+      VisionSimConstants.SwerveModulePositions.getValue()[i].distanceMeters += newStates[i].speedMetersPerSecond
+          * timeDelta * constantMultiplier + distanceError;
       System.out.println(VisionSimConstants.SwerveModulePositions.getValue()[i]);
     }
-    poseEstimator.get().updateWithTime(Timer.getFPGATimestamp(), gyro.get().toRotation2d(), VisionSimConstants.SwerveModulePositions.getValue());
+    poseEstimator.get().updateWithTime(Timer.getFPGATimestamp(), gyro.get().toRotation2d(),
+        VisionSimConstants.SwerveModulePositions.getValue());
     visionSim.update(simPose);
     // System.out.println("Estimated " +
     // poseEstimator.get().getEstimatedPosition().toString());

@@ -61,7 +61,7 @@ public class VisionSimConstants {
         cameraProperties.setCalibration(1200, 1600, Rotation2d.fromDegrees(94));
         // Approximate detection noise with average and standard deviation error in
         // pixels.
-        cameraProperties.setCalibError(3.25, 0.25);
+        cameraProperties.setCalibError(.25, 0.05);
         // Set the camera image capture framerate (Note: this is limited by robot loop
         // rate).
         cameraProperties.setFPS(24);

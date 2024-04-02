@@ -271,9 +271,15 @@ public class Vision {
         }
     }
 
-    public boolean containsSpeakerTag(int cameraId) {
+    public boolean containsSpeakerTag(int cameraIndex) {
+        for (PhotonTrackedTarget target : lastResults[cameraIndex].targets) {
+            if (target.getFiducialId() == VisionConstants.kSpeakerId) {
+                return true;
+            }
+        }
         return false;
     }
+
 
     /**
      * Filter methods used:
