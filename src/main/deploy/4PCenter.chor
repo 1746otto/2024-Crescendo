@@ -699,42 +699,42 @@
                         "first"
                     ],
                     "type": "StopPoint",
-                    "uuid": "dfd9b405-0ed6-48b9-8b81-6e95ed85e031"
+                    "uuid": "940d05a5-c8c8-4461-b998-7ba6d83742ae"
                 },
                 {
                     "scope": [
                         "last"
                     ],
                     "type": "StopPoint",
-                    "uuid": "2f9c6ba4-65ff-4d60-861b-27b56d1eb9cc"
+                    "uuid": "25e3d317-39a7-4803-b0c1-fa045845a00a"
                 },
                 {
                     "scope": [
                         0
                     ],
                     "type": "WptZeroVelocity",
-                    "uuid": "41704eed-9fb1-4037-9994-5a64d551a382"
+                    "uuid": "b45ec2b4-6c22-430a-a9de-da0c3052e54b"
                 },
                 {
                     "scope": [
                         1
                     ],
                     "type": "WptZeroVelocity",
-                    "uuid": "95b9023d-3671-47f3-b828-6bd218ecc820"
+                    "uuid": "68a2d5a5-c83c-40fe-b568-230f026d98cd"
                 },
                 {
                     "scope": [
                         2
                     ],
                     "type": "WptZeroVelocity",
-                    "uuid": "2ef7c4b1-e2ba-4ab4-bb80-290d0a251135"
+                    "uuid": "24fee4dc-5985-4691-ad5e-a1499310d69b"
                 },
                 {
                     "scope": [
                         6
                     ],
                     "type": "WptZeroVelocity",
-                    "uuid": "70452446-deef-437a-9754-813f653b394b"
+                    "uuid": "1edf26b3-fe2b-4a1e-98fe-71770a815571"
                 },
                 {
                     "scope": [
@@ -742,7 +742,7 @@
                         2
                     ],
                     "type": "ZeroAngularVelocity",
-                    "uuid": "b223cb7e-80aa-41b4-a3d8-31c16c6d3f3c"
+                    "uuid": "6a214d0d-579a-4cc1-9580-4220a7c297bf"
                 },
                 {
                     "scope": [
@@ -750,7 +750,7 @@
                         4
                     ],
                     "type": "ZeroAngularVelocity",
-                    "uuid": "10ff80ac-ca78-4b41-8d72-a29917c48246"
+                    "uuid": "509c26bd-e982-40d0-a8dc-24d0d6542b41"
                 }
             ],
             "usesControlIntervalGuessing": true,

@@ -37,6 +37,7 @@ import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootAnywhereAuton;
 import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
@@ -100,54 +101,32 @@ public class RobotContainer {
 
   // pathplanner testing
   public RobotContainer() {
-    NamedCommands.registerCommand("primeShooter", new handlePrimerShooter(primer, () -> ampPosition == AmpPositionState.Amp).withTimeout(.375));
-    NamedCommands.registerCommand("goToSubwooferSpeed", 
-                                                                                            shooter.setRequestCommand(
-                                                                                            ShooterConstants.
-                                                                                            kSubwooferSpeed).andThen(
-                                                                                            new WaitUntilCommand((() ->
-                                                                                            shooter.isAtReq())).
-                                                                                            withTimeout(.5))
-                                                                                           ); // Might want to have a
-                                                                                                // check for is at
-                                                                                                // request instead of
-                                                                                                // just calling this
-                                                                                                // over again.
-    NamedCommands.registerCommand("stopShooter", new PrintCommand("stopShooter")/* shooter.setRequestCommand(0) */);
 
-    NamedCommands.registerCommand("intakeCommand", new PrintCommand("intakeCommand")/*
-                                                                                     * new ConditionalCommand(
-                                                                                     * intakeWrist.intakePosCommand().
-                                                                                     * alongWith(pivot.goToIntakePos())
-                                                                                     * .andThen(intakeRollers.
-                                                                                     * intakeSpeedCommand()),
-                                                                                     * 
-                                                                                     * intakeRollers.holdCommand().
-                                                                                     * alongWith(intakeWrist.
-                                                                                     * indexPosCommand())
-                                                                                     * .andThen(intakeRollers.
-                                                                                     * outtakeCommand().alongWith(primer
-                                                                                     * .setIntakeSpeed())),
-                                                                                     * 
-                                                                                     * () ->
-                                                                                     * !intakeRollers.intakeHasPiece())
-                                                                                     */);
-
-    // NamedCommands.registerCommand("intakeCommand",
-    // intakeWrist.intakePosCommand().alongWith(pivot.goToIntakePos()).andThen(intakeRollers.intakeSpeedCommand())
-    // .until(() ->
-    // intakeRollers.intakeHasPiece()).andThen(intakeRollers.stowSpeedCommand()).andThen(intakeWrist.indexPosCommand()).alongWith(primer.intakeCommand()).andThen(intakeRollers.outtakeCommand())
-    // .until(() ->
-    // primer.isPrimerBeamBreakBroken()).andThen(intakeRollers.stopCommand()).alongWith(primer.stopCommand()).alongWith(pivot.goToParallelPos()));
-
-    NamedCommands.registerCommand("pivotPodium", pivot.runPivot(ShooterWristConstants.kPodiumPos));
-    NamedCommands.registerCommand("pivotAmp", pivot.runPivot(ShooterWristConstants.kAmpPos));
-    NamedCommands.registerCommand("pivotIntakePos", pivot.runPivot(ShooterWristConstants.kIntakePos));
-    NamedCommands.registerCommand("pivotSubwoofer", new PrintCommand("pivotSubwoofer")/*
-                                                                                       * pivot.runPivot(
-                                                                                       * ShooterWristConstants.
-                                                                                       * kSubwooferPos)
-                                                                                       */);
+    NamedCommands.registerCommand("intakeCommand", new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+      intakeWrist.intakePosCommand(),
+      intakeRollers.intakeSpeedCommand(),
+      pivot.goToIntakePos(),
+      new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+      ),
+      new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+      .withTimeout(2),//change this
+      intakeRollers.stopCommand(),
+      new ParallelDeadlineGroup(
+      primer.intakeCommand(),
+      intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
+      )
+     
+      )
+       .finallyDo(
+      () -> {
+      intakeRollers.stop();
+      pivot.setRequest(ShooterWristConstants.kFlat);
+          }
+        )
+      );
+    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(vision, shooter, pivot, led, primer).withTimeout(2));
+    
 
     NamedCommands.registerCommand("ejectStuckPieces",
         new SequentialCommandGroup(
@@ -165,6 +144,7 @@ public class RobotContainer {
               primer.stop();
               intakeRollers.stop();
             })));
+    
     // NamedCommands.registerCommand("intakeCommand", new InstantCommand(() ->
     // intookPiece =
     // false).andThen(intakeRollers.intakeSpeedCommand()).andThen(intakeWrist.intakePosCommand()).andThen(new
@@ -381,7 +361,7 @@ public class RobotContainer {
     pivot.setRequest(ShooterWristConstants.kFlat);
   }
 
-  // public Command getAutonomousCommand() {
+  public Command getAutonomousCommand() {
   // Command auton = drivetrain.getAutoPath("5Piece");
   // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
   // Command middle2P = drivetrain.getAutoPath("Middle2P");
@@ -390,14 +370,12 @@ public class RobotContainer {
   // Command theory = drivetrain.getAutoPath("Bottom4P");
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
-  // Command tune = drivetrain.getAutoPath("PathPlanTest");
-  // Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-  // Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
-  // Command fourP = drivetrain.getAutoPath("4P");
-  // PathPlannerPath path =
-  // PathPlannerPath.fromChoreoTrajectory("4PUnderStage").flipPath();
-  // drivetrain.seedFieldRelative(path.getPathPoses().get(0));
-  // Command test = drivetrain.getAutoPath("testAuto");
-  // return test;
-  // }
+  Command tune = drivetrain.getAutoPath("PathPlanTest");
+  Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+  Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
+  Command fourP = drivetrain.getAutoPath("4P");
+ 
+  Command test = drivetrain.getAutoPath("testAuto");
+  return test;
+  }
 }
