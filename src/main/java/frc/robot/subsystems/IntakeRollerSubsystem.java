@@ -48,9 +48,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
         TalonFXConfiguration configs = new TalonFXConfiguration();
+        
         configs.CurrentLimits = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
-        .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
+            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            // .withStatorCurrentLimitEnable(true)
+            // .withSupplyCurrentLimitEnable(true);
+
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
@@ -115,7 +119,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
      */
     public boolean intakeHasPiece() {
         
-        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125 || rollerMotor.getVelocity().getValueAsDouble() <= 1.0;
+        return Timer.getFPGATimestamp() - buttonLastTrigger > 0.125; //|| rollerMotor.getVelocity().getValueAsDouble() <= 1.0;
     }
 
     public boolean buttonPressed() {

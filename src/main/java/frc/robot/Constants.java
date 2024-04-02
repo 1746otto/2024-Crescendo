@@ -33,8 +33,8 @@ public final class Constants {
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1;
     public static final double kStop = 0;
-    public static final double kStatorLimit = 5;
-    public static final double kSupplyLimit = 10;
+    public static final double kStatorLimit = 60;
+    public static final double kSupplyLimit = 30;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
@@ -86,19 +86,22 @@ public final class Constants {
     public static final int kShooterBottomRollerMotorID = 22;
     
     // PID constants (top shooting roller)
-    public static final double kP = 0.11200000118743628;
+    public static final double kP = 0.4;
     public static final double kI = 0;
-    public static final double kD = 0.0002500000118743628;
-    public static final double kS = 0.17;
-    public static final double kV = 0.0001654583333333333;
+    public static final double kD = 0.0;
+    public static final double kS = 0.23738;
+    public static final double kV = 0.11924;
+    public static final double kA = 0.0054329;
     
     // speed constants
     public static final double kShoot = 4000;//0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kSubwooferShot = 0.8;
-    public static final double kSubwooferSpeed = 1/kV;//4640;
+    public static final double kSubwooferSpeed = 4500;//4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
+    public static final double kFerry = 5200;
+    public static final double kAngleFerry = -0.345;
 
     // Limits
     public static final int kStatorLimit = 60;
@@ -123,13 +126,14 @@ public final class Constants {
     public static final int kPrimerRollerMotorID = 31;
     public static final int kPrimerSlotID = 0;
     // Speeds
-    public static final double kIntake = 0.4;
+    public static final double kIntake = 0.2;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
     public static final double kAmp = -1.0;
     public static final double kShoot = 1.0;//1.0
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
+    public static final double kSlowSpeed = 0.05;
 
     // PID values
     public static final double kVelocityP = 0.1;
@@ -138,17 +142,18 @@ public final class Constants {
     public static final double kVelocityS = 0.0;
     public static final double kVelocityV = 0.0;
     public static final double kVelocityA = 0.0;
-    public static final double kPositionP = 50.0;
+    public static final double kPositionP = 10.0;
     public static final double kPositionI = 0.0;
-    public static final double kPositionD = 0.1;
+    public static final double kPositionD = 0.05;
     public static final double kPositionS = 0.0;
     public static final double kPositionV = 0.0;
     public static final double kPositionA = 0.0;
     public static final double kFF = 0.0;
+    public static final double kEncoderOffset = 0.0;
   }// Should go away for final competition code
 
   public static class LEDConstants {
-    public static final int PWMPortLeft = 9;
+    public static final int PWMPortLeft = 0;
     public static final int LEDLength = 13;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;

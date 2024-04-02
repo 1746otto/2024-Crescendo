@@ -1,15 +1,17 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -40,6 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private double targetVelocity;
 
+
+  private VoltageOut voltageRequest = new VoltageOut(0);
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
@@ -56,8 +61,22 @@ public class ShooterSubsystem extends SubsystemBase {
     pidController.kD = ShooterConstants.kD;
     pidController.kS = ShooterConstants.kS;
     pidController.kV = ShooterConstants.kV;
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    pidController.kA = ShooterConstants.kA;
+    
+    rollerConfig.CurrentLimits
+      .withStatorCurrentLimit(ShooterConstants.kStatorLimit)
+      .withSupplyCurrentLimit(ShooterConstants.kSupplyLimit)
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimitEnable(true);
+    
     shooterLeader.getConfigurator().apply(rollerConfig);
+    
+    TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+    
+    followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    followerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    shooterFollower.getConfigurator().apply(followerConfig);
     shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
 
     //Setting PID values for the top shooting roller not how this works
@@ -87,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
   public void setOutput(double speed) {
-    shooterLeader.set(speed);
+    shooterLeader.setControl(voltageRequest.withOutput(speed * 12));
   }
 
   /**
@@ -122,7 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    setRequest(0);
+    shooterLeader.setControl(new NeutralOut());
   }
 
   public boolean isAtReq() {
@@ -135,7 +154,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRequest(double RPM) {
     targetVelocity = RPM;
-    shooterLeader.setControl(new VelocityVoltage(RPM/60));
+    shooterLeader.setControl(new VelocityVoltage(RPM/60.0));
     // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
     //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   }
@@ -148,11 +167,15 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
+    //  if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
     //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
+      
     // }
+
+    //setRequest(targetVelocity);
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", getRPM());  
+    SmartDashboard.putNumber("shooterspeed", getRPM());
+    SmartDashboard.putNumber("shooter target", targetVelocity);
   }
 
 }

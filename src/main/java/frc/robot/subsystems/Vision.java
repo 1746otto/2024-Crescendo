@@ -298,7 +298,7 @@ public class Vision {
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
+                if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getFiducialId() == 13 || target.getFiducialId() == 14)
                     continue;
                 tags = tags.concat(Integer.toString(target.getFiducialId())).concat(", ");
                 if (tags.length() > 30) {
@@ -439,7 +439,7 @@ public class Vision {
 
             for (PhotonTrackedTarget target : lastResults[i].targets) {
 
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
+                if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getFiducialId() == 13 || target.getFiducialId() == 14)
                     continue;
                 
                 // Transforms to the pose of the camera, not the robot.
