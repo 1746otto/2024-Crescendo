@@ -1,32 +1,16 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.units.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
-import frc.robot.Constants.ShooterConstants;
 
 public class IntakeWristSubsystem extends SubsystemBase{
     /** Motor controller for turning the intake mechanism. */
@@ -58,8 +42,11 @@ public class IntakeWristSubsystem extends SubsystemBase{
         // motionMagic.MotionMagicCruiseVelocity = ShooterConstants.kMotionMagicCruiseVelocity;
         // motionMagic.MotionMagicAcceleration = ShooterConstants.kMotionMagicCruiseAcceleration;
         // motionMagic.MotionMagicJerk = ShooterConstants.kMotionMagicJerk;
-        talonFxConfig.CurrentLimits.SupplyCurrentLimit = 60;
-        talonFxConfig.CurrentLimits.StatorCurrentLimit = 60;
+        talonFxConfig.CurrentLimits
+            .withStatorCurrentLimit(IntakeWristConstants.kStatorLimit)
+            .withSupplyCurrentLimit(IntakeWristConstants.kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true);
         
         turningMotor.getConfigurator().apply(talonFxConfig);
         turningMotor.setNeutralMode(NeutralModeValue.Brake);

@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
-import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 
