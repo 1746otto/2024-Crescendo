@@ -124,7 +124,7 @@ public class RobotContainer {
           }
         )
       );
-    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(vision, shooter, pivot, led, primer).until(() -> primer.isPrimerBeamBreakBroken()).withTimeout(2));
+    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> !primer.isPrimerBeamBreakBroken()));
     //static positions
 
 
@@ -199,8 +199,8 @@ public class RobotContainer {
     );
 
     // Temporary test button for autonomous
-    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken()).whileTrue(
-        shootAnywhereCommand);
+    // joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken()).whileTrue(
+    //     shootAnywhereCommand);
 
     // joystick.y().and(notInIntakeDown).onTrue( //Change for toggling
     // new SequentialCommandGroup(
@@ -297,8 +297,15 @@ public class RobotContainer {
     // WaitUntilCommand(100))).finallyDo(() -> {shooter.stop();
     // pivot.goToIntakePos();
     // intakeWrist.setRequest(IntakeWristConstants.kStow);}));
-    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed())
+    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed())
         .whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed))
+            .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
+            .finallyDo(() -> {
+              shooter.stop();
+              pivot.setRequest(ShooterWristConstants.kFlat);
+            }));
+    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed())
+        .whileTrue(pivot.goToIntakePos().alongWith(shooter.setRequestCommand(ShooterConstants.kFerry))
             .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
             .finallyDo(() -> {
               shooter.stop();
@@ -343,12 +350,11 @@ public class RobotContainer {
   // Command theory = drivetrain.getAutoPath("Bottom4P");
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
-  Command tune = drivetrain.getAutoPath("PathPlanTest");
-  Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-  Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
-  Command fourP = drivetrain.getAutoPath("4P");
- 
-  Command test = drivetrain.getAutoPath("testAuto");
-  return test;
+  // Command tune = drivetrain.getAutoPath("PathPlanTest");
+  // Command baseAuton4 = drivetrain.getAutoPath("4Piece");
+  // Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
+  // Command fourP = drivetrain.getAutoPath("4P");
+  // Command test = drivetrain.getAutoPath("testAuto2");
+  return NamedCommands.getCommand("shootPiece");
   }
 }

@@ -155,7 +155,7 @@ public final class Constants {
 
   public static class LEDConstants {
     public static final int PWMPortLeft = 0;
-    public static final int LEDLength = 13;
+    public static final int LEDLength = 14;
     public static final int coneHValue = 18;
     public static final int coneSValue = 255;
     public static final int coneVValue = 130;
@@ -195,7 +195,7 @@ public final class Constants {
 
   public static class TeleopSwerveConstants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
-    public static double MaxAngularRateRotPerSec = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+    public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
     public static double SwerveMagnitudeExponent = 4;
 
     public static final SwerveRequest.FieldCentric TeleopDriveRequest = new SwerveRequest.FieldCentric()

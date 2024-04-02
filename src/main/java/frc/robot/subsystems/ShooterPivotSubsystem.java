@@ -120,6 +120,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToAmpPosition() {
         return runPivot(ShooterWristConstants.kAmpPosition);
     }
+    public Command goToFerryPos() {
+        return runPivot(ShooterWristConstants.kAmpPosition);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }

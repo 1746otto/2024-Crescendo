@@ -3,6 +3,8 @@ package frc.robot.commands;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 
+import org.opencv.core.Mat.Tuple3;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -35,7 +37,6 @@ import frc.robot.subsystems.Vision;
 public class ShootAnywhereAuton extends Command {
 
     CommandSwerveDrivetrain swerve;
-    Vision vision;
     ShooterSubsystem shooter;
     ShooterPivotSubsystem pivot;
     LEDSubsystem leds;
@@ -54,32 +55,27 @@ public class ShootAnywhereAuton extends Command {
     Translation2d[] pivotPositions = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
     Translation2d[] shooterSpeeds = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
 
-    
-
     DoubleSupplier directionSupplier;
     Command drive;
     boolean canDriverRotate;
 
     // This is so jank the entire class needs to be rewritten;
-    public ShootAnywhereAuton( Vision visionSubsystem,
-            ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem, PrimerSubsystem primerSubsystem) {
+    public ShootAnywhereAuton(CommandSwerveDrivetrain swerveSubsystem,
+            ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem,
+            PrimerSubsystem primerSubsystem) {
 
-        vision = visionSubsystem;
+        swerve = swerveSubsystem;
         shooter = shooterSubsystem;
         pivot = pivotSubsystem;
         leds = ledSubsystem;
         primer = primerSubsystem;
 
-        addRequirements(shooter, pivot, swerve, leds, primer);
-
-      
+        addRequirements(shooter, pivot, leds, primer);
 
         pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD, new Constraints(DynamicShootingConstants.kMaxAngularVelocity,
                         DynamicShootingConstants.kMaxAngularAcceleration));
-      
 
-        
         for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {
             pivotPositions[i - 1] = new Translation2d(DynamicShootingConstants.distanceMap.get(i).get_0(),
                     DynamicShootingConstants.distanceMap.get(i).get_2());
@@ -149,13 +145,14 @@ public class ShootAnywhereAuton extends Command {
         shooterSplines = SplineHelper.getCubicSplinesFromControlVectors(startAndEnd[0], shooterSpeeds, startAndEnd[1]);
     }
 
-  @Override
-  public void initialize() {
-    // swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
-    // xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(VisionConstants.kVisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
-    
-  
-  }
+    @Override
+    public void initialize() {
+        // swerve.applyRequest(() -> request.withVelocityX(direction *
+        // yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
+        // xAxisSupplier.getAsDouble() *
+        // 4.5).withTargetDirection(VisionConstants.kVisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
+
+    }
 
     public void generateValues(int count) {
 
@@ -195,38 +192,43 @@ public class ShootAnywhereAuton extends Command {
         System.out.println(shooterString);
         // System.out.println(pivotString);
         // SmartDashboard.putString("pivot", pivotString);
-        
+
     }
 
     @Override
     public void execute() {
-      
+
         // Find above and below keys
-        double distance = VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getNorm();
+        double distance = VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
         Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
-        SmartDashboard.putNumber("Distance to speaker", distance);
-        SmartDashboard.putNumber("Robot Angle",
-                VisionConstants.kSpeakerPose.minus(vision.cameraPoses[0].getTranslation().toTranslation2d()).getAngle().getDegrees());
+        SmartDashboard.putNumber("Auton Distance to speaker", distance);
+        SmartDashboard.putNumber("Auton Robot Angle",
+                VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().getDegrees());
+        double shooterAngle;
+        double shooterRPM;
         // Find and apply interpolated angle and speed
         if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null
                 || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
             leds.setToHue(1);
             SmartDashboard.putBoolean("null entry", true);
-            return;
+            // default values
+            Tuple3<Double> values = DynamicShootingConstants.distanceMap.get(DynamicShootingConstants.distanceMapLength - 1);
+            shooterRPM = values.get_1();
+            shooterAngle = values.get_2();
+
         } else {
             leds.setToHue(65);
             SmartDashboard.putBoolean("null entry", false);
-        }
-
-        double interpolationValue = (distance - lowEntry.getKey()) / (highEntry.getKey() - lowEntry.getKey());
+                    double interpolationValue = (distance - lowEntry.getKey()) / (highEntry.getKey() - lowEntry.getKey());
 
         // Will get optimised away :)
-        double shooterRPM = shooterSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
-        double shooterAngle = pivotSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
+        shooterRPM = shooterSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
+        shooterAngle = pivotSplines[lowEntry.getValue()].getPoint(interpolationValue).poseMeters.getY();
         SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
         SmartDashboard.putNumber("Shooter speed", shooterRPM);
+        }
 
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
@@ -243,6 +245,5 @@ public class ShootAnywhereAuton extends Command {
         pivot.setRequest(ShooterWristConstants.kFlat);
         primer.stop();
     }
-        
 
 }
