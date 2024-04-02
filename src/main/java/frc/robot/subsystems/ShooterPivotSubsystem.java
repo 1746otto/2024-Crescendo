@@ -121,7 +121,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kAmpPosition);
     }
     public Command goToFerryPos() {
-        return runPivot(ShooterWristConstants.kAmpPosition);
+        return runPivot(ShooterWristConstants.kFerry);
     }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());

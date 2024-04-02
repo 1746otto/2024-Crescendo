@@ -116,6 +116,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return runOnce(() -> setSpeed(0));
     }
 
+
+    public Command autonIntakeSpeedCommand() {
+        return run(() -> setSpeed(IntakeRollerConstants.kIntake));
+    }
+
     /**
      * Run once intake is down only
      * @return

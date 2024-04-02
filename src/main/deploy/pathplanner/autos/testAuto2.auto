@@ -14,13 +14,61 @@
         {
           "type": "named",
           "data": {
-            "name": "intakeCommand"
+            "name": "shootPiece"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4PUnderStage"
+            "pathName": "4PUnderStage.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4PUnderStage.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootPiece"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4PUnderStage.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4PUnderStage.4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootPiece"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4PUnderStage.5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4PUnderStage.6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootPiece"
           }
         }
       ]
