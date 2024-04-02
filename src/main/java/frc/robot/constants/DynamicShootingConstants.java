@@ -44,7 +44,6 @@ public class DynamicShootingConstants {
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(169 + 16.25), 5900.0, -0.295));
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(181 + 16.25), 6100.0, -0.2935));
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(192 + 16.25), 6100.0, -0.2932));
-    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(203 + 16.25), 5250.0, .465));
     distanceMap = tempMap;
     distanceMapLength = tempMap.size();
     distanceToIndex = new TreeMap<>();
