@@ -79,6 +79,8 @@ public class ShootAnywhereCommand extends Command {
         request = new SwerveRequest.FieldCentricFacingAngle()
                 .withDeadband(6 * 0.1).withRotationalDeadband(0) // Add a 10% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        request2 = new SwerveRequest.FieldCentric().withDeadband(6 * 0.1).withRotationalDeadband(0) // Add a 10% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);//Should fix
         request.HeadingController = new PhoenixPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD);
         request.HeadingController.setTolerance(.0125);

@@ -30,5 +30,7 @@ public class VisionConstants {
 
     public static Translation2d kSpeakerPose = new Translation2d();
     public static int kSpeakerId = 7;
+    public static int kRedSpeakerCenterId = 4;
+    public static int kBlueSpeakerCenterId = 7;
     
 }
