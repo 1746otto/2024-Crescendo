@@ -119,6 +119,9 @@ public class IntakeWristSubsystem extends SubsystemBase{
     public Command intakePosCommand() {
         return runOnce(() -> intakeToReq(IntakeWristConstants.kIntake)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kIntake))).finallyDo(() -> stop());
     }
+    public Command ampPosCommand() {
+        return runOnce(() -> intakeToReq(IntakeWristConstants.kAmp)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(IntakeWristConstants.kAmp))).finallyDo(() -> stop());
+    }
     public Command stopMotorCommand(){
         return runOnce(this::stop);
     }

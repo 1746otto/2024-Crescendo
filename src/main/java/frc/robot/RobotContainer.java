@@ -305,6 +305,14 @@ public class RobotContainer {
                 new Pose2d(
                     drivetrain.getState().Pose.getTranslation(),
                     Rotation2d.fromDegrees(/* (temp == 1) ? 180 : */0)))));
+    
+    joystick.b().onTrue(
+      new SequentialCommandGroup(
+        intakeWrist.ampPosCommand(),
+        intakeRollers.outtakeCommand()
+      )
+      .andThen(intakeWrist.indexPosCommand().alongWith(intakeRollers.stopCommand()))
+    );
      
     joystick.a().onTrue( //Test button
     new SequentialCommandGroup(
