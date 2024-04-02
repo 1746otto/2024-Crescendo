@@ -57,7 +57,7 @@ public class ShootAnywhereCommand extends Command {
     Command drive;
     boolean canDriverRotate;
 
-    // This is so jank the entire class needs to be rewritten;
+    // This is so jank the entire class needs to be rewritten.
     public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem,
             ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem,
             DoubleSupplier xAxis, DoubleSupplier yAxis, DoubleSupplier angularRequest,
