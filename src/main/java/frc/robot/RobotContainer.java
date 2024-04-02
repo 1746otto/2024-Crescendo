@@ -27,6 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.BackpackRollerSubsystem;
+import frc.robot.subsystems.BackpackWristSubsystem;
+import frc.robot.subsystems.BeamBreak;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -69,6 +72,8 @@ public class RobotContainer {
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
+  private final BackpackRollerSubsystem backpackRollers = new BackpackRollerSubsystem();
+  private final BackpackWristSubsystem backpackWrist = new BackpackWristSubsystem();
 
   private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -97,6 +102,8 @@ public class RobotContainer {
   public double temp = -1;
   boolean intookPiece;
   boolean stowPivot = false;
+
+  private int toggleBackpack = 2;
 
   // pathplanner testing
   public RobotContainer() {
@@ -331,6 +338,30 @@ public class RobotContainer {
         }
       )
     );
+    
+    if (toggleBackpack%2 == 0) {
+      joystick.a().onTrue( //BackpackButton
+      new ParallelDeadlineGroup(
+        backpackWrist.intakePosCommand(),
+        backpackRollers.intakeSpeedCommand(),
+        pivot.goToBackpackPos(),
+        primer.intakeCommand(),
+        shooter.ShootCommand()
+        )
+      );
+      ++toggleBackpack;
+    } else {
+      joystick.a().onTrue( //BackpackButton
+      new ParallelDeadlineGroup(
+        backpackWrist.stowPosCommand(),
+        backpackRollers.stopCommand(),
+        pivot.gotToStowCommand(),
+        primer.stopCommand(),
+        shooter.StopCommand()
+        )
+      );
+      --toggleBackpack;
+    }
     // pivot
     // joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() ||
     // joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new
