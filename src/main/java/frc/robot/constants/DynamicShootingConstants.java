@@ -10,7 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 public class DynamicShootingConstants {
 
-  public static final double kP = 20;
+  public static final double kP = 10;
   public static final double kI = 0;
   public static final double kD = 0;
 

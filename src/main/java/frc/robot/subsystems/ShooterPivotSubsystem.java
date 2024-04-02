@@ -88,9 +88,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runOnce(() -> setRequest(position)).andThen(new WaitUntilCommand(() -> atPosition(position)));
     }
 
-    public Command goToAmpPose(){
-        return runPivot(ShooterWristConstants.kAmpPos);
-    }
+    // public Command goToAmpPose(){
+    //     return runPivot(ShooterWristConstants.kAmpPos);
+    // }
 
     /**
      * Sets the targetPose variable to indexing position and the waits until pivot is at that position.
@@ -105,9 +105,9 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToIntakePos() {
         return runPivot(ShooterWristConstants.kIntakePos);
     }
-    public Command goToPodiumPos() {
-        return runPivot(ShooterWristConstants.kPodiumPos);
-    }
+    // public Command goToPodiumPos() {
+    //     return runPivot(ShooterWristConstants.kPodiumPos);
+    // }
     public Command goToSubCommand() {
         return runPivot(ShooterWristConstants.kIntakePos); //It all works now with every position
     }
