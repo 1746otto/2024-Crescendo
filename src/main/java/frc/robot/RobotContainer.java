@@ -102,27 +102,32 @@ public class RobotContainer {
   // pathplanner testing
   public RobotContainer() {
     NamedCommands.registerCommand("slamIntakeCommand", intakeWrist.intakePosCommand());
-    NamedCommands.registerCommand("intakeCommand", new SequentialCommandGroup(
-      intakeWrist.intakePosCommand(),
-      new ParallelDeadlineGroup(
-        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
-        intakeRollers.autonIntakeSpeedCommand(),
-      pivot.goToIntakePos()
-      ).withTimeout(5),//change this
-      intakeRollers.stopCommand(),
-      new ParallelDeadlineGroup(
-      primer.intakeCommand(),
-      intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
+    NamedCommands.registerCommand("intakeCommand", 
+      new SequentialCommandGroup(
+        intakeRollers.intakeSpeedCommand(),
+        intakeWrist.intakePosCommand()
+          .withTimeout(.75),
+        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+          .withTimeout(1.75),
+        intakeRollers.stowSpeedCommand(),
+        new ParallelCommandGroup(
+          intakeWrist.indexPosCommand(),
+          pivot.goToIntakePos()
+        ).withTimeout(1),
+        new ParallelCommandGroup(
+          primer.intakeCommand(),
+          intakeRollers.outtakeCommand()
+        ), // Stops primer by itself
+        intakeRollers.stopCommand()
       )
-     
-      )
-       .finallyDo(
-      () -> {
-      intakeRollers.stop();
-      pivot.setRequest(ShooterWristConstants.kFlat);
+        .finallyDo(
+          () -> {
+            intakeRollers.stop();
+            pivot.setRequest(ShooterWristConstants.kFlat);
           }
         )
       );
+    NamedCommands.registerCommand("Prep", autonCommand);
     NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> !primer.isPrimerBeamBreakBroken()));
     //static positions
 
