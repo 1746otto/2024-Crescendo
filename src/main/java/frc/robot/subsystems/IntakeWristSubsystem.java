@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -93,7 +94,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
     }
 
     public void stop() {
-        turningMotor.set(0);
+        turningMotor.setControl(new NeutralOut());
     }
 
     /**

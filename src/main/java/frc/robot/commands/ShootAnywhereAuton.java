@@ -232,7 +232,7 @@ public class ShootAnywhereAuton extends Command {
 
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
-
+        // No this needs to change
         if (shooter.isAtReq() && pivot.atSetpoint()) {
             primer.setSpeed(PrimerConstants.kShoot);
         }

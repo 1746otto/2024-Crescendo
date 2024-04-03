@@ -39,6 +39,7 @@ import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShootAnywhereAuton;
 import frc.robot.commands.ShootAnywhereCommand;
+import frc.robot.commands.ShootStaticAuton;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -102,28 +103,43 @@ public class RobotContainer {
   // pathplanner testing
   public RobotContainer() {
     NamedCommands.registerCommand("slamIntakeCommand", intakeWrist.intakePosCommand());
-    NamedCommands.registerCommand("intakeCommand", new SequentialCommandGroup(
-      intakeWrist.intakePosCommand(),
-      new ParallelDeadlineGroup(
-        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
-        intakeRollers.autonIntakeSpeedCommand(),
-      pivot.goToIntakePos()
-      ).withTimeout(5),//change this
-      intakeRollers.stopCommand(),
-      new ParallelDeadlineGroup(
-      primer.intakeCommand(),
-      intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
+    NamedCommands.registerCommand("intakeCommand", 
+      new SequentialCommandGroup(
+        intakeRollers.intakeSpeedCommand(),
+        intakeWrist.intakePosCommand()
+          .withTimeout(.75),
+        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+          .withTimeout(1.75),
+        intakeRollers.stowSpeedCommand(),
+        new ParallelCommandGroup(
+          intakeWrist.indexPosCommand(),
+          pivot.goToIntakePos()
+        ).withTimeout(1),
+        new ParallelCommandGroup(
+          primer.intakeCommand(),
+          intakeRollers.outtakeCommand()
+        ), // Stops primer by itself
+        intakeRollers.stopCommand()
       )
-     
-      )
-       .finallyDo(
-      () -> {
-      intakeRollers.stop();
-      pivot.setRequest(ShooterWristConstants.kFlat);
+        .finallyDo(
+          () -> {
+            intakeRollers.stop();
+            pivot.setRequest(ShooterWristConstants.kFlat);
           }
         )
       );
+    NamedCommands.registerCommand("Prep", autonCommand);
     NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> !primer.isPrimerBeamBreakBroken()));
+    
+    //Shooting commands should work
+    NamedCommands.registerCommand("shootPiece1", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller1", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
+
+    NamedCommands.registerCommand("shootPiece2", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller2", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
+
+    NamedCommands.registerCommand("shootPiece3", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller3", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
     //static positions
 
 

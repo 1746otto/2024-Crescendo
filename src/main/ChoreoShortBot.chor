@@ -11055,24 +11055,6 @@
                 },
                 {
                     "scope": [
-                        3
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
-                        8
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
-                        12
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
                         6
                     ],
                     "type": "StopPoint"
@@ -11091,12 +11073,6 @@
                 },
                 {
                     "scope": [
-                        0
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
                         7,
                         8
                     ],
@@ -11108,6 +11084,27 @@
                         6
                     ],
                     "type": "ZeroAngularVelocity"
+<<<<<<< HEAD
+=======
+                },
+                {
+                    "scope": [
+                        3
+                    ],
+                    "type": "WptZeroVelocity"
+                },
+                {
+                    "scope": [
+                        8
+                    ],
+                    "type": "WptZeroVelocity"
+                },
+                {
+                    "scope": [
+                        12
+                    ],
+                    "type": "WptZeroVelocity"
+>>>>>>> 2c307c7c2a7341b289dea6a59b2eaa7ebe9ef996
                 }
             ],
             "usesControlIntervalGuessing": true,
@@ -11207,7 +11204,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         },
         "4PUnderStageMid": {
             "waypoints": [
