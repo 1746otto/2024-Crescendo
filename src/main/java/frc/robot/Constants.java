@@ -103,6 +103,8 @@ public final class Constants {
     public static final double kPodium = 5350;
     public static final double kFerry = 5000;
     public static final double kAngleFerry = -0.345;
+    public static final double kAutonAngle = -0.329;
+    public static final double kAutonShoot = 5850;
 
     // Limits
     public static final int kStatorLimit = 60;

@@ -132,14 +132,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> !primer.isPrimerBeamBreakBroken()));
     
     //Shooting commands should work
-    NamedCommands.registerCommand("shootPiece1", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
-    NamedCommands.registerCommand("primeShooterRoller1", shooter.setRequestCommand(5200));//NEED VALUE HERE
+    NamedCommands.registerCommand("shootPiece1", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller1", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
 
-    NamedCommands.registerCommand("shootPiece2", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
-    NamedCommands.registerCommand("primeShooterRoller2", shooter.setRequestCommand(5200));//NEED VALUE HERE
+    NamedCommands.registerCommand("shootPiece2", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller2", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
 
-    NamedCommands.registerCommand("shootPiece3", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
-    NamedCommands.registerCommand("primeShooterRoller3", shooter.setRequestCommand(5200));//NEED VALUE HERE
+    NamedCommands.registerCommand("shootPiece3", new ShootStaticAuton(pivot, primer, ShooterConstants.kAutonAngle)); //NEED VALUE HERE
+    NamedCommands.registerCommand("primeShooterRoller3", shooter.setRequestCommand(ShooterConstants.kAutonShoot));//NEED VALUE HERE
     //static positions
 
 
