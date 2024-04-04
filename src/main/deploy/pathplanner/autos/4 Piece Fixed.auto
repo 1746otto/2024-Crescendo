@@ -33,7 +33,7 @@
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "shootPiece"
           }
         },
         {
@@ -45,13 +45,13 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "goToSubwooferSpeed"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
+            "name": "shootPiece"
           }
         },
         {
@@ -63,13 +63,13 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "goToSubwooferSpeed"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
+            "name": "shootPiece"
           }
         },
         {
@@ -81,19 +81,13 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "goToSubwooferSpeed"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopShooter"
+            "name": "shootPiece"
           }
         }
       ]

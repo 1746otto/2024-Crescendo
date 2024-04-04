@@ -232,8 +232,8 @@ public class ShootAnywhereAuton extends Command {
 
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
-        // No this needs to change
-        if (shooter.isAtReq() && pivot.atSetpoint()) {
+        
+        if (shooter.isAtReq() && pivot.atSetpoint() && request.HeadingController.atSetpoint()) {
             primer.setSpeed(PrimerConstants.kShoot);
         }
 
@@ -241,7 +241,6 @@ public class ShootAnywhereAuton extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        shooter.stop();
         pivot.setRequest(ShooterWristConstants.kFlat);
         primer.stop();
     }

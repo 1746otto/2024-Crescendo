@@ -69,7 +69,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     }
     public boolean atPosition(double position) {
-        return (Math.abs(master.getPosition().getValueAsDouble()- position) < ShooterWristConstants.kTolerance);
+        return (Math.abs(master.getPosition().getValueAsDouble() - position) < ShooterWristConstants.kTolerance);
     }
 
     public boolean atSetpoint() {

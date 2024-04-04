@@ -63,12 +63,6 @@
             {
               "type": "named",
               "data": {
-                "name": "indexCommand"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
                 "name": "pivotSubwoofer"
               }
             }

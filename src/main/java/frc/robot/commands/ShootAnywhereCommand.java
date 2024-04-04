@@ -85,7 +85,7 @@ public class ShootAnywhereCommand extends Command {
         request2 = TeleopSwerveConstants.TeleopDriveRequest;
         request.HeadingController = new PhoenixPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD);
-        request.HeadingController.setTolerance(.0125);
+        request.HeadingController.setTolerance(Math.PI/128);
 
         
         for (int i = 1; i < DynamicShootingConstants.distanceMapLength - 1; i++) {

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +30,7 @@ public class PrimerSubsystem extends SubsystemBase {
   private AnalogInput speakerBeamBreak;
   public boolean primerStow = false;
   public double tempPosition;
+  public double lastBeamBreakActive = 0;
 
   /**
    * Creates a new PrimerSubsystem with initialized motor controller.
@@ -66,6 +68,7 @@ public class PrimerSubsystem extends SubsystemBase {
     // pidController.setI(PrimerConstants.kI);
     // pidController.setFF(PrimerConstants.kFF);
     tempPosition = primerRoller.getPosition().getValueAsDouble();
+    lastBeamBreakActive = Timer.getFPGATimestamp();
   }
 
   /**
@@ -181,6 +184,10 @@ public class PrimerSubsystem extends SubsystemBase {
     return ((Math.floor(speakerBeamBreak.getVoltage()) == 0));
   }
 
+  public boolean isNoteShot() {
+    return Timer.getFPGATimestamp() - lastBeamBreakActive > PrimerConstants.kShotDelay;
+  }
+
 
   @Override
   public void periodic() {
@@ -189,6 +196,9 @@ public class PrimerSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("stow pos", tempPosition);
     SmartDashboard.putBoolean("primerStow", primerStow);
     SmartDashboard.putString("primerMode", primerRoller.getControlMode().getValue().toString());
+    if (isPrimerBeamBreakBroken()) {
+      lastBeamBreakActive = Timer.getFPGATimestamp();
+    }
   }
 
   

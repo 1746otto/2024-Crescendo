@@ -107,12 +107,6 @@
             {
               "type": "named",
               "data": {
-                "name": "fastIndexCommand"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
                 "name": "pivotSubwoofer"
               }
             }

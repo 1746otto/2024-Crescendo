@@ -103,22 +103,29 @@ public class RobotContainer {
   // pathplanner testing
   public RobotContainer() {
     NamedCommands.registerCommand("slamIntakeCommand", intakeWrist.intakePosCommand());
+    /* 
+     * Needs 2.375 seconds. 
+     * Intaking period is .75 seconds.
+     * Down approximately a half second after its called.
+     * Intaking takes .5 seconds from piece touch.
+     * 1 Second for it to return to flat after intaking is complete.
+    */
     NamedCommands.registerCommand("intakeCommand", 
       new SequentialCommandGroup(
         intakeRollers.intakeSpeedCommand(),
         intakeWrist.intakePosCommand()
-          .withTimeout(.75),
+          .withTimeout(.5),
         new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-          .withTimeout(1.75),
+          .withTimeout(.75),
         intakeRollers.stowSpeedCommand(),
         new ParallelCommandGroup(
           intakeWrist.indexPosCommand(),
           pivot.goToIntakePos()
-        ).withTimeout(1),
+        ).withTimeout(.6),
         new ParallelCommandGroup(
           primer.intakeCommand(),
           intakeRollers.outtakeCommand()
-        ), // Stops primer by itself
+        ).withTimeout(.325), // Stops primer by itself
         intakeRollers.stopCommand()
       )
         .finallyDo(
@@ -128,8 +135,47 @@ public class RobotContainer {
           }
         )
       );
-    NamedCommands.registerCommand("Prep", autonCommand);
-    NamedCommands.registerCommand("shootPiece", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> !primer.isPrimerBeamBreakBroken()));
+    NamedCommands.registerCommand("prepToShootMidStage", 
+      new ParallelCommandGroup(
+        pivot.runPivot(ShooterWristConstants.kMidStagePos),
+        shooter.setRequestCommand(ShooterConstants.kMidStageSpeed)
+      )
+    );
+
+    NamedCommands.registerCommand("finishIndex",
+      new ParallelCommandGroup(
+        intakeRollers.outtakeCommand(),
+        primer.intakeCommand(),
+        pivot.goToIntakePos()
+      )
+        .withTimeout(.15)
+        .onlyIf(() -> primer.isPrimerBeamBreakBroken())
+    );
+
+    NamedCommands.registerCommand("shootPieceMidStage",
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          pivot.runPivot(ShooterWristConstants.kMidStagePos),
+          new WaitUntilCommand(shooter::isAtReq)
+            .withTimeout(.5)
+        ),
+        primer.setSpeedCommand(1),
+        new WaitUntilCommand(primer::isNoteShot)
+          .withTimeout(.3),
+        primer.stopCommand()
+      )
+        .finallyDo(() -> pivot.setRequest(ShooterWristConstants.kFlat))
+    );
+
+
+    //Named Commands for 4P Fixed
+    NamedCommands.registerCommand("pivotSubwoofer", pivot.goToSubCommand().withTimeout(.5));
+    NamedCommands.registerCommand("pivotToIntake", pivot.goToIntakePos().withTimeout(.25));
+    NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(4000).withTimeout(1));
+    NamedCommands.registerCommand("shootPiece", primer.setSpeedCommand(PrimerConstants.kShoot).until(() -> primer.isNoteShot()).withTimeout(.5).finallyDo(() -> primer.stop()));
+
+    //Shoot ANYWHERE
+    NamedCommands.registerCommand("shootPieceAnywhere", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> primer.isNoteShot()));
     
     //Shooting commands should work
     NamedCommands.registerCommand("shootPiece1", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
@@ -148,12 +194,12 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Middle subwoofer two piece", "Middle2P");
-    autoChooser.addOption("Top subwoofer (Amp side) two piece", "Top2P");
+    // autoChooser.addOption("Top subwoofer (Amp side) two piece", "Top2P");
     autoChooser.addOption("Middle subwoofer two piece", "Middle2P");
-    autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
+    // autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
     autoChooser.addOption("Four Piece close. Start center subwoofer", "4 Piece Fixed");
-    autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
-    autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
+    // autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
+    // autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
 
   }
 
@@ -365,11 +411,7 @@ public class RobotContainer {
   // Command theory = drivetrain.getAutoPath("Bottom4P");
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
-  Command tune = drivetrain.getAutoPath("PathPlanTest");
-  Command baseAuton4 = drivetrain.getAutoPath("4Piece");
-  Command threePieceChoreo = drivetrain.getAutoPath("3 piece");
-  Command fourP = drivetrain.getAutoPath("4P");
-  Command test = drivetrain.getAutoPath("testAuto2");
-  return test;
+  //Command test = drivetrain.getAutoPath("testAuto2");
+  return autonCommand;
   }
 }
