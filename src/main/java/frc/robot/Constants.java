@@ -197,6 +197,37 @@ public final class Constants {
     public static final double kStowpos = kFlat;
   }
 
+  public static class BackpackWristConstants {
+    public static final int kMotorID = 0;
+
+    // Limits
+    // public static final double kStatorLimit = 60;
+    public static final int kSupplyLimit = 40;
+
+    // PID constants
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kFF = 0;
+
+    // Positions
+    public static final double kIntake = 0;
+    public static final double kStow = 0;
+
+    // tolerance
+    public static final double kTolerance = 0;
+
+  }
+  public static class BackpackRollerConstants {
+    public static final int kBackpackRollerID = 11;
+    public static final double kIntake = 0.8;
+    public static final double kOuttake = -0.3;
+    public static final double kHold = 0.1;
+    public static final double kStop = 0;
+    public static final double kStatorLimit = 60;
+    public static final double kSupplyLimit = 30;
+  }
+
   public static class TeleopSwerveConstants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
     public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
