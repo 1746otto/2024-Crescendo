@@ -34,7 +34,11 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     double buttonLastTrigger = 0;
 
+    double intakingSpeed = IntakeRollerConstants.kIntake;
+
     VoltageOut voltage = new VoltageOut(0);
+
+    boolean isDebug = true;
     
 
     /**
@@ -59,6 +63,14 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
         rollerMotor.getConfigurator().apply(configs);
+
+        if (isDebug) {
+            configureDebug();
+        }
+    }
+
+    private void configureDebug() {
+        SmartDashboard.putNumber("Intake speed", intakingSpeed);
     }
 
     

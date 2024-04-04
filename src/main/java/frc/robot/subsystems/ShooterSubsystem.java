@@ -45,6 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private VoltageOut voltageRequest = new VoltageOut(0);
 
+  private boolean isDebug = true;
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
@@ -98,8 +100,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // Initialization of analog input for beam break detection
     // Also in the wrong spot but i have to commit.
     
-    SmartDashboard.putNumber("Speed", targetVelocity);
+    if (isDebug)
+      configureDebug();
+    
 
+  }
+
+  void configureDebug() {
+    SmartDashboard.putNumber("shooter target", targetVelocity);
   }
 
   /**
@@ -155,9 +163,10 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setRequest(double RPM) {
     targetVelocity = RPM;
     shooterLeader.setControl(new VelocityVoltage(RPM/60.0));
+    SmartDashboard.putNumber("shooter target", targetVelocity);
     // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
     //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
-  }
+  } 
 
   public Command setRequestCommand(double RPM) {
     return runOnce(() -> setRequest(RPM));
@@ -167,10 +176,9 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    //  if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
-    //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
-      
-    // }
+     if (isDebug && SmartDashboard.getNumber("shooter target", targetVelocity) != targetVelocity) {
+      setRequest(SmartDashboard.getNumber("shooter target", targetVelocity));
+    }
 
     //setRequest(targetVelocity);
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);

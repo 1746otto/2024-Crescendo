@@ -8,6 +8,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -31,7 +32,7 @@ public final class Constants {
 
   public static class IntakeRollerConstants {
     public static final int kIntakeRollerID = 11;
-    public static final double kIntake = 0.8;
+    public static final double kIntake = 1.0;
     public static final double kAmp = -0.475;
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1; // Recommend .06 or .05
@@ -101,9 +102,10 @@ public final class Constants {
     public static final double kSubwooferSpeed = 4500;// 4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
-    public static final double kFerry = 5000;
+    public static final double kFerry = 4750;
     public static final double kMidStageSpeed = 5850;
     public static final double kAngleFerry = -0.345;
+    public static final double kBackpackSpeed = 5000;
 
     // Limits
     public static final int kStatorLimit = 60;
@@ -136,6 +138,7 @@ public final class Constants {
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
     public static final double kSlowSpeed = 0.05;
+    public static final double kBackpackSpeed = 0.2;
 
     // PID values
     public static final double kVelocityP = 0.1;
@@ -178,7 +181,7 @@ public final class Constants {
     public static double kFlat = -0.213379;
     public static double kSubwooferPos = -0.389404; // To change 0.541
     public static double kIntakePos = -0.348389; // To change
-    public static double kBackPackPos = -0.616455;
+    public static double kBackPackPos = -0.580322;
     public static double kAmpPosition = -0.137695;
     public static double kFerry = -0.45;
     public static double kMidStagePos = -.329;
@@ -198,29 +201,35 @@ public final class Constants {
   }
 
   public static class BackpackWristConstants {
-    public static final int kMotorID = 0;
+    public static final int kMotorID = 62;
 
     // Limits
-    // public static final double kStatorLimit = 60;
-    public static final int kSupplyLimit = 40;
+    public static final double kStatorLimit = 40;
+    public static final double kSupplyLimit = 30;
+    public static final double kMaxForwardDutyCycle = .15;
+    public static final double kMaxReverseDutyCycle = .05;
+
+    // Wrist Characteristics
+    public static final double kGearRatio = 275.0 / 9.0;
+    public static final double kRangeDegrees = 192;
 
     // PID constants
-    public static final double kP = 0;
+    public static final double kP = 2.0;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kFF = 0;
 
     // Positions
-    public static final double kIntake = 0;
+    public static final double kIntake = 15.0;//Units.degreesToRotations(192) * kGearRatio;
     public static final double kStow = 0;
 
     // tolerance
-    public static final double kTolerance = 0;
+    public static final double kTolerance = Units.degreesToRotations(2);
 
   }
   public static class BackpackRollerConstants {
-    public static final int kBackpackRollerID = 11;
-    public static final double kIntake = 0.8;
+    public static final int kBackpackRollerID = 61;
+    public static final double kIntake = 0.5;
     public static final double kOuttake = -0.3;
     public static final double kHold = 0.1;
     public static final double kStop = 0;

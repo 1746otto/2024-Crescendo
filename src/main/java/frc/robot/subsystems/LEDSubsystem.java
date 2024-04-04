@@ -10,6 +10,12 @@ import frc.robot.Constants.LEDConstants;
 public class LEDSubsystem extends SubsystemBase {
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
+  private enum LEDMode {Solid, Blinking};
+  private LEDMode mode = LEDMode.Solid;
+  private int counter = 0;
+  private int period = 0;
+  private int activeTime = 0;
+  private int activeHue = 0;
 
   public LEDSubsystem() {
     led = new AddressableLED(LEDConstants.PWMPortLeft);
@@ -24,6 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
       ledBuffer.setHSV(i, LEDConstants.cubeHValue, LEDConstants.cubeSValue,
           LEDConstants.cubeVValue);
     }
+    mode = LEDMode.Solid;
     led.setData(ledBuffer);
   }
 
@@ -31,6 +38,7 @@ public class LEDSubsystem extends SubsystemBase {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, hue, 255, 130);
     }
+    mode = LEDMode.Solid;
     led.setData(ledBuffer);
   }
 
@@ -39,6 +47,7 @@ public class LEDSubsystem extends SubsystemBase {
       ledBuffer.setHSV(i, LEDConstants.coneHValue, LEDConstants.coneSValue,
           LEDConstants.coneVValue);
     }
+    mode = LEDMode.Solid;
     led.setData(ledBuffer);
   }
 
@@ -46,8 +55,18 @@ public class LEDSubsystem extends SubsystemBase {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, 0, 0, 0);
     }
+    mode = LEDMode.Solid;
     led.setData(ledBuffer);
   }
+
+  public void setBlinkPattern(int blinkPeriod, int blinkActive, int hue) {
+    mode = LEDMode.Blinking;
+    period = blinkPeriod;
+    activeTime = blinkActive;
+    activeHue = hue;
+
+  }
+
   public Command setLedIntakeCommand(){
     return run(() -> setLedtoIntake()).finallyDo(() -> setLedOff());
   }
@@ -61,6 +80,16 @@ public class LEDSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("led", ledBuffer.getLength());
+
+    if (mode == LEDMode.Blinking) {
+      if (counter % period < activeTime) {
+        setToHue(activeHue);
+      } else {
+        setLedOff();
+      }
+      counter++;
+    }
+
   }
 
 }

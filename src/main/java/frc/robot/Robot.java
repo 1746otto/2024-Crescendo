@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_robotContainer = new RobotContainer();
 
-    m_robotContainer.vision.startThread();
+    //m_robotContainer.vision.startThread();
 
     SmartDashboard.putData(m_robotContainer.autoChooser);
   }

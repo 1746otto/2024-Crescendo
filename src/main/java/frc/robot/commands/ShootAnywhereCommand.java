@@ -16,6 +16,7 @@ import edu.wpi.first.math.spline.SplineHelper;
 import edu.wpi.first.math.spline.Spline.ControlVector;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -61,6 +62,11 @@ public class ShootAnywhereCommand extends Command {
     double speakerOffset = FieldConstants.blueAllianceYOffset;
     final boolean isDebug = true;
 
+    private enum TargetingMode {Localization, SpeakerTag, TwoDimensional};
+
+    SendableChooser<TargetingMode> modeChooser = new SendableChooser<>();
+
+
     // This is so jank the entire class needs to be rewritten.
     public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem,
             ShooterSubsystem shooterSubsystem, ShooterPivotSubsystem pivotSubsystem, LEDSubsystem ledSubsystem,
@@ -79,19 +85,14 @@ public class ShootAnywhereCommand extends Command {
 
         this.directionSupplier = directionSupplier;
 
-        if (isDebug) {
-        
-            SmartDashboard.putNumber("speaker Y offset", speakerOffset);
-            speakerPos = new Translation2d((directionSupplier.getAsDouble() == 1) ? FieldConstants.redSpeakerX : FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
-            
-        }
-        else {
-            speakerPos = VisionConstants.kSpeakerPose;
-        }
+        modeChooser.setDefaultOption("Localization", TargetingMode.Localization);
+        modeChooser.addOption("Localization", TargetingMode.Localization);
+        modeChooser.addOption("Speaker Tag", TargetingMode.SpeakerTag);
+        //modeChooser.addOption("2D Speaker Tag", TargetingMode.TwoDimensional);
 
-        pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
+        /*pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD, new Constraints(DynamicShootingConstants.kMaxAngularVelocity,
-                        DynamicShootingConstants.kMaxAngularAcceleration));
+                        DynamicShootingConstants.kMaxAngularAcceleration));*/
         request = new SwerveRequest.FieldCentricFacingAngle()
                 .withDeadband(6 * 0.1).withRotationalDeadband(0) // Add a 10% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -172,6 +173,15 @@ public class ShootAnywhereCommand extends Command {
 
   @Override
   public void initialize() {
+    if (isDebug) {
+        
+        SmartDashboard.putNumber("speaker Y offset", speakerOffset);
+        speakerPos = new Translation2d((directionSupplier.getAsDouble() == 1) ? FieldConstants.redSpeakerX : FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+            
+    }
+    else {
+        speakerPos = VisionConstants.kSpeakerPose;
+    }
     // swerve.applyRequest(() -> request.withVelocityX(direction * yAxisSupplier.getAsDouble() * 4.5).withVelocityY(direction *
     // xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(VisionConstants.kVisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle()));
     
@@ -224,21 +234,32 @@ public class ShootAnywhereCommand extends Command {
         if (isDebug && SmartDashboard.getNumber("speaker Y offset", speakerOffset) != speakerOffset)
             speakerOffset = SmartDashboard.getNumber("speaker Y offset", speakerOffset);
 
-        if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || !vision.containsSpeakerTag(0) ) {
-        // Drive forward with
-        swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6)
-        .withVelocityY(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
-        .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
-        return;
-      } else {
-        // negative Y (forward)
-        swerve.setControl(
-        request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
-        .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
-        ((isDebug) ? speakerPos.plus(new Translation2d(0, speakerOffset)) : speakerPos).minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
-      }
-        // Find above and below keys
+        if (Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || (!vision.containsSpeakerTag(0) && modeChooser.getSelected() != TargetingMode.Localization)) {
+            // Drive forward with
+            swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6)
+            .withVelocityY(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
+            .withRotationalRate(-rightXAxis.getAsDouble() * Math.pow(Math.abs(rightXAxis.getAsDouble()), 3) * 1.5 * Math.PI));
+            return;
+        }
 
+        // negative Y (forward)
+        request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
+        .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5);
+        switch (modeChooser.getSelected()) {
+            case Localization:
+                request.withTargetDirection(
+                    ((isDebug) ? speakerPos.plus(new Translation2d(0, speakerOffset)) : speakerPos).minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180)));
+                break;
+            case SpeakerTag:
+                request.withTargetDirection(
+                    ((isDebug) ? speakerPos.plus(new Translation2d(0, speakerOffset)) : speakerPos).minus(vision.cameraPoses[VisionConstants.kShooterCameraIndex].getTranslation().toTranslation2d()).getAngle().plus(Rotation2d.fromDegrees(180)));
+                break;
+            default:
+                request.withTargetDirection(
+                    ((isDebug) ? speakerPos.plus(new Translation2d(0, speakerOffset)) : speakerPos).minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180)));
+        }
+        // Find above and below keys
+        swerve.setControl(request);
         double distance = VisionConstants.kSpeakerPose.plus(new Translation2d(0, speakerOffset)).minus(swerve.getState().Pose.getTranslation()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
         Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
@@ -269,14 +290,9 @@ public class ShootAnywhereCommand extends Command {
 
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
+
         if (shooter.isAtReq()) {
-           if (blinking % 16 <= 7) {
-                leds.setToHue(55);
-           } else {
-                leds.setLedOff();
-           }
-           blinking++;
-           
+            leds.setBlinkPattern(16, 8, 55);
         }
          
     }

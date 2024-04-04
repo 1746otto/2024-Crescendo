@@ -30,6 +30,9 @@ public class Vision {
     volatile boolean continueLoop;
     String tags = new String();
 
+    public enum PipelineIndex {k3DAprilTag, k3DAruco, k2DAprilTag};
+    PipelineIndex[] currentIndex = new PipelineIndex[VisionConstants.kCameraCount];
+
 
     public Vision(CommandSwerveDrivetrain swerveDrive) {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
@@ -67,10 +70,12 @@ public class Vision {
     }
 
     public void stopThread() {
+        if (!visionThread.isAlive())
+            return;
         try {
-        visionThread.join();
+            visionThread.join();
         } catch (Exception e) {
-
+            SmartDashboard.putString("Vision error", "Thread failed to join");
         }
     }
 

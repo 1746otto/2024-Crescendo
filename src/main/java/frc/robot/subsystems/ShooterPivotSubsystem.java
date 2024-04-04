@@ -27,6 +27,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     private TalonFX slave;
 
     private double targetPose = ShooterWristConstants.kFlat;
+
+    private boolean isDebug = true;
   
     public ShooterPivotSubsystem() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -50,15 +52,20 @@ public class ShooterPivotSubsystem extends SubsystemBase{
       slave.setControl(new Follower(ShooterWristConstants.kShooterMasterID, true));
       slave.getConfigurator().apply(configs);
 
-      //master.enableVoltageCompensation(12);
-      //slave.enableVoltageCompensation(12);
-
 
       SmartDashboard.putNumber("target", targetPose);
-      SmartDashboard.putNumber("Target Position", targetPose);
+
+      if (isDebug) {
+        configureDebug();
+      }
       
       //setRequest(master.getPosition().getValueAsDouble());
     }
+
+    private void configureDebug() {
+      SmartDashboard.putNumber("Target wrist position", targetPose);
+    }
+
     public void test() {
         master.set(0.1);
     }
@@ -123,6 +130,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToFerryPos() {
         return runPivot(ShooterWristConstants.kFerry);
     }
+
+    public Command goToBackpackPos() {
+        return runPivot(ShooterWristConstants.kBackPackPos);
+    }
     public Command stopCommand() {
         return new InstantCommand(() -> stop());
     }
@@ -134,8 +145,8 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("TargetPose", targetPose);
         SmartDashboard.putNumber("CurrentPose", master.getPosition().getValueAsDouble());
 
-        // if (SmartDashboard.getNumber("Target Position", targetPose) != targetPose) {
-        //     targetPose = SmartDashboard.getNumber("Target Position", targetPose);
+        // if (isDebug && SmartDashboard.getNumber("Target wrist position", targetPose) != targetPose) {
+        //     targetPose = SmartDashboard.getNumber("Target wrist position", targetPose);
         // }
         if (!atSetpoint()){
             master.setControl(new PositionVoltage(targetPose));

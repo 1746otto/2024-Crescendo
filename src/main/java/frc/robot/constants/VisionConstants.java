@@ -16,15 +16,17 @@ public class VisionConstants {
     public static final double kDistanceCutoff = 7; // TODO: Tune the distance cutoff for this robot.
     public static final double kAmbiguityCutoff = 0.2; // TODO: Tune the ambiguity cutoff for this robot. It is probably fine, but we need to test it.
     public static final String[] kCameraNames = {
-       "front_camera"
+        "back_camera",
+       //"intake_camera"
+       
     };
-    public static final int k3DAruco = 0;
-    public static final int k3DAprilTag = 1;
-    public static final int k2DAprilTag = 2;
+
+    public static final int kShooterCameraIndex = 0;
     public static final int kCameraCount = kCameraNames.length;
     public static final Transform3d[] kCameraTransforms = {
-        new Transform3d(new Translation3d(Units.inchesToMeters(-6.868435), 0, Units.inchesToMeters(12.907907)), new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(180))), 
-        new Transform3d(new Pose3d(), new Pose3d(-0.5, 0, 0.5, new Rotation3d()))
+        new Transform3d(new Translation3d(Units.inchesToMeters(12.746911), 0, Units.inchesToMeters(6.429865)), new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180))),
+        new Transform3d(new Translation3d(Units.inchesToMeters(12.61043), Units.inchesToMeters(-11.187369), Units.inchesToMeters(6.916453)), new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(15))) // Currently wrong idfk how the coordinate system works
+        
     }; // TODO: Get the actual transforms for the cameras.
     public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(3.3, 3.3, Double.MAX_VALUE); // TODO: Tune these values for our robot.
 

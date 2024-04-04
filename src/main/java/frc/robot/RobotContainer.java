@@ -27,10 +27,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.BackpackRollerSubsystem;
+import frc.robot.subsystems.BackpackWristSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
+import frc.robot.Constants.BackpackRollerConstants;
+import frc.robot.Constants.BackpackWristConstants;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
 import frc.robot.Constants.PrimerConstants;
@@ -64,13 +68,15 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  public final Vision vision = new Vision(drivetrain);
+  //public final Vision vision = new Vision(drivetrain);
   private final LEDSubsystem led = new LEDSubsystem();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeRollerSubsystem intakeRollers = new IntakeRollerSubsystem();
   private final IntakeWristSubsystem intakeWrist = new IntakeWristSubsystem();
   private final PrimerSubsystem primer = new PrimerSubsystem();
+  private final BackpackWristSubsystem backpackWrist = new BackpackWristSubsystem();
+  private final BackpackRollerSubsystem backpackRoller = new BackpackRollerSubsystem();
 
   private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -80,6 +86,8 @@ public class RobotContainer {
   private enum AmpPositionState {
     Amp, Normal
   };
+
+  public boolean backPackToggle;
 
   private AmpPositionState ampPosition = AmpPositionState.Normal;
   public SendableChooser<String> autoChooser;
@@ -199,14 +207,14 @@ public class RobotContainer {
     autoChooser.addOption("Middle subwoofer two piece", "Middle2P");
     // autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
     autoChooser.addOption("Four Piece close. Start center subwoofer", "4 Piece Fixed");
+    
     // autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
     // autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
 
   }
 
   private void configureBindings() {
-    ShootAnywhereCommand shootAnywhereCommand = new ShootAnywhereCommand(drivetrain, vision, shooter, pivot, led,
-        () -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX(), () -> temp);
+
 
     
      drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -300,10 +308,28 @@ public class RobotContainer {
                 new Pose2d(
                     drivetrain.getState().Pose.getTranslation(),
                     Rotation2d.fromDegrees(/* (temp == 1) ? 180 : */0)))));
+
+    joystick.povUp().toggleOnTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          pivot.goToBackpackPos(),
+          backpackWrist.goToBackPackPos(),
+          shooter.setRequestCommand(ShooterConstants.kBackpackSpeed)
+        ).withTimeout(1),
+        new StartEndCommand(() -> {
+          backpackRoller.setRollerSpeed(BackpackRollerConstants.kIntake);
+          primer.setSpeed(PrimerConstants.kBackpackSpeed);
+        }, () -> {
+          shooter.stop();
+          backpackRoller.stop();
+          primer.stop();
+          pivot.setRequest(ShooterWristConstants.kFlat);
+          backpackWrist.setRequest(BackpackWristConstants.kStow);
+        })));
     
     // joystick.b().onTrue(
     //   new SequentialCommandGroup(
-    //     pivot.goToAmpPosition(),
+    //     pivot.goToAmpPosition
     //     intakeWrist.ampPosCommand(),
     //     intakeRollers.ampCommand().andThen(new WaitUntilCommand(() -> joystick.getHID().getBButtonReleased()))
     //   )
@@ -320,32 +346,32 @@ public class RobotContainer {
     // );
   
      
-    joystick.a().onTrue( //Test button
-    new SequentialCommandGroup(
-    new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
-    new ParallelDeadlineGroup(
-    intakeWrist.intakePosCommand(),
-    intakeRollers.intakeSpeedCommand(),
-    pivot.goToIntakePos(),
-    new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
-    ),
-    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-    .withTimeout(5),
-    intakeRollers.stopCommand(),
-    intakeWrist.indexPosCommand(),
-    shooter.ShootCommand(),
-    new ParallelDeadlineGroup(
-    primer.intakeCommand(), // Stops primer by itself
-    intakeRollers.outtakeCommand()),
-    intakeRollers.stopCommand()
-    )
-     .finallyDo(
-    () -> {
-    intakeRollers.stop();
-    pivot.setRequest(ShooterWristConstants.kFlat);
-        }
-      )
-    );
+    // joystick.a().onTrue( //Test button
+    // new SequentialCommandGroup(
+    // new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
+    // new ParallelDeadlineGroup(
+    // intakeWrist.intakePosCommand(),
+    // intakeRollers.intakeSpeedCommand(),
+    // pivot.goToIntakePos(),
+    // new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+    // ),
+    // new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    // .withTimeout(5),
+    // intakeRollers.stopCommand(),
+    // intakeWrist.indexPosCommand(),
+    // shooter.ShootCommand(),
+    // new ParallelDeadlineGroup(
+    // primer.intakeCommand(), // Stops primer by itself
+    // intakeRollers.outtakeCommand()),
+    // intakeRollers.stopCommand()
+    // )
+    //  .finallyDo(
+    // () -> {
+    // intakeRollers.stop();
+    // pivot.setRequest(ShooterWristConstants.kFlat);
+    //     }
+    //   )
+    // );
     // pivot
     // joystick.rightBumper().and(() -> primer.isPrimerBeamBreakBroken() ||
     // joystick.getHID().getAButtonPressed()).toggleOnTrue(pivot.goToAmpPose()/*.andThen(new
@@ -379,8 +405,8 @@ public class RobotContainer {
     }));
     joystick.rightTrigger().onFalse(primer.backupCommand());
 
-    joystick.povLeft().whileTrue(new StartEndCommand(() -> pivot.test(), () -> pivot.stop(), pivot));
-    joystick.povRight().onTrue(pivot.goToIntakePos());
+    // joystick.povLeft().whileTrue(new StartEndCommand(() -> pivot.test(), () -> pivot.stop(), pivot));
+    // joystick.povRight().onTrue(pivot.goToIntakePos());
 
     if (Utils.isSimulation()) {
 
@@ -401,6 +427,7 @@ public class RobotContainer {
     intakeWrist.setRequest(IntakeWristConstants.kStow);
     primer.stop();
     pivot.setRequest(ShooterWristConstants.kFlat);
+    // vision.stopThread();
   }
 
   public Command getAutonomousCommand() {
@@ -413,6 +440,6 @@ public class RobotContainer {
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
   //Command test = drivetrain.getAutoPath("testAuto2");
-  return autonCommand;
+  return new InstantCommand();
   }
 }
