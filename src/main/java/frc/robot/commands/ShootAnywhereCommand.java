@@ -51,12 +51,15 @@ public class ShootAnywhereCommand extends Command {
     Translation2d[] pivotPositions = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
     Translation2d[] shooterSpeeds = new Translation2d[DynamicShootingConstants.distanceMapLength - 2];
 
-    
+    Translation2d speakerPos;
 
     DoubleSupplier directionSupplier;
     Command drive;
     boolean canDriverRotate;
     int blinking = 0;
+
+    double speakerOffset = FieldConstants.blueAllianceYOffset;
+    final boolean isDebug = true;
 
     // This is so jank the entire class needs to be rewritten.
     public ShootAnywhereCommand(CommandSwerveDrivetrain swerveSubsystem, Vision visionSubsystem,
@@ -75,6 +78,16 @@ public class ShootAnywhereCommand extends Command {
         addRequirements(shooter, pivot, swerve, leds);
 
         this.directionSupplier = directionSupplier;
+
+        if (isDebug) {
+        
+            SmartDashboard.putNumber("speaker Y offset", speakerOffset);
+            speakerPos = new Translation2d((directionSupplier.getAsDouble() == 1) ? FieldConstants.redSpeakerX : FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY);
+            
+        }
+        else {
+            speakerPos = VisionConstants.kSpeakerPose;
+        }
 
         pidController = new ProfiledPIDController(DynamicShootingConstants.kP, DynamicShootingConstants.kI,
                 DynamicShootingConstants.kD, new Constraints(DynamicShootingConstants.kMaxAngularVelocity,
@@ -208,7 +221,10 @@ public class ShootAnywhereCommand extends Command {
 
     @Override
     public void execute() {
-      if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || !vision.containsSpeakerTag(0) ) {
+        if (isDebug && SmartDashboard.getNumber("speaker Y offset", speakerOffset) != speakerOffset)
+            speakerOffset = SmartDashboard.getNumber("speaker Y offset", speakerOffset);
+
+        if ( Timer.getFPGATimestamp() - vision.lastResults[0].getTimestampSeconds() > .3 || !vision.containsSpeakerTag(0) ) {
         // Drive forward with
         swerve.setControl(request2.withVelocityX(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * Math.pow(Math.abs(xAxisSupplier.getAsDouble()), 3) * 6)
         .withVelocityY(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * Math.pow(Math.abs(yAxisSupplier.getAsDouble()), 3) * 6) // Drive left with negative X (left)
@@ -219,17 +235,17 @@ public class ShootAnywhereCommand extends Command {
         swerve.setControl(
         request.withVelocityX(directionSupplier.getAsDouble() * yAxisSupplier.getAsDouble() * 4.5)
         .withVelocityY(directionSupplier.getAsDouble() * xAxisSupplier.getAsDouble() * 4.5).withTargetDirection(
-        VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
+        ((isDebug) ? speakerPos.plus(new Translation2d(0, speakerOffset)) : speakerPos).minus(swerve.getState().Pose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
       }
         // Find above and below keys
 
-        double distance = VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getNorm();
+        double distance = VisionConstants.kSpeakerPose.plus(new Translation2d(0, speakerOffset)).minus(swerve.getState().Pose.getTranslation()).getNorm();
         Map.Entry<Double, Integer> lowEntry = DynamicShootingConstants.distanceToIndex.floorEntry(distance);
         Map.Entry<Double, Integer> highEntry = DynamicShootingConstants.distanceToIndex.ceilingEntry(distance);
 
         SmartDashboard.putNumber("Distance to speaker", distance);
         SmartDashboard.putNumber("Robot Angle",
-                VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().getDegrees());
+                (VisionConstants.kSpeakerPose.minus(swerve.getState().Pose.getTranslation()).getAngle().getDegrees()));
         // Find and apply interpolated angle and speed
         if (lowEntry == null || lowEntry.getValue() < 0 || highEntry == null
                 || highEntry.getValue() >= DynamicShootingConstants.distanceToIndex.size()) {
@@ -249,6 +265,8 @@ public class ShootAnywhereCommand extends Command {
         SmartDashboard.putNumber("Shooter pivot angle", shooterAngle);
         SmartDashboard.putNumber("Shooter speed", shooterRPM);
 
+        
+
         shooter.setRequest(shooterRPM);
         pivot.setRequest(shooterAngle);
         if (shooter.isAtReq()) {
@@ -257,11 +275,10 @@ public class ShootAnywhereCommand extends Command {
            } else {
                 leds.setLedOff();
            }
-           blinking ++;
+           blinking++;
            
         }
          
-
     }
 
     @Override

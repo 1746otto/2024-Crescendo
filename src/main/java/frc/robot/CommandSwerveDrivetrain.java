@@ -13,11 +13,16 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.sendable.SendableBuilder;
 //import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.constants.VisionConstants;
@@ -36,6 +41,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     Alliance alliance;
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
+    Vector<N3> stdDev = VisionConstants.kVisionStdDeviations;
+
+    final boolean isDebug = true;
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
 
@@ -46,13 +55,31 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        
+        if (isDebug) {
+            configureDebug();
+        }
     }
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
+
         configurePathPlanner();
+        
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        setVisionMeasurementStdDevs(VisionConstants.kVisionStdDeviations);
+
+        if (isDebug)
+            configureDebug();
+        
+    }
+
+    void configureDebug() {
+        stdDev = VisionConstants.kVisionStdDeviations;
+
+        SmartDashboard.putNumber("Standard deviation value", stdDev.get(0));
     }
 
     private void configurePathPlanner() {
@@ -107,5 +134,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
+    }
+
+    @Override
+    public void periodic() {
+        if (isDebug && SmartDashboard.getNumber("Standard deviation value", stdDev.get(0)) != stdDev.get(0)) {
+            stdDev.set(0, 0, SmartDashboard.getNumber("Standard deviation value", stdDev.get(0)));
+            stdDev.set(1, 0, stdDev.get(0));
+            setVisionMeasurementStdDevs(stdDev);
+        }
     }
 }
