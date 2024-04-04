@@ -135,6 +135,7 @@ public class RobotContainer {
           }
         )
       );
+    
     NamedCommands.registerCommand("prepToShootMidStage", 
       new ParallelCommandGroup(
         pivot.runPivot(ShooterWristConstants.kMidStagePos),
@@ -149,7 +150,7 @@ public class RobotContainer {
         pivot.goToIntakePos()
       )
         .withTimeout(.15)
-        .onlyIf(() -> primer.isPrimerBeamBreakBroken())
+        .onlyIf(() -> !primer.isPrimerBeamBreakBroken())
     );
 
     NamedCommands.registerCommand("shootPieceMidStage",

@@ -11405,7 +11405,7 @@
                     }
                 },
                 {
-                    "name": "Marker",
+                    "name": "Shot prep",
                     "target": 6,
                     "trajTargetIndex": 6,
                     "targetTimestamp": 4.541200742059291,
@@ -11413,7 +11413,7 @@
                     "command": {
                         "type": "named",
                         "data": {
-                            "name": ""
+                            "name": "prepToShootMidStage"
                         }
                     }
                 }

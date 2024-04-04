@@ -700,7 +700,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": ""
+          "name": "prepToShootMidStage"
         }
       }
     }

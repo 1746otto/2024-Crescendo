@@ -5,7 +5,7 @@
       "x": 1.3576143980026243,
       "y": 3.026256561279297
     },
-    "rotation": -61.080844563109146
+    "rotation": -65.4823085998282
   },
   "command": {
     "type": "sequential",
@@ -51,12 +51,6 @@
           "type": "named",
           "data": {
             "name": "shootPieceMidStage"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
           }
         }
       ]
