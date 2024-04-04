@@ -25,7 +25,9 @@ public class BackpackWristSubsystem extends SubsystemBase{
         
         configs.CurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
-            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true);
 
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
