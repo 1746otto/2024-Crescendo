@@ -226,6 +226,7 @@ public final class Constants {
     public static final double kStop = 0;
     public static final double kStatorLimit = 60;
     public static final double kSupplyLimit = 30;
+    
   }
 
   public static class TeleopSwerveConstants {
