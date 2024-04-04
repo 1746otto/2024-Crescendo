@@ -138,7 +138,7 @@ public final class Constants {
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
     public static final double kSlowSpeed = 0.05;
-    public static final double kBackpackSpeed = 0.2;
+    public static final double kBackpackSpeed = 0.35;
 
     // PID values
     public static final double kVelocityP = 0.1;
@@ -229,7 +229,7 @@ public final class Constants {
   }
   public static class BackpackRollerConstants {
     public static final int kBackpackRollerID = 61;
-    public static final double kIntake = 0.5;
+    public static final double kIntake = 0.7;
     public static final double kOuttake = -0.3;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
