@@ -113,7 +113,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         return runOnce(() -> setSpeed(IntakeRollerConstants.kHold));
     }
     public Command stopCommand() {
-        return runOnce(() -> setSpeed(0));
+        return runOnce(() -> stop());
     }
 
 

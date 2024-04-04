@@ -30,6 +30,7 @@ public class DynamicShootingConstants {
     ArrayList<Tuple3<Double>> tempMap = new ArrayList<Tuple3<Double>>();
 
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(-FieldConstants.blueSpeakerX + 25 + 16.25), 5150.0, -0.394)); // Tested is .55 but if sub is good then this must be higher bc no monotonicity.
+    tempMap.add(new Tuple3<Double>(Units.inchesToMeters(-FieldConstants.blueSpeakerX + 37 + 16.25), 5150.0, -0.3683));
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(-FieldConstants.blueSpeakerX + 48 + 16.25), 5150.0,-0.366)); // Test this one
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(-FieldConstants.blueSpeakerX + 59 + 16.25), 5150.0, -0.346));
     tempMap.add(new Tuple3<Double>(Units.inchesToMeters(-FieldConstants.blueSpeakerX + 70 + 16.25), 5200.0, -0.338));

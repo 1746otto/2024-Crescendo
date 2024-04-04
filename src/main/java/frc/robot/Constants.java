@@ -102,7 +102,7 @@ public final class Constants {
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
     public static final double kFerry = 5000;
-    public static final double kMidStagePos = 5850;
+    public static final double kMidStageSpeed = 5850;
     public static final double kAngleFerry = -0.345;
 
     // Limits
@@ -181,7 +181,7 @@ public final class Constants {
     public static double kBackPackPos = -0.616455;
     public static double kAmpPosition = -0.137695;
     public static double kFerry = -0.45;
-    public static double kMidStageSpeed = -.329;
+    public static double kMidStagePos = -.329;
     public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
     public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
     public static double kDt = 0.02;// To change

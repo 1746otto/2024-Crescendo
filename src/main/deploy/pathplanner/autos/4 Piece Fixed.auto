@@ -45,7 +45,13 @@
         {
           "type": "named",
           "data": {
-            "name": "goToSubwooferSpeed"
+            "name": "finishIndex"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pivotSubwoofer"
           }
         },
         {
@@ -63,7 +69,13 @@
         {
           "type": "named",
           "data": {
-            "name": "goToSubwooferSpeed"
+            "name": "finishIndex"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pivotSubwoofer"
           }
         },
         {
@@ -81,7 +93,13 @@
         {
           "type": "named",
           "data": {
-            "name": "goToSubwooferSpeed"
+            "name": "finishIndex"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pivotSubwoofer"
           }
         },
         {
