@@ -9,6 +9,8 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
+import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -79,6 +82,10 @@ public class RobotContainer {
   private final BackpackRollerSubsystem backpackRoller = new BackpackRollerSubsystem();
 
   private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
+  private final SwerveRequest.FieldCentricFacingAngle headingLockRequest = new FieldCentricFacingAngle()
+        .withDeadband(TeleopSwerveConstants.MaxSpeedMetersPerSec * Math.pow(.1, 4))
+        .withRotationalDeadband(TeleopSwerveConstants.MaxAngularRateRotPerSec * Math.pow(.1, 4)) // Add a 10% deadband.
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(TeleopSwerveConstants.MaxSpeedMetersPerSec);
@@ -196,17 +203,34 @@ public class RobotContainer {
     NamedCommands.registerCommand("shootPiece3", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
     NamedCommands.registerCommand("primeShooterRoller3", shooter.setRequestCommand(5200));//NEED VALUE HERE
     //static positions
-
-
+    NamedCommands.registerCommand("singleSubwoofer", 
+      new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          if (DriverStation.getAlliance().get() == Alliance.Red)
+            drivetrain.seedFieldRelative(drivetrain.getState().Pose.rotateBy(Rotation2d.fromDegrees(180)));
+        }),
+        new ParallelCommandGroup(
+          pivot.goToSubCommand(),
+          shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed),
+          new WaitUntilCommand(() -> shooter.isAtReq())
+        ),
+        primer.setSpeedCommand(PrimerConstants.kShoot)
+      )
+    );
+    
+    
+    headingLockRequest.HeadingController = new PhoenixPIDController(10, 0, 0);
     configureBindings();
     configureDefaultCommands();
 
+    // ! infront of namedcommands to run them in auton.
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Middle subwoofer two piece", "Middle2P");
     // autoChooser.addOption("Top subwoofer (Amp side) two piece", "Top2P");
     autoChooser.addOption("Middle subwoofer two piece", "Middle2P");
     // autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
     autoChooser.addOption("Four Piece close. Start center subwoofer", "4 Piece Fixed");
+    autoChooser.addOption("Shoot preload", "!singleSubwoofer");
     
     // autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
     // autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
@@ -293,6 +317,17 @@ public class RobotContainer {
     // InstantCommand(() ->
     // {primer.setSpeed(0);})).andThen(primer.backupCommand()));
 
+    // Bind to a button
+    new Trigger(() -> false).toggleOnTrue(drivetrain.applyRequest(() ->
+      headingLockRequest.withVelocityX(
+        temp * joystick.getLeftY() *
+        Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+      .withVelocityY(
+        temp * joystick.getLeftX() *
+        Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackShotAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackShotAngle))
+    ));
+
     joystick.x().onTrue(
         new ParallelCommandGroup(
             new InstantCommand(
@@ -307,7 +342,7 @@ public class RobotContainer {
             () -> drivetrain.seedFieldRelative(
                 new Pose2d(
                     drivetrain.getState().Pose.getTranslation(),
-                    Rotation2d.fromDegrees(/* (temp == 1) ? 180 : */0)))));
+                    Rotation2d.fromDegrees((temp == 1) ? 180 : 0)))));
 
     joystick.povUp().toggleOnTrue(
       new SequentialCommandGroup(

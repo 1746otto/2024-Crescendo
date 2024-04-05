@@ -242,6 +242,7 @@ public final class Constants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
     public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
     public static double SwerveMagnitudeExponent = 4;
+    public static Rotation2d kBackpackShotAngle = Rotation2d.fromDegrees(-120);
 
     public static final SwerveRequest.FieldCentric TeleopDriveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeedMetersPerSec * Math.pow(.1, 4))

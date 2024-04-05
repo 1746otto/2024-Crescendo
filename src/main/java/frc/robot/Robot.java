@@ -6,6 +6,9 @@ package frc.robot;
 
 import org.opencv.core.Mat.Tuple3;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -44,6 +47,11 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     if (m_robotContainer.autoChooser.getSelected() != m_robotContainer.currentAuton) {
+      if (m_robotContainer.autoChooser.getSelected().charAt(0) == '!') {
+        m_robotContainer.currentAuton = m_robotContainer.autoChooser.getSelected();
+        m_robotContainer.autonCommand = NamedCommands.getCommand(m_robotContainer.currentAuton.substring(1));
+      }
+        
       m_robotContainer.autonCommand = m_robotContainer.drivetrain
           .getAutoPath(m_robotContainer.autoChooser.getSelected());
       m_robotContainer.currentAuton = m_robotContainer.autoChooser.getSelected();
