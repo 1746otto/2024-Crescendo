@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private VoltageOut voltageRequest = new VoltageOut(0);
 
-  private boolean isDebug = true;
+  private boolean isDebug = false;
 
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
@@ -163,7 +163,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setRequest(double RPM) {
     targetVelocity = RPM;
     shooterLeader.setControl(new VelocityVoltage(RPM/60.0));
-    SmartDashboard.putNumber("shooter target", targetVelocity);
+    //SmartDashboard.putNumber("shooter target", targetVelocity);
     // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
     //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
   } 
@@ -177,6 +177,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void periodic() {
      if (isDebug && SmartDashboard.getNumber("shooter target", targetVelocity) != targetVelocity) {
+      targetVelocity = SmartDashboard.getNumber("shooter target", targetVelocity);
       setRequest(SmartDashboard.getNumber("shooter target", targetVelocity));
     }
 

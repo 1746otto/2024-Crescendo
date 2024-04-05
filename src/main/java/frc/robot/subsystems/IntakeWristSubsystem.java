@@ -82,6 +82,7 @@ public class IntakeWristSubsystem extends SubsystemBase{
      */
     public void setRequest(double req) {
         reqPosition = req;
+        intakeToReq(reqPosition);
     }
 
     /**

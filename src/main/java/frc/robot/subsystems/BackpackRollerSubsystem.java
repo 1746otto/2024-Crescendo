@@ -32,7 +32,7 @@ public class BackpackRollerSubsystem extends SubsystemBase{
         roller.set(speed);
     }
 
-    public Command setShootSpeedCommand() { //bad naming lol
+    public Command setAmpSpeedCommand() { //bad naming lol
         return runOnce(() -> setRollerSpeed(BackpackRollerConstants.kOuttake));
     }
 

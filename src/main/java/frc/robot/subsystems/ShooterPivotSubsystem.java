@@ -28,7 +28,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
 
     private double targetPose = ShooterWristConstants.kFlat;
 
-    private boolean isDebug = true;
+    private boolean isDebug = false;
   
     public ShooterPivotSubsystem() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -124,9 +124,13 @@ public class ShooterPivotSubsystem extends SubsystemBase{
     public Command goToParallelPos() {
         return runPivot(ShooterWristConstants.kFlat);
     }
-    public Command goToAmpPosition() {
-        return runPivot(ShooterWristConstants.kAmpPosition);
+    public Command goToAmpSetupPosition() {
+        return runPivot(ShooterWristConstants.kAmpSetupPosition);
     }
+    public Command goToAmpFlickPosition() {
+        return runPivot(ShooterWristConstants.kAmpFlickPosition);
+    }
+
     public Command goToFerryPos() {
         return runPivot(ShooterWristConstants.kFerry);
     }
@@ -152,6 +156,7 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         // if (isDebug && SmartDashboard.getNumber("Target wrist position", targetPose) != targetPose) {
         //     targetPose = SmartDashboard.getNumber("Target wrist position", targetPose);
         // }
+        
         if (!atSetpoint()){
             master.setControl(new PositionVoltage(targetPose));
         } else {

@@ -38,7 +38,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     VoltageOut voltage = new VoltageOut(0);
 
-    boolean isDebug = true;
+    boolean isDebug = false;
     
 
     /**

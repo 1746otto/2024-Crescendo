@@ -47,9 +47,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     if (m_robotContainer.autoChooser.getSelected() != m_robotContainer.currentAuton) {
-      if (m_robotContainer.autoChooser.getSelected().charAt(0) == '!') {
+      if (m_robotContainer.autoChooser.getSelected().startsWith("!")) {
         m_robotContainer.currentAuton = m_robotContainer.autoChooser.getSelected();
         m_robotContainer.autonCommand = NamedCommands.getCommand(m_robotContainer.currentAuton.substring(1));
+        return;
       }
         
       m_robotContainer.autonCommand = m_robotContainer.drivetrain

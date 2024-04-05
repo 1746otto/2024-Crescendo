@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -45,6 +46,7 @@ import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AmpDelayCommand;
 import frc.robot.commands.ShootAnywhereAuton;
 import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.ShootStaticAuton;
@@ -66,6 +68,8 @@ public class RobotContainer {
 
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public double time = 0.1;
+  DoubleSupplier timeSupplier = () -> time;
 
   public double power = TeleopSwerveConstants.SwerveMagnitudeExponent;
 
@@ -115,6 +119,8 @@ public class RobotContainer {
   public double temp = -1;
   boolean intookPiece;
   boolean stowPivot = false;
+  // Do not use.
+  boolean sawNoteIn = false;
 
   // pathplanner testing
   public RobotContainer() {
@@ -213,18 +219,19 @@ public class RobotContainer {
         new ParallelCommandGroup(
           pivot.goToSubCommand(),
           shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed),
-          new WaitUntilCommand(() -> shooter.isAtReq())
+          new WaitUntilCommand(() -> shooter.isAtReq()).withTimeout(1.5)
         ),
         primer.setSpeedCommand(PrimerConstants.kShoot)
       )
     );
+  
     
     
     headingLockRequest.HeadingController = new PhoenixPIDController(10, 0, 0);
     headingLockRequest.HeadingController.setTolerance(MaxAngularRate);
     configureBindings();
     configureDefaultCommands();
-
+    SmartDashboard.putNumber("time", time);
     // ! infront of namedcommands to run them in auton.
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Middle subwoofer two piece", "Middle2P");
@@ -289,6 +296,7 @@ public class RobotContainer {
      .finallyDo(
     () -> {
     intakeRollers.stop();
+    intakeWrist.setRequest(IntakeWristConstants.kStow);
     pivot.setRequest(ShooterWristConstants.kFlat);
         }
       )
@@ -327,7 +335,17 @@ public class RobotContainer {
       .withVelocityY(
         temp * joystick.getLeftX() *
         Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackShotAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackShotAngle))
+      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
+    ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
+
+    joystick.b().whileTrue(drivetrain.applyRequest(() ->
+      headingLockRequest.withVelocityX(
+        temp * joystick.getLeftY() *
+        Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+      .withVelocityY(
+        temp * joystick.getLeftX() *
+        Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kFerryAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kFerryAlignAngle))
     ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
 
     /*joystick.b().onTrue(
@@ -405,6 +423,8 @@ public class RobotContainer {
           backpackWrist.setRequest(BackpackWristConstants.kStow);
           intakeWrist.setRequest(IntakeWristConstants.kStow);
         })));
+
+    
     
     // joystick.b().onTrue(
     //   new SequentialCommandGroup(
@@ -464,14 +484,14 @@ public class RobotContainer {
     // WaitUntilCommand(100))).finallyDo(() -> {shooter.stop();
     // pivot.goToIntakePos();
     // intakeWrist.setRequest(IntakeWristConstants.kStow);}));
-    joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed())
+    joystick.leftTrigger()
         .whileTrue(pivot.goToSubCommand().alongWith(shooter.setRequestCommand(ShooterConstants.kSubwooferSpeed))
             .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
             .finallyDo(() -> {
               shooter.stop();
               pivot.setRequest(ShooterWristConstants.kFlat);
             }));
-    joystick.leftBumper().and(() -> primer.isPrimerBeamBreakBroken() || joystick.getHID().getAButtonPressed())
+    joystick.leftBumper()
         .whileTrue(pivot.goToFerryPos().alongWith(shooter.setRequestCommand(ShooterConstants.kFerry))
             .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
             .finallyDo(() -> {
@@ -483,6 +503,64 @@ public class RobotContainer {
       primer.primerStow = primer.isPrimerBeamBreakBroken();
     }));
     joystick.rightTrigger().onFalse(primer.backupCommand());
+    
+    joystick.rightBumper().onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          shooter.setRequestCommand(ShooterConstants.kAmpRPM),
+          pivot.goToAmpSetupPosition()
+        ),
+        new ParallelCommandGroup(
+          primer.setSpeedCommand(PrimerConstants.kAmp),
+          new SequentialCommandGroup(
+            new WaitCommand(PrimerConstants.kAmpDelay),
+            pivot.goToAmpFlickPosition()
+          )
+        ).withTimeout(0.5),
+        pivot.goToParallelPos(),
+        new ParallelCommandGroup(
+          backpackRoller.setAmpSpeedCommand(),
+          shooter.ReverseCommand(),
+          new WaitCommand(.75)
+        )
+      )
+      .finallyDo(
+        () -> {
+          pivot.setRequest(ShooterWristConstants.kFlat);
+          primer.stop();
+          backpackRoller.stop();
+          shooter.stop();
+        }
+      )
+    );
+
+    /*joystick.rightBumper().onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          shooter.setRequestCommand(ShooterConstants.kAmpRPM),
+          pivot.goToAmpSetupPosition()
+        ).withTimeout(1),
+        primer.intakeCommand(),
+        new ParallelCommandGroup(
+          primer.setSpeedCommand(PrimerConstants.kAmp),
+          new SequentialCommandGroup(
+            new AmpDelayCommand(pivot, primer::isPrimerBeamBreakBroken),
+            new WaitCommand(5)
+          )
+        ).until(primer::isNoteShot)
+      )
+      .withTimeout(5)
+      .finallyDo(
+        () -> {
+          pivot.setRequest(ShooterWristConstants.kFlat);
+          primer.stop();
+          shooter.stop();
+
+        }
+      )
+
+    );*/
+
 
     // joystick.povLeft().whileTrue(new StartEndCommand(() -> pivot.test(), () -> pivot.stop(), pivot));
     // joystick.povRight().onTrue(pivot.goToIntakePos());
@@ -519,6 +597,6 @@ public class RobotContainer {
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
   //Command test = drivetrain.getAutoPath("testAuto2");
-  return new InstantCommand();
+  return autonCommand;
   }
 }

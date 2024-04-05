@@ -119,6 +119,7 @@ public final class Constants {
     public static final double kMotionMagicCruiseVelocity = 80;
     public static final double kMotionMagicCruiseAcceleration = 160;
     public static final double kMotionMagicJerk = 1600;
+    public static final double kAmpRPM = 800;
   }
 
   /**
@@ -133,7 +134,7 @@ public final class Constants {
     public static final double kIntake = 0.2;
     public static final double kOuttake = -kIntake;
     public static final double kStop = 0.0;
-    public static final double kAmp = -1.0;
+    public static final double kAmp = .5;
     public static final double kShoot = 1.0;// 1.0
     public static final double kStatorLimit = 80;
     public static final double kSupplyLimit = 30;
@@ -156,6 +157,7 @@ public final class Constants {
     public static final double kFF = 0.0;
     public static final double kEncoderOffset = 0.33;
     public static final double kShotDelay = .15;
+    public static final double kAmpDelay = 0.1;
   }// Should go away for final competition code
 
   public static class LEDConstants {
@@ -182,8 +184,8 @@ public final class Constants {
     public static double kSubwooferPos = -0.389404; // To change 0.541
     public static double kIntakePos = -0.348389; // To change
     public static double kBackPackPos = -0.580322;
-    public static double kAmpPosition = -0.137695;
-    public static double kFerry = -0.45;
+    public static double kAmpSetupPosition = -0.390381;
+    public static double kFerry = kIntakePos;
     public static double kMidStagePos = -.348389;
     public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
     public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
@@ -199,6 +201,7 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final double kStowpos = kFlat;
     public static final double kOuttake = -0.1;
+    public static final double kAmpFlickPosition = -.05;
   }
 
   public static class BackpackWristConstants {
@@ -231,7 +234,7 @@ public final class Constants {
   public static class BackpackRollerConstants {
     public static final int kBackpackRollerID = 61;
     public static final double kIntake = 0.7;
-    public static final double kOuttake = -0.3;
+    public static final double kOuttake = -.7;
     public static final double kHold = 0.1;
     public static final double kStop = 0;
     public static final double kStatorLimit = 60;
@@ -243,12 +246,13 @@ public final class Constants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
     public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
     public static double SwerveMagnitudeExponent = 4;
-    public static Rotation2d kBackpackShotAngle = Rotation2d.fromDegrees(+180+34);
+    public static Rotation2d kBackpackAlignAngle = Rotation2d.fromDegrees(180-37);
+    public static Rotation2d kFerryAlignAngle = Rotation2d.fromDegrees(-37);
 
     public static final SwerveRequest.FieldCentric TeleopDriveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeedMetersPerSec * Math.pow(.1, 4))
         .withRotationalDeadband(MaxAngularRateRotPerSec * Math.pow(.1, 4)) // Add a 10% deadband.
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric driving in open loop
-    public static final double kHeadingTolerance = Units.degreesToRadians(1);
+    public static final double kHeadingTolerance = Units.degreesToRadians(.5);
   }
 }

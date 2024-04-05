@@ -101,6 +101,10 @@ public class PrimerSubsystem extends SubsystemBase {
     primerRoller.set(PrimerConstants.kStop);
   }
 
+  public boolean isAmpFlickReady() {
+    return Timer.getFPGATimestamp() - lastBeamBreakActive > PrimerConstants.kAmpDelay;
+  }
+
   /**
    * Checks if the game piece is pinched into the primer at a certain point.
    * 
