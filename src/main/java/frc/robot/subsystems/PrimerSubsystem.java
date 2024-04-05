@@ -160,7 +160,7 @@ public class PrimerSubsystem extends SubsystemBase {
   }
 
   public Command stopCommand() {
-    return setSpeedCommand(PrimerConstants.kStop);
+    return new InstantCommand(this::stop);
   }
 
   public Command setOuttakeSpeed() {

@@ -131,6 +131,10 @@ public class ShooterPivotSubsystem extends SubsystemBase{
         return runPivot(ShooterWristConstants.kFerry);
     }
 
+    public Command goToOuttakePos() {
+        return runPivot(ShooterWristConstants.kOuttake);
+    }
+
     public Command goToBackpackPos() {
         return runPivot(ShooterWristConstants.kBackPackPos);
     }

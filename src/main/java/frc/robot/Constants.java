@@ -184,7 +184,7 @@ public final class Constants {
     public static double kBackPackPos = -0.580322;
     public static double kAmpPosition = -0.137695;
     public static double kFerry = -0.45;
-    public static double kMidStagePos = -.329;
+    public static double kMidStagePos = -.348389;
     public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
     public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
@@ -198,6 +198,7 @@ public final class Constants {
     public static final double kP = 12 * 6.4;
     public static final double kD = 0.0;
     public static final double kStowpos = kFlat;
+    public static final double kOuttake = -0.1;
   }
 
   public static class BackpackWristConstants {
@@ -242,11 +243,12 @@ public final class Constants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
     public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
     public static double SwerveMagnitudeExponent = 4;
-    public static Rotation2d kBackpackShotAngle = Rotation2d.fromDegrees(-120);
+    public static Rotation2d kBackpackShotAngle = Rotation2d.fromDegrees(+180+34);
 
     public static final SwerveRequest.FieldCentric TeleopDriveRequest = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeedMetersPerSec * Math.pow(.1, 4))
         .withRotationalDeadband(MaxAngularRateRotPerSec * Math.pow(.1, 4)) // Add a 10% deadband.
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric driving in open loop
+    public static final double kHeadingTolerance = Units.degreesToRadians(1);
   }
 }

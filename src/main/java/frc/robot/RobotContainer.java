@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.constants.DynamicShootingConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.BackpackRollerSubsystem;
@@ -188,7 +189,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("pivotSubwoofer", pivot.goToSubCommand().withTimeout(.5));
     NamedCommands.registerCommand("pivotToIntake", pivot.goToIntakePos().withTimeout(.25));
     NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(4000).withTimeout(1));
-    NamedCommands.registerCommand("shootPiece", primer.setSpeedCommand(PrimerConstants.kShoot).until(() -> primer.isNoteShot()).withTimeout(.5).finallyDo(() -> primer.stop()));
+    NamedCommands.registerCommand("shootPiece", primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitUntilCommand(() -> primer.isNoteShot())).withTimeout(.5).finallyDo(() -> primer.stop()));
 
     //Shoot ANYWHERE
     NamedCommands.registerCommand("shootPieceAnywhere", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> primer.isNoteShot()));
@@ -220,6 +221,7 @@ public class RobotContainer {
     
     
     headingLockRequest.HeadingController = new PhoenixPIDController(10, 0, 0);
+    headingLockRequest.HeadingController.setTolerance(MaxAngularRate);
     configureBindings();
     configureDefaultCommands();
 
@@ -318,7 +320,7 @@ public class RobotContainer {
     // {primer.setSpeed(0);})).andThen(primer.backupCommand()));
 
     // Bind to a button
-    new Trigger(() -> false).toggleOnTrue(drivetrain.applyRequest(() ->
+    joystick.a().whileTrue(drivetrain.applyRequest(() ->
       headingLockRequest.withVelocityX(
         temp * joystick.getLeftY() *
         Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
@@ -326,16 +328,56 @@ public class RobotContainer {
         temp * joystick.getLeftX() *
         Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackShotAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackShotAngle))
-    ));
+    ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
 
-    joystick.x().onTrue(
+    /*joystick.b().onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          pivot.goToIntakePos(),
+          intakeWrist.indexPosCommand(),
+          intakeRollers.intakeSpeedCommand()
+        ).withTimeout(1),
+        primer.setOuttakeSpeed(),
+        new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(1),
+        primer.stopCommand(),
+        intakeRollers.stowSpeedCommand(),
+        intakeWrist.ampPosCommand(),
+        
+      )
+    );*/
+    
+    /*joystick.x().onTrue(
         new ParallelCommandGroup(
             new InstantCommand(
                 () -> {
                   intakeRollers.stop();
                   primer.stop();
                 }),
-            intakeWrist.indexPosCommand()));
+            intakeWrist.indexPosCommand()));*/
+
+    joystick.x().whileTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          intakeWrist.intakePosCommand(),
+          pivot.goToOuttakePos()
+        ).withTimeout(1.5),
+        new StartEndCommand(
+          () -> {
+            primer.setSpeed(-PrimerConstants.kShoot);
+            intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
+          }, 
+          () -> {
+            primer.stop();
+            intakeRollers.stop();
+            intakeWrist.setRequest(IntakeWristConstants.kStow);
+            pivot.setRequest(ShooterWristConstants.kFlat);
+          },
+          primer, intakeWrist, intakeRollers, pivot
+        )
+      )
+    );
+    
+
 
     joystick.start().onTrue(
         new InstantCommand(
@@ -349,7 +391,8 @@ public class RobotContainer {
         new ParallelCommandGroup(
           pivot.goToBackpackPos(),
           backpackWrist.goToBackPackPos(),
-          shooter.setRequestCommand(ShooterConstants.kBackpackSpeed)
+          shooter.setRequestCommand(ShooterConstants.kBackpackSpeed),
+          intakeWrist.intakePosCommand()
         ).withTimeout(1),
         new StartEndCommand(() -> {
           backpackRoller.setRollerSpeed(BackpackRollerConstants.kIntake);
@@ -360,6 +403,7 @@ public class RobotContainer {
           primer.stop();
           pivot.setRequest(ShooterWristConstants.kFlat);
           backpackWrist.setRequest(BackpackWristConstants.kStow);
+          intakeWrist.setRequest(IntakeWristConstants.kStow);
         })));
     
     // joystick.b().onTrue(
