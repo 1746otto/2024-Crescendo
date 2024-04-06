@@ -513,8 +513,9 @@ public class RobotContainer {
             }
           ),
           intakeRollers.intakeSpeedCommand().asProxy(),
-          intakeWrist.intakePosCommand()
-        ),
+          intakeWrist.intakePosCommand(),
+          pivot.goToIntakePos()
+        ).withTimeout(1),
         new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
         shooter.setRequestCommand(ShooterConstants.kFerry),
         intakeRollers.holdSpeedCommand().asProxy(),
