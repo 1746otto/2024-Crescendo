@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,8 +69,8 @@ public class RobotContainer {
 
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-  public double time = 0.1;
-  DoubleSupplier timeSupplier = () -> time;
+  // DO NOT USE THIS FOR ANY COMMAND EXCEPT FERRY. Probably won't matter though.
+  boolean seenNote;
 
   public double power = TeleopSwerveConstants.SwerveMagnitudeExponent;
 
@@ -231,7 +232,7 @@ public class RobotContainer {
     headingLockRequest.HeadingController.setTolerance(MaxAngularRate);
     configureBindings();
     configureDefaultCommands();
-    SmartDashboard.putNumber("time", time);
+    
     // ! infront of namedcommands to run them in auton.
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Middle subwoofer two piece", "Middle2P");
@@ -491,17 +492,58 @@ public class RobotContainer {
               shooter.stop();
               pivot.setRequest(ShooterWristConstants.kFlat);
             }));
-    joystick.leftBumper()
-        .whileTrue(pivot.goToFerryPos().alongWith(shooter.setRequestCommand(ShooterConstants.kFerry))
-            .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
-            .finallyDo(() -> {
-              shooter.stop();
-              pivot.setRequest(ShooterWristConstants.kFlat);
-            }));
-    joystick.rightTrigger().whileTrue(primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new RunCommand(() -> {
-    })).finallyDo(() -> {
-      primer.primerStow = primer.isPrimerBeamBreakBroken();
-    }));
+    // joystick.leftBumper()
+    //     .whileTrue(pivot.goToFerryPos().alongWith(shooter.setRequestCommand(ShooterConstants.kFerry))
+    //         .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
+    //         .finallyDo(() -> {
+    //           shooter.stop();
+    //           pivot.setRequest(ShooterWristConstants.kFlat);
+    //         }));
+
+    joystick.leftBumper().onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new InstantCommand(
+            () -> {
+              seenNote = false;
+            }
+          ),
+          intakeRollers.intakeSpeedCommand(),
+          intakeWrist.intakePosCommand(),
+          shooter.setRequestCommand(ShooterConstants.kFerry)
+        ),
+        new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
+        intakeWrist.indexPosCommand(),
+        new WaitUntilCommand(
+          () -> {
+            return seenNote && primer.isNoteShot();
+          }
+        )
+      )
+      .finallyDo(
+        () -> {
+          shooter.stop();
+          pivot.setRequest(ShooterWristConstants.kFlat);
+          intakeWrist.setRequest(IntakeWristConstants.kStow);
+          intakeRollers.stop();
+        }
+      )
+    );
+    
+    // I don't believe we can add intake rollers as a requirement because the sequential command group that runs our intaking portion might get cancelled. Be careful.
+    joystick.rightTrigger().whileTrue(
+      new StartEndCommand(
+        () -> {
+          primer.setSpeed(PrimerConstants.kShoot);
+          intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
+        }, 
+        () -> {
+          primer.stop();
+          intakeRollers.stop();
+        }, 
+        primer)
+    );
+    // ??? I don't think we need this anymore.
     joystick.rightTrigger().onFalse(primer.backupCommand());
     
     joystick.rightBumper().onTrue(
