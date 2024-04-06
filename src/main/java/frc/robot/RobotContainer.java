@@ -508,14 +508,18 @@ public class RobotContainer {
               seenNote = false;
             }
           ),
-          intakeRollers.intakeSpeedCommand(),
-          intakeWrist.intakePosCommand(),
-          shooter.setRequestCommand(ShooterConstants.kFerry)
+          intakeRollers.intakeSpeedCommand().asProxy(),
+          intakeWrist.intakePosCommand()
         ),
         new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
+        shooter.setRequestCommand(ShooterConstants.kFerry),
+        intakeRollers.holdSpeedCommand().asProxy(),
         intakeWrist.indexPosCommand(),
         new WaitUntilCommand(
           () -> {
+            if (primer.isPrimerBeamBreakBroken())
+              seenNote = true;
+            
             return seenNote && primer.isNoteShot();
           }
         )
@@ -541,7 +545,9 @@ public class RobotContainer {
           primer.stop();
           intakeRollers.stop();
         }, 
-        primer)
+        primer, 
+        intakeRollers
+      )
     );
     // ??? I don't think we need this anymore.
     joystick.rightTrigger().onFalse(primer.backupCommand());
