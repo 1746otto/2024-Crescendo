@@ -197,6 +197,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("pivotToIntake", pivot.goToIntakePos().withTimeout(.25));
     NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(4000).withTimeout(1));
     NamedCommands.registerCommand("shootPiece", primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitUntilCommand(() -> primer.isNoteShot())).withTimeout(.5).finallyDo(() -> primer.stop()));
+    NamedCommands.registerCommand("pivotToFlat", pivot.goToParallelPos());
 
     //Shoot ANYWHERE
     NamedCommands.registerCommand("shootPieceAnywhere", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> primer.isNoteShot()));
@@ -241,6 +242,9 @@ public class RobotContainer {
     // autoChooser.addOption("Bottom subwoofer (Source side) two piece", "Bottom2P");
     autoChooser.addOption("Four Piece close. Start center subwoofer", "4 Piece Fixed");
     autoChooser.addOption("Shoot preload", "!singleSubwoofer");
+    autoChooser.addOption("4.4 Piece North. Close 4 then north side to center.", "4.4 Piece North");
+    autoChooser.addOption("4.4 Piece Center close. Close 4 then under stage.", "4.4 Piece Under Stage");
+    autoChooser.addOption("4.4 Piece South. Close 4 then south side.", "4.4 Piece South");
     
     // autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
     // autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
