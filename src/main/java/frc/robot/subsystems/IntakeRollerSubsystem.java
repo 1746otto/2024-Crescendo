@@ -103,8 +103,8 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     
     // Needs to go but idk if it can be replaced with out breaking stuff.
   
-    public Command holdCommand() {
-        return setSpeedCommand(IntakeRollerConstants.kHold);
+    public Command holdSpeedCommand() {
+        return runOnce(() -> setSpeed(IntakeRollerConstants.kHold));
     }
     public Command setSpeedCommand(double speed){
         return run(() -> setSpeed(speed)); // needs to be an instant command. MUST FIX AFTER COMP
