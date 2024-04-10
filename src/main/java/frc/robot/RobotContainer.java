@@ -158,6 +158,30 @@ public class RobotContainer {
           }
         )
       );
+      NamedCommands.registerCommand("intakeCommandNoFlat", 
+      new SequentialCommandGroup(
+        intakeRollers.intakeSpeedCommand(),
+        intakeWrist.intakePosCommand()
+          .withTimeout(.5),
+        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+          .withTimeout(.75),
+        intakeRollers.stowSpeedCommand(),
+        new ParallelCommandGroup(
+          intakeWrist.indexPosCommand(),
+          pivot.goToIntakePos()
+        ).withTimeout(.6),
+        new ParallelCommandGroup(
+          primer.intakeCommand(),
+          intakeRollers.outtakeCommand()
+        ).withTimeout(.325), // Stops primer by itself
+        intakeRollers.stopCommand()
+      )
+        .finallyDo(
+          () -> {
+            intakeRollers.stop();
+          }
+        )
+      );
     
     NamedCommands.registerCommand("prepToShootMidStage", 
       new ParallelCommandGroup(
@@ -211,6 +235,13 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shootPiece3", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE
     NamedCommands.registerCommand("primeShooterRoller3", shooter.setRequestCommand(5200));//NEED VALUE HERE
+
+    NamedCommands.registerCommand("set5PUnderStageLastShotSpeed", shooter.setRequestCommand(ShooterConstants.k5PUnderStageLastShotSpeed));
+    NamedCommands.registerCommand("pivotTo5PUnderStagePosition", new InstantCommand(() -> pivot.setRequest(ShooterWristConstants.k5PUnderStageLastShotPos)));
+    
+    NamedCommands.registerCommand("set5PUnderStageFirstShotSpeed", shooter.setRequestCommand(ShooterConstants.k5PUnderStageFirstShotSpeed));
+    NamedCommands.registerCommand("pivotTo5PUnderStageFirstPosition", new InstantCommand(() -> pivot.setRequest(ShooterWristConstants.k5PUnderStageFirstShotPos)));
+
     //static positions
     NamedCommands.registerCommand("singleSubwoofer", 
       new SequentialCommandGroup(
@@ -230,7 +261,7 @@ public class RobotContainer {
     
     
     headingLockRequest.HeadingController = new PhoenixPIDController(10, 0, 0);
-    headingLockRequest.HeadingController.setTolerance(MaxAngularRate);
+    headingLockRequest.HeadingController.setTolerance(TeleopSwerveConstants.kHeadingTolerance);
     configureBindings();
     configureDefaultCommands();
     
@@ -245,6 +276,9 @@ public class RobotContainer {
     autoChooser.addOption("4.4 Piece North. Close 4 then north side to center.", "4.4 Piece North");
     autoChooser.addOption("4.4 Piece Center close. Close 4 then under stage.", "4.4 Piece Under Stage");
     autoChooser.addOption("4.4 Piece South. Close 4 then south side.", "4.4 Piece South");
+    autoChooser.addOption("4.5 Piece Under Stage. ", "4.5 Piece Under Stage");
+    autoChooser.addOption("4.5 with shoot", "4.5 Piece Under Stage Shoot");
+    autoChooser.addOption("4.5 Piece stage 3rd?", "4.5 Piece Under Stage First");
     
     // autoChooser.addOption("Two piece south. Start on source side", "2PSouth");
     // autoChooser.addOption("Four piece south. Start on source side", "4PSouthPreload");
@@ -341,7 +375,7 @@ public class RobotContainer {
         temp * joystick.getLeftX() *
         Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
-    ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
+    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
     joystick.b().whileTrue(drivetrain.applyRequest(() ->
       headingLockRequest.withVelocityX(
@@ -351,7 +385,7 @@ public class RobotContainer {
         temp * joystick.getLeftX() *
         Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kFerryAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kFerryAlignAngle))
-    ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
+    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
     /*joystick.b().onTrue(
       new SequentialCommandGroup(
@@ -378,7 +412,7 @@ public class RobotContainer {
                 }),
             intakeWrist.indexPosCommand()));*/
 
-    joystick.x().whileTrue(
+    joystick.povDown().whileTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           intakeWrist.intakePosCommand(),
@@ -504,7 +538,7 @@ public class RobotContainer {
     //           pivot.setRequest(ShooterWristConstants.kFlat);
     //         }));
 
-    joystick.leftBumper().onTrue(
+    joystick.x().onTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           new InstantCommand(
@@ -517,8 +551,8 @@ public class RobotContainer {
           pivot.goToIntakePos()
         ).withTimeout(1),
         new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
-        shooter.setRequestCommand(ShooterConstants.kFerry),
-        intakeRollers.holdSpeedCommand().asProxy(),
+        //shooter.setRequestCommand(ShooterConstants.kFerry),
+        intakeRollers.stopCommand().asProxy(),
         intakeWrist.indexPosCommand(),
         new WaitUntilCommand(
           () -> {
@@ -531,11 +565,19 @@ public class RobotContainer {
       )
       .finallyDo(
         () -> {
-          shooter.stop();
+          //shooter.stop();
           pivot.setRequest(ShooterWristConstants.kFlat);
           intakeWrist.setRequest(IntakeWristConstants.kStow);
           intakeRollers.stop();
         }
+      )
+    );
+
+    joystick.leftBumper().whileTrue(
+      new StartEndCommand(
+        () -> shooter.setRequest(ShooterConstants.kFerry),
+        shooter::stop,
+        shooter
       )
     );
     

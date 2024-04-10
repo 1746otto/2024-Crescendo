@@ -2,7 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -39,6 +43,8 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     VoltageOut voltage = new VoltageOut(0);
 
     boolean isDebug = false;
+
+    Mechanism2d intakeButtonStatus;
     
 
     /**
@@ -49,15 +55,16 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
         // Initialization of motor controllers and PID controller
         rollerMotor = new TalonFX(IntakeRollerConstants.kIntakeRollerID);
+        intakeButtonStatus = new Mechanism2d(500, 500);
         
         rollerSensor = new AnalogInput(IntakeRollerConstants.kIntakeAnalogInputChannel);
         TalonFXConfiguration configs = new TalonFXConfiguration();
         
         configs.CurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(IntakeRollerConstants.kStatorLimit)
-            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit);
+            .withSupplyCurrentLimit(IntakeRollerConstants.kSupplyLimit)
             // .withStatorCurrentLimitEnable(true)
-            // .withSupplyCurrentLimitEnable(true);
+            .withSupplyCurrentLimitEnable(true);
 
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -156,5 +163,12 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         }
         SmartDashboard.putNumber("Intake button voltage", rollerSensor.getVoltage());
         SmartDashboard.putNumber("Roller speed", rollerMotor.getVelocity().getValueAsDouble());
+        if (intakeHasPiece()) {
+            intakeButtonStatus.setBackgroundColor(new Color8Bit(Color.kGreen));
+        }
+        else {
+            intakeButtonStatus.setBackgroundColor(new Color8Bit(Color.kRed));
+        }
+        SmartDashboard.putData("Intake has piece", intakeButtonStatus);
     }
 }

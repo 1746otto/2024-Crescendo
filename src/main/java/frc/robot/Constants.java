@@ -37,8 +37,8 @@ public final class Constants {
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1; // Recommend .06 or .05
     public static final double kStop = 0;
-    public static final double kStatorLimit = 30;
-    public static final double kSupplyLimit = 30;
+    public static final double kStatorLimit = 60;
+    public static final double kSupplyLimit = 40;
     public static final int kIntakeAnalogInputChannel = 2;// To Change
   }
 
@@ -106,6 +106,8 @@ public final class Constants {
     public static final double kMidStageSpeed = 5850;
     public static final double kAngleFerry = -0.345;
     public static final double kBackpackSpeed = 5000;
+    public static final double k5PUnderStageLastShotSpeed = 5000;
+    public static final double k5PUnderStageFirstShotSpeed = 5000;
 
     // Limits
     public static final int kStatorLimit = 60;
@@ -187,6 +189,7 @@ public final class Constants {
     public static double kAmpSetupPosition = -0.390381;
     public static double kFerry = kIntakePos;
     public static double kMidStagePos = -.348389;
+    public static double k5PUnderStageLastShotPos = kFlat - Units.degreesToRotations(33.568);
     public static double kTolerance = Math.toRadians(1) / (2 * Math.PI); // Just divide by 360.0???
     public static double kLimit = 0.5/* 5.52380952383 */ / (2 * Math.PI);
     public static double kDt = 0.02;// To change
@@ -202,6 +205,7 @@ public final class Constants {
     public static final double kStowpos = kFlat;
     public static final double kOuttake = -0.1;
     public static final double kAmpFlickPosition = -.05;
+    public static final double k5PUnderStageFirstShotPos = -.33;
   }
 
   public static class BackpackWristConstants {
