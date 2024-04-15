@@ -1,24 +1,18 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.ShooterPivotSubsystem;
-import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.PrimerSubsystem;
-import frc.robot.subsystems.ShooterPivotSubsystem;
 
 public class checkPrimerPiece extends Command {
     private PrimerSubsystem m_PrimerSubsystem;
     private IntakeRollerSubsystem m_IntakeRollerSubsystem;
-    private IndexerSubsystem m_IndexerSubsystem;
 
-    public checkPrimerPiece(PrimerSubsystem primerSubsystem, IntakeRollerSubsystem intakeRollerSubsystem, IndexerSubsystem indexerSubsystem) {
+    public checkPrimerPiece(PrimerSubsystem primerSubsystem, IntakeRollerSubsystem intakeRollerSubsystem) {
         m_PrimerSubsystem = primerSubsystem;
         m_IntakeRollerSubsystem = intakeRollerSubsystem;
-        m_IndexerSubsystem = indexerSubsystem;
-        addRequirements(primerSubsystem, intakeRollerSubsystem, indexerSubsystem);
+        addRequirements(primerSubsystem, intakeRollerSubsystem);
     }
     // Called when the command is initially scheduled.
   @Override
@@ -35,7 +29,6 @@ public class checkPrimerPiece extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_IndexerSubsystem.setSpeed(IndexerConstants.kStop);
     m_IntakeRollerSubsystem.setSpeed(IntakeRollerConstants.kStop);
     m_PrimerSubsystem.setSpeed(PrimerConstants.kStop);
   }

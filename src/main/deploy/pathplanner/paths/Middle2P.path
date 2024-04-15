@@ -49,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "intake",
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
         "data": {
@@ -63,13 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "indexCommand"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "pivotSubwoofer"
+                "name": "pivotToIntake"
               }
             }
           ]

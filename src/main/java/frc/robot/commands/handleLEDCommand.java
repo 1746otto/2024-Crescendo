@@ -28,7 +28,7 @@ public class handleLEDCommand extends Command {
         if(intake.getAsBoolean()) {
             led.setLedtoIntake();
         } else if (shooter.getAsBoolean()) {
-            led.setLedShooter();
+            led.setLEDToShooter();
         } else {
             led.setLedOff();
         }

@@ -1,38 +1,32 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
-
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterWristConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates new ShooterSubsystem. */
   
-  /** CANSparkMax motor controller for the top shooting roller with PID control. */
-  private CANSparkMax topRollerNeo;
-  
-  /** CANSparkMax motor controller for the bottom shooting roller (follows top roller). */
-  private CANSparkMax bottomRollerNeo;
+  private TalonFX shooterLeader;
+  private TalonFX shooterFollower;
   
   /** Analog input for detecting beam breaks. */
   private AnalogInput beamBreak;
@@ -48,25 +42,55 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private double targetVelocity;
 
+
+  private VoltageOut voltageRequest = new VoltageOut(0);
+
+  private boolean isDebug = false;
+
   /**
    * Creates a new ShooterSubsystem with initialized motor controllers and other necessary components.
    */
   public ShooterSubsystem() {
     // Initialization of motor controllers
-    topRollerNeo = new CANSparkMax(ShooterConstants.kShooterTopRollerMotorID, MotorType.kBrushless);
-    bottomRollerNeo = new CANSparkMax(ShooterConstants.kShooterBottomRollerMotorID, MotorType.kBrushless);
-    topRollerNeo.setIdleMode(IdleMode.kCoast);
-    bottomRollerNeo.setIdleMode(IdleMode.kCoast);
-    topRollerNeo.setInverted(true);
-    bottomRollerNeo.follow(topRollerNeo, true);
+    shooterLeader = new TalonFX(ShooterConstants.kShooterTopRollerMotorID);
+    shooterFollower = new TalonFX(ShooterConstants.kShooterBottomRollerMotorID);
+    TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    Slot0Configs pidController = rollerConfig.Slot0;
+    pidController.kP = ShooterConstants.kP;
+    pidController.kI = ShooterConstants.kI;
+    pidController.kD = ShooterConstants.kD;
+    pidController.kS = ShooterConstants.kS;
+    pidController.kV = ShooterConstants.kV;
+    pidController.kA = ShooterConstants.kA;
+    
+    rollerConfig.CurrentLimits
+      .withStatorCurrentLimit(ShooterConstants.kStatorLimit)
+      .withSupplyCurrentLimit(ShooterConstants.kSupplyLimit)
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimitEnable(true);
+    
+    shooterLeader.getConfigurator().apply(rollerConfig);
+    
+    TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+    
+    followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    followerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    shooterFollower.getConfigurator().apply(followerConfig);
+    shooterFollower.setControl(new Follower(ShooterConstants.kShooterTopRollerMotorID, true));
+
+    //Setting PID values for the top shooting roller not how this works
+   
+    
     
 
-    //Setting PID values for the top shooting roller
-    pidController = topRollerNeo.getPIDController();
-    pidController.setP(0);
-    pidController.setI(0);
-    pidController.setD(0);
-    pidController.setFF(ShooterConstants.kV);
+    // pidController = shooterRoller.getPIDController();
+    // pidController.setP(0);
+    // pidController.setI(0);
+    // pidController.setD(0);
+    // pidController.setFF(ShooterConstants.kV);
     
     
 
@@ -74,17 +98,23 @@ public class ShooterSubsystem extends SubsystemBase {
     
 
     // Initialization of analog input for beam break detection
-    topRollerNeo.setSmartCurrentLimit(40);
-    bottomRollerNeo.setSmartCurrentLimit(40);
-    SmartDashboard.putNumber("Speed", targetVelocity);
+    // Also in the wrong spot but i have to commit.
+    
+    if (isDebug)
+      configureDebug();
+    
 
+  }
+
+  void configureDebug() {
+    SmartDashboard.putNumber("shooter target", targetVelocity);
   }
 
   /**
    * Sets the speed for the top shooting roller and returns a BooleanConsumer (placeholder for future functionality).
    */
   public void setOutput(double speed) {
-    topRollerNeo.set(speed);
+    shooterLeader.setControl(voltageRequest.withOutput(speed * 12));
   }
 
   /**
@@ -98,7 +128,13 @@ public class ShooterSubsystem extends SubsystemBase {
    * Creates a command for shooting based on certain conditions.
    */
   public Command ShootCommand(){
-    return setSpeedCommand(ShooterConstants.kShoot).andThen(StopCommand());
+    return setSpeedCommand(ShooterConstants.kShoot);
+  }
+  public Command tempShooter(){
+    return run(() -> shooterLeader.set(0.5));
+  }
+  public Command tempStop(){
+    return run(() -> shooterLeader.set(0));
   }
   
   public Command ReverseCommand(){
@@ -109,11 +145,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM() {
-    return topRollerNeo.getEncoder().getVelocity();
+    return shooterLeader.getVelocity().getValueAsDouble()*60;
   }
 
   public void stop() {
-    setRequest(0);
+    shooterLeader.setControl(new NeutralOut());
   }
 
   public boolean isAtReq() {
@@ -126,8 +162,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRequest(double RPM) {
     targetVelocity = RPM;
-    pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
-  }
+    shooterLeader.setControl(new VelocityVoltage(RPM/60.0));
+    //SmartDashboard.putNumber("shooter target", targetVelocity);
+    // shooterLeader.setControl(new VelocityVoltage(RPM/60, 0, false, 0, 0, false, false, false));
+    //pidController.setReference(RPM, ControlType.kVelocity, 0, (Math.round(RPM) == 0.0) ? 0 : Math.copySign(ShooterConstants.kS, RPM), ArbFFUnits.kVoltage);
+  } 
 
   public Command setRequestCommand(double RPM) {
     return runOnce(() -> setRequest(RPM));
@@ -137,11 +176,15 @@ public class ShooterSubsystem extends SubsystemBase {
    * Periodic method for updating the state of the beam break.
    */
   public void periodic() {
-    // if (SmartDashboard.getNumber("Speed", targetVelocity) != targetVelocity) {
-    //   targetVelocity = SmartDashboard.getNumber("Speed", targetVelocity);
-    // }
+     if (isDebug && SmartDashboard.getNumber("shooter target", targetVelocity) != targetVelocity) {
+      targetVelocity = SmartDashboard.getNumber("shooter target", targetVelocity);
+      setRequest(SmartDashboard.getNumber("shooter target", targetVelocity));
+    }
+
+    //setRequest(targetVelocity);
     //pidController.setReference(targetVelocity, ControlType.kVelocity, 0, ShooterConstants.kS, ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("shooterspeed", topRollerNeo.getEncoder().getVelocity());  
+    SmartDashboard.putNumber("shooterspeed", getRPM());
+    SmartDashboard.putNumber("shooter target", targetVelocity);
   }
 
 }

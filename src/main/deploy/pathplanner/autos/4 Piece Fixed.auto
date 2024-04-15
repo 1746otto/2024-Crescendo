@@ -33,7 +33,7 @@
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "shootPiece"
           }
         },
         {
@@ -45,13 +45,19 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "finishIndex"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
+            "name": "pivotSubwoofer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootPiece"
           }
         },
         {
@@ -63,13 +69,19 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "finishIndex"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
+            "name": "pivotSubwoofer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootPiece"
           }
         },
         {
@@ -81,19 +93,19 @@
         {
           "type": "named",
           "data": {
-            "name": "confirmPiece"
+            "name": "finishIndex"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "confirmShootPiece"
+            "name": "pivotSubwoofer"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "stopShooter"
+            "name": "shootPiece"
           }
         }
       ]

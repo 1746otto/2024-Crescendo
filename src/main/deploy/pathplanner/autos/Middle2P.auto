@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "shootPiece"
           }
         },
         {
@@ -57,7 +57,7 @@
         {
           "type": "named",
           "data": {
-            "name": "primeShooter"
+            "name": "shootPiece"
           }
         }
       ]
