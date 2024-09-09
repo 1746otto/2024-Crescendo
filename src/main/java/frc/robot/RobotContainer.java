@@ -107,14 +107,14 @@ public class RobotContainer {
   public Command autonCommand;
   public String currentAuton;
 
-  public BooleanSupplier inIntakeUp = (() -> intakeRollers.intakeHasPiece()
-      && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
-  public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece()
-      && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
-  public BooleanSupplier notInIntakeDown = (() -> !intakeRollers.intakeHasPiece()
-      && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
-  public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece()
-      && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  // public BooleanSupplier inIntakeUp = (() -> intakeRollers.intakeHasPiece()
+  //     && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  // public BooleanSupplier inIntakeDown = (() -> intakeRollers.intakeHasPiece()
+  //     && intakeWrist.isAtReqPosition(IntakeWristConstants.kIntake));
+  // public BooleanSupplier notInIntakeDown = (() -> !intakeRollers.intakeHasPiece()
+  //     && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow));
+  // public BooleanSupplier notInIntake = (() -> !intakeRollers.intakeHasPiece()
+      // && intakeWrist.isAtReqPosition(IntakeWristConstants.kStow);
   public BooleanSupplier inShooter = (() -> primer.isPrimerBeamBreakBroken());
   public boolean isIndexing = false;
   public double temp = -1;
@@ -133,55 +133,55 @@ public class RobotContainer {
      * Intaking takes .5 seconds from piece touch.
      * 1 Second for it to return to flat after intaking is complete.
     */
-    NamedCommands.registerCommand("intakeCommand", 
-      new SequentialCommandGroup(
-        intakeRollers.intakeSpeedCommand(),
-        intakeWrist.intakePosCommand()
-          .withTimeout(.5),
-        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-          .withTimeout(.75),
-        intakeRollers.stowSpeedCommand(),
-        new ParallelCommandGroup(
-          intakeWrist.indexPosCommand(),
-          pivot.goToIntakePos()
-        ).withTimeout(.6),
-        new ParallelCommandGroup(
-          primer.intakeCommand(),
-          intakeRollers.outtakeCommand()
-        ).withTimeout(.325), // Stops primer by itself
-        intakeRollers.stopCommand()
-      )
-        .finallyDo(
-          () -> {
-            intakeRollers.stop();
-            pivot.setRequest(ShooterWristConstants.kFlat);
-          }
-        )
-      );
-      NamedCommands.registerCommand("intakeCommandNoFlat", 
-      new SequentialCommandGroup(
-        intakeRollers.intakeSpeedCommand(),
-        intakeWrist.intakePosCommand()
-          .withTimeout(.5),
-        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-          .withTimeout(.75),
-        intakeRollers.stowSpeedCommand(),
-        new ParallelCommandGroup(
-          intakeWrist.indexPosCommand(),
-          pivot.goToIntakePos()
-        ).withTimeout(.6),
-        new ParallelCommandGroup(
-          primer.intakeCommand(),
-          intakeRollers.outtakeCommand()
-        ).withTimeout(.325), // Stops primer by itself
-        intakeRollers.stopCommand()
-      )
-        .finallyDo(
-          () -> {
-            intakeRollers.stop();
-          }
-        )
-      );
+    // NamedCommands.registerCommand("intakeCommand", 
+    //   new SequentialCommandGroup(
+    //     intakeRollers.intakeSpeedCommand(),
+    //     intakeWrist.intakePosCommand()
+    //       .withTimeout(.5),
+    //     new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    //       .withTimeout(.75),
+    //     intakeRollers.stowSpeedCommand(),
+    //     new ParallelCommandGroup(
+    //       intakeWrist.indexPosCommand(),
+    //       pivot.goToIntakePos()
+    //     ).withTimeout(.6),
+    //     new ParallelCommandGroup(
+    //       primer.intakeCommand(),
+    //       intakeRollers.outtakeCommand()
+    //     ).withTimeout(.325), // Stops primer by itself
+    //     intakeRollers.stopCommand()
+    //   )
+      //   .finallyDo(
+      //     () -> {
+      //       intakeRollers.stop();
+      //       pivot.setRequest(ShooterWristConstants.kFlat);
+      //     }
+      //   )
+      // );
+      // NamedCommands.registerCommand("intakeCommandNoFlat", 
+      // new SequentialCommandGroup(
+      //   intakeRollers.intakeSpeedCommand(),
+      //   intakeWrist.intakePosCommand()
+      //     .withTimeout(.5),
+      //   new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+      //     .withTimeout(.75),
+      //   intakeRollers.stowSpeedCommand(),
+      //   new ParallelCommandGroup(
+      //     intakeWrist.indexPosCommand(),
+      //     pivot.goToIntakePos()
+      //   ).withTimeout(.6),
+      //   new ParallelCommandGroup(
+      //     primer.intakeCommand(),
+      //     intakeRollers.outtakeCommand()
+      //   ).withTimeout(.325), // Stops primer by itself
+      //   intakeRollers.stopCommand()
+      // )
+      //   .finallyDo(
+      //     () -> {
+      //       intakeRollers.stop();
+      //     }
+      //   )
+      // );
     
     NamedCommands.registerCommand("prepToShootMidStage", 
       new ParallelCommandGroup(
@@ -190,15 +190,15 @@ public class RobotContainer {
       )
     );
 
-    NamedCommands.registerCommand("finishIndex",
-      new ParallelCommandGroup(
-        intakeRollers.outtakeCommand(),
-        primer.intakeCommand(),
-        pivot.goToIntakePos()
-      )
-        .withTimeout(.15)
-        .onlyIf(() -> !primer.isPrimerBeamBreakBroken())
-    );
+    // NamedCommands.registerCommand("finishIndex",
+    //   new ParallelCommandGroup(
+    //     intakeRollers.outtakeCommand(),
+    //     primer.intakeCommand(),
+    //     pivot.goToIntakePos()
+    //   )
+    //     .withTimeout(.15)
+    //     .onlyIf(() -> !primer.isPrimerBeamBreakBroken())
+    // );
 
     NamedCommands.registerCommand("shootPieceMidStage",
       new SequentialCommandGroup(
@@ -313,33 +313,33 @@ public class RobotContainer {
     // intakeRollers.intakeSpeedCommand()));
 
     
-    joystick.y().onTrue(
-    new SequentialCommandGroup(
-    new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
-    new ParallelDeadlineGroup(
-    intakeWrist.intakePosCommand(),
-    intakeRollers.intakeSpeedCommand(),
-    pivot.goToIntakePos(),
-    new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
-    ),
-    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
-    .withTimeout(5),
-    intakeRollers.stopCommand(),
+    // joystick.y().onTrue(
+    // new SequentialCommandGroup(
+    // new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
+    // new ParallelDeadlineGroup(
+    // intakeWrist.intakePosCommand(),
+    // intakeRollers.intakeSpeedCommand(),
+    // pivot.goToIntakePos(),
+    // new InstantCommand(() -> ampPosition = AmpPositionState.Normal)
+    // ),
+    // new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    // .withTimeout(5),
+    // intakeRollers.stopCommand(),
     
-    new ParallelDeadlineGroup(
-    primer.intakeCommand(),
-    intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
-    )
+    // new ParallelDeadlineGroup(
+    // primer.intakeCommand(),
+    // intakeWrist.indexPosCommand().andThen(intakeRollers.outtakeCommand()) // Stops primer by itself
+    // )
    
-    )
-     .finallyDo(
-    () -> {
-    intakeRollers.stop();
-    intakeWrist.setRequest(IntakeWristConstants.kStow);
-    pivot.setRequest(ShooterWristConstants.kFlat);
-        }
-      )
-    );
+    // )
+    //  .finallyDo(
+    // () -> {
+    // intakeRollers.stop();
+    // intakeWrist.setRequest(IntakeWristConstants.kStow);
+    // pivot.setRequest(ShooterWristConstants.kFlat);
+    //     }
+    //   )
+    // );
 
     // Temporary test button for autonomous
     // joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken()).whileTrue(
@@ -377,15 +377,6 @@ public class RobotContainer {
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
     )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
-    joystick.b().whileTrue(drivetrain.applyRequest(() ->
-      headingLockRequest.withVelocityX(
-        temp * joystick.getLeftY() *
-        Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withVelocityY(
-        temp * joystick.getLeftX() *
-        Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kFerryAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kFerryAlignAngle))
-    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
     /*joystick.b().onTrue(
       new SequentialCommandGroup(
@@ -412,27 +403,27 @@ public class RobotContainer {
                 }),
             intakeWrist.indexPosCommand()));*/
 
-    joystick.povDown().whileTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          intakeWrist.intakePosCommand(),
-          pivot.goToOuttakePos()
-        ).withTimeout(1.5),
-        new StartEndCommand(
-          () -> {
-            primer.setSpeed(-PrimerConstants.kShoot);
-            intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
-          }, 
-          () -> {
-            primer.stop();
-            intakeRollers.stop();
-            intakeWrist.setRequest(IntakeWristConstants.kStow);
-            pivot.setRequest(ShooterWristConstants.kFlat);
-          },
-          primer, intakeWrist, intakeRollers, pivot
-        )
-      )
-    );
+    // joystick.povDown().whileTrue(
+    //   new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //       intakeWrist.intakePosCommand(),
+    //       pivot.goToOuttakePos()
+    //     ).withTimeout(1.5),
+    //     new StartEndCommand(
+    //       () -> {
+    //         primer.setSpeed(-PrimerConstants.kShoot);
+    //         intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
+    //       }, 
+    //       () -> {
+    //         primer.stop();
+    //         intakeRollers.stop();
+    //         intakeWrist.setRequest(IntakeWristConstants.kStow);
+    //         pivot.setRequest(ShooterWristConstants.kFlat);
+    //       },
+    //       primer, intakeWrist, intakeRollers, pivot
+    //     )
+    //   )
+    // );
     
 
 
@@ -538,40 +529,40 @@ public class RobotContainer {
     //           pivot.setRequest(ShooterWristConstants.kFlat);
     //         }));
 
-    joystick.x().onTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new InstantCommand(
-            () -> {
-              seenNote = false;
-            }
-          ),
-          intakeRollers.intakeSpeedCommand().asProxy(),
-          intakeWrist.intakePosCommand(),
-          pivot.goToIntakePos()
-        ).withTimeout(1),
-        new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
-        //shooter.setRequestCommand(ShooterConstants.kFerry),
-        intakeRollers.stopCommand().asProxy(),
-        intakeWrist.indexPosCommand(),
-        new WaitUntilCommand(
-          () -> {
-            if (primer.isPrimerBeamBreakBroken())
-              seenNote = true;
+    // joystick.x().onTrue(
+    //   new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //       new InstantCommand(
+    //         () -> {
+    //           seenNote = false;
+    //         }
+    //       ),
+    //       intakeRollers.intakeSpeedCommand().asProxy(),
+    //       intakeWrist.intakePosCommand(),
+    //       pivot.goToIntakePos()
+    //     ).withTimeout(1),
+    //     new WaitUntilCommand(intakeRollers::intakeHasPiece).withTimeout(5),
+    //     //shooter.setRequestCommand(ShooterConstants.kFerry),
+    //     intakeRollers.stopCommand().asProxy(),
+    //     intakeWrist.indexPosCommand(),
+    //     new WaitUntilCommand(
+    //       () -> {
+    //         if (primer.isPrimerBeamBreakBroken())
+    //           seenNote = true;
             
-            return seenNote && primer.isNoteShot();
-          }
-        )
-      )
-      .finallyDo(
-        () -> {
-          //shooter.stop();
-          pivot.setRequest(ShooterWristConstants.kFlat);
-          intakeWrist.setRequest(IntakeWristConstants.kStow);
-          intakeRollers.stop();
-        }
-      )
-    );
+    //         return seenNote && primer.isNoteShot();
+    //       }
+    //     )
+    //   )
+    //   .finallyDo(
+    //     () -> {
+    //       //shooter.stop();
+    //       pivot.setRequest(ShooterWristConstants.kFlat);
+    //       intakeWrist.setRequest(IntakeWristConstants.kStow);
+    //       intakeRollers.stop();
+    //     }
+    //   )
+    // );
 
     joystick.leftBumper().whileTrue(
       new StartEndCommand(
@@ -582,20 +573,20 @@ public class RobotContainer {
     );
     
     // I don't believe we can add intake rollers as a requirement because the sequential command group that runs our intaking portion might get cancelled. Be careful.
-    joystick.rightTrigger().whileTrue(
-      new StartEndCommand(
-        () -> {
-          primer.setSpeed(PrimerConstants.kShoot);
-          intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
-        }, 
-        () -> {
-          primer.stop();
-          intakeRollers.stop();
-        }, 
-        primer, 
-        intakeRollers
-      )
-    );
+    // joystick.rightTrigger().whileTrue(
+    //   new StartEndCommand(
+    //     () -> {
+    //       primer.setSpeed(PrimerConstants.kShoot);
+    //       intakeRollers.setSpeed(IntakeRollerConstants.kOuttake);
+    //     }, 
+    //     () -> {
+    //       primer.stop();
+    //       intakeRollers.stop();
+    //     }, 
+    //     primer, 
+    //     intakeRollers
+    //   )
+    // );
     // ??? I don't think we need this anymore.
     joystick.rightTrigger().onFalse(primer.backupCommand());
     
@@ -668,19 +659,19 @@ public class RobotContainer {
   }
 
   public void configureDefaultCommands() {
-    led.setDefaultCommand(new handleLEDCommand(led, () -> intakeRollers.intakeHasPiece(), inShooter).ignoringDisable(true));
+    //led.setDefaultCommand(new handleLEDCommand(led, () -> intakeRollers.intakeHasPiece(), inShooter).ignoringDisable(true));
     // pivot.setDefaultCommand(pivot.goToParallelPos().onlyIf(notInIntakeDown));
     // check wrist up and intake roller beambreak is triggered
   }
 
-  public void setTeleopInitState() {
-    shooter.stop();
-    intakeRollers.stop();
-    intakeWrist.setRequest(IntakeWristConstants.kStow);
-    primer.stop();
-    pivot.setRequest(ShooterWristConstants.kFlat);
-    // vision.stopThread();
-  }
+  // public void setTeleopInitState() {
+  //   shooter.stop();
+  //   intakeRollers.stop();
+  //   intakeWrist.setRequest(IntakeWristConstants.kStow);
+  //   primer.stop();
+  //   pivot.setRequest(ShooterWristConstants.kFlat);
+  //   // vision.stopThread();
+  // }
 
   public Command getAutonomousCommand() {
   // Command auton = drivetrain.getAutoPath("5Piece");
