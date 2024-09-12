@@ -379,25 +379,21 @@ public class RobotContainer {
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
     )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
-    joystick.b().whileTrue(
+    joystick.b().onTrue(
       new SequentialCommandGroup(
          new ParallelCommandGroup(
-            pivot.goToIntakePos(),
-            primer.setOuttakeSpeed(),
+            pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
             intakeRollers.intakeSpeedCommand()  
          ),
-         new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
-         new StartEndCommand(
-          () -> {
-            intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand());
-          },
-          () -> {
-            primer.stop();
-            intakeRollers.stop();
-            pivot.gotToStowCommand();
-            intakeWrist.indexPosCommand();
-          }
-         )
+        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
+        new SequentialCommandGroup(
+          primer.stopCommand(),
+          intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
+          new WaitCommand(1.25),
+          intakeRollers.stopCommand(),
+          pivot.gotToStowCommand(),
+          intakeWrist.indexPosCommand()
+        )
         )
       );
     /*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/

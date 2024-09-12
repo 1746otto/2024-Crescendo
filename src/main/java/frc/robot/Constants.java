@@ -33,7 +33,7 @@ public final class Constants {
   public static class IntakeRollerConstants {
     public static final int kIntakeRollerID = 11;
     public static final double kIntake = 1.0;
-    public static final double kAmp = -0.475;
+    public static final double kAmp = -1.0;
     public static final double kOuttake = -0.3; // This needs to be slower than primer.
     public static final double kHold = 0.1; // Recommend .06 or .05
     public static final double kStop = 0;
@@ -56,7 +56,7 @@ public final class Constants {
     // Positions
     public static final double kIntake = 14.438;
     public static final double kStow = 0.0;
-    public static final double kAmp = 3.471008;
+    public static final double kAmp = 4.75008;
     public static final double kHalf = kIntake / 2;
 
     // tolerance
