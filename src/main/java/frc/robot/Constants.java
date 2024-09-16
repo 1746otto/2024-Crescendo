@@ -246,6 +246,10 @@ public final class Constants {
     
   }
 
+  public static class BarConstants{
+    
+  }
+
   public static class TeleopSwerveConstants {
     public static double MaxSpeedMetersPerSec = 6; // 6 meters per second desired top speed
     public static double MaxAngularRateRotPerSec = 2.25 * Math.PI; // 6/4 of a rotation per second max angular velocity
