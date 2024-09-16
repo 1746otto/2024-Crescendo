@@ -43,6 +43,7 @@ import frc.robot.Constants.BackpackRollerConstants;
 import frc.robot.Constants.BackpackWristConstants;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.IntakeWristConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PrimerConstants;
 import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
@@ -76,6 +77,7 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
+  private final CommandXboxController joystick2 = new CommandXboxController(1);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
   //public final Vision vision = new Vision(drivetrain);
   private final LEDSubsystem led = new LEDSubsystem();
@@ -377,15 +379,24 @@ public class RobotContainer {
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
     )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
-    joystick.b().whileTrue(drivetrain.applyRequest(() ->
-      headingLockRequest.withVelocityX(
-        temp * joystick.getLeftY() *
-        Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withVelocityY(
-        temp * joystick.getLeftX() *
-        Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kFerryAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kFerryAlignAngle))
-    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
+    joystick.b().onTrue(
+      new SequentialCommandGroup(
+         new ParallelCommandGroup(
+            pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
+            intakeRollers.intakeSpeedCommand()  
+         ),
+        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
+        new SequentialCommandGroup(
+          primer.stopCommand(),
+          intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
+          new WaitCommand(1.25),
+          intakeRollers.stopCommand(),
+          pivot.gotToStowCommand(),
+          intakeWrist.indexPosCommand()
+        )
+        )
+      );
+    /*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/
 
     /*joystick.b().onTrue(
       new SequentialCommandGroup(
@@ -402,7 +413,7 @@ public class RobotContainer {
         
       )
     );*/
-    
+    //
     /*joystick.x().onTrue(
         new ParallelCommandGroup(
             new InstantCommand(
@@ -412,7 +423,7 @@ public class RobotContainer {
                 }),
             intakeWrist.indexPosCommand()));*/
 
-    joystick.povDown().whileTrue(
+    joystick2.a().whileTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           intakeWrist.intakePosCommand(),
@@ -443,7 +454,7 @@ public class RobotContainer {
                     drivetrain.getState().Pose.getTranslation(),
                     Rotation2d.fromDegrees((temp == 1) ? 180 : 0)))));
 
-    joystick.povUp().toggleOnTrue(
+    joystick2.b().toggleOnTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           pivot.goToBackpackPos(),
