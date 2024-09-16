@@ -58,11 +58,11 @@ public class IntakeWristSubsystem extends SubsystemBase{
 
     }
 
-    public void testIntake() {
+    public void testBar() {
         turningMotor.set(0.1);
     }
 
-    public void stopIntake() {
+    public void stopBar() {
         turningMotor.set(0);
     }
     

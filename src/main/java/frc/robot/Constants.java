@@ -247,7 +247,16 @@ public final class Constants {
   }
 
   public static class BarConstants{
-    
+    public static final int kBarId = 61;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kFF = 0;
+    public static final double kStatorLimit = 0;
+    public static final double kSupplyLimit = 0;
+    public static final double kStow = 0;
+    public static final double kAmpPositon = 0;
+    public static final double kTolerance = 0;
   }
 
   public static class TeleopSwerveConstants {

@@ -35,6 +35,7 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.BackpackRollerSubsystem;
 import frc.robot.subsystems.BackpackWristSubsystem;
+import frc.robot.subsystems.BarSubsystem;
 import frc.robot.subsystems.IntakeRollerSubsystem;
 import frc.robot.subsystems.IntakeWristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -88,6 +89,8 @@ public class RobotContainer {
   private final PrimerSubsystem primer = new PrimerSubsystem();
   private final BackpackWristSubsystem backpackWrist = new BackpackWristSubsystem();
   private final BackpackRollerSubsystem backpackRoller = new BackpackRollerSubsystem();
+  private final BarSubsystem bar = new BarSubsystem();
+
 
   private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
   private final SwerveRequest.FieldCentricFacingAngle headingLockRequest = new FieldCentricFacingAngle()
@@ -387,9 +390,10 @@ public class RobotContainer {
          ),
         new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
         new SequentialCommandGroup(
-          primer.stopCommand(),
+          primer.stopCommand(), bar.ampPosCommand(),
           intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
           new WaitCommand(1.25),
+          bar.stowPositionCommand(),
           intakeRollers.stopCommand(),
           pivot.gotToStowCommand(),
           intakeWrist.indexPosCommand()
