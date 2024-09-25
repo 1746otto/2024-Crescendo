@@ -49,8 +49,6 @@ import frc.robot.Constants.ShooterWristConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpDelayCommand;
-import frc.robot.commands.ShootAnywhereAuton;
-import frc.robot.commands.ShootAnywhereCommand;
 import frc.robot.commands.ShootStaticAuton;
 import frc.robot.commands.handleLEDCommand;
 import frc.robot.commands.handlePrimerShooter;
@@ -224,9 +222,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("goToSubwooferSpeed", shooter.setRequestCommand(4000).withTimeout(1));
     NamedCommands.registerCommand("shootPiece", primer.setSpeedCommand(PrimerConstants.kShoot).andThen(new WaitUntilCommand(() -> primer.isNoteShot())).withTimeout(.5).finallyDo(() -> primer.stop()));
     NamedCommands.registerCommand("pivotToFlat", pivot.goToParallelPos());
-
-    //Shoot ANYWHERE
-    NamedCommands.registerCommand("shootPieceAnywhere", new ShootAnywhereAuton(drivetrain, shooter, pivot, led, primer).until(() -> primer.isNoteShot()));
     
     //Shooting commands should work
     NamedCommands.registerCommand("shootPiece1", new ShootStaticAuton(pivot, primer, -0.345)); //NEED VALUE HERE

@@ -1,499 +1,145 @@
 package frc.robot.subsystems;
+import frc.robot.constants.VisionConstants;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.hal.simulation.SimulatorJNI;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.CommandSwerveDrivetrain;
-import frc.robot.constants.VisionConstants;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 public class Vision {
-    Thread visionThread;
-    PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
-    public volatile PhotonPipelineResult[] lastResults = new PhotonPipelineResult[VisionConstants.kCameraCount];
-    public volatile double[] lastResultTimestamps = new double[VisionConstants.kCameraCount];
-    public volatile Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
-    public volatile Pose3d robotPose; // Might use this in other filter methods later
-    AprilTagFieldLayout field;
-    volatile Pose3d tempPose;
-    CommandSwerveDrivetrain swerve;
-    volatile boolean continueLoop;
-    String tags = new String();
+    public PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
+    public PhotonPipelineResult[] results = new PhotonPipelineResult[VisionConstants.kCameraCount];
+    public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
+    public AprilTagFieldLayout field;
 
-    public enum PipelineIndex {k3DAprilTag, k3DAruco, k2DAprilTag};
-    PipelineIndex[] currentIndex = new PipelineIndex[VisionConstants.kCameraCount];
-
-
-    public Vision(CommandSwerveDrivetrain swerveDrive) {
+    public Vision() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             cameras[i] = new PhotonCamera(VisionConstants.kCameraNames[i]);
             cameraPoses[i] = new Pose3d();
         }
-
-        getResult();
-
-        swerve = swerveDrive;
-
         try {
             field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
-        }
-        catch (Exception e) {
-            SmartDashboard.putString("Vision Error Message", e.getMessage());
-        }
-
-        visionThread = new Thread(() -> {
-            while (true) {
-                try {
-                getResult();
-                    filter3();
-                } catch (Exception e) {
-                    SmartDashboard.putString("filter error", e.getMessage());
-                }
-                
-            }
-        });
-
-    
-        visionThread.setName("Vision Thread");
-
-    //visionThread.start();
-    }
-
-    public void stopThread() {
-        if (!visionThread.isAlive())
-            return;
-        try {
-            visionThread.join();
         } catch (Exception e) {
-            SmartDashboard.putString("Vision error", "Thread failed to join");
+            System.out.println("Vission Error Message: " + e.getMessage());
         }
     }
 
-    public void startThread() {
-        visionThread.start();
-    }
-
+    // Gets latest result [PhotonPipelineResult] from each camera
     private void getResult() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-            lastResults[i] = cameras[i].getLatestResult();
-            SmartDashboard.putNumber("cameratimestamp", lastResults[i].getTimestampSeconds());
+            results[i] = cameras[i].getLatestResult();
         }
     }
 
+    // Returns robot pose [Pose3d] from the best target for a single camera
     private Pose3d bestTargetToRobotPose(PhotonTrackedTarget target, int cameraNumber) {
+        // Check if AprilTag ID is within range
+        int tagID = target.getFiducialId();
+        if (tagID < VisionConstants.kMinTagID || tagID > VisionConstants.kMaxTagID) {
+            return null;
+        }
+        // Check if target is within range
+        double distance = target.getBestCameraToTarget().getTranslation().getNorm();
+        if (distance >= VisionConstants.kMaxDistance) {
+            return null;
+        }
         return field.getTagPose(target.getFiducialId()).get()
-            .transformBy(target.getBestCameraToTarget().inverse())
-            .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
+        .transformBy(target.getBestCameraToTarget().inverse())
+        .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
     }
 
-    private Pose3d alternateTargetToRobotPose(PhotonTrackedTarget target, int cameraNumber) {
-        return field.getTagPose(target.getFiducialId()).get()
-            .transformBy(target.getAlternateCameraToTarget().inverse())
-            .transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
-    }
-
-    private boolean isDataNew(int i) {
-        if (lastResults[i].getTimestampSeconds() == lastResultTimestamps[i]) {
-            return false;
-        }
-        else {
-            lastResultTimestamps[i] = lastResults[i].getTimestampSeconds();
-            return true;
-        }
-    }
-
-    public boolean containsSpeakerTag(int cameraIndex) {
-        for (PhotonTrackedTarget target : lastResults[cameraIndex].targets) {
-            if (target.getFiducialId() == VisionConstants.kSpeakerId) {
-                return true;
+    // Returns robot pose [Pose3d] from the multitarget for a single camera
+    private Pose3d multiTargetToRobotPose(MultiTargetPNPResult multiTarget, int cameraNumber) {
+        // Check if AprilTag ID is within range
+        for (int tagID : multiTarget.fiducialIDsUsed) {
+            if (tagID < VisionConstants.kMinTagID || tagID > VisionConstants.kMaxTagID) {
+                return null;
             }
         }
-        return false;
+        // Check if multitarget is available
+        if (multiTarget.estimatedPose.isPresent) {
+            Translation3d multiTargetTranslation = multiTarget.estimatedPose.best.getTranslation();
+            Rotation3d multiTargetRotation = multiTarget.estimatedPose.best.getRotation();
+            Pose3d multiTargetPose = new Pose3d(multiTargetTranslation, multiTargetRotation);
+            return multiTargetPose.transformBy(VisionConstants.kCameraTransforms[cameraNumber].inverse());
+        } else {
+            return null;
+        }
     }
 
-    /**
-     * Filtering methods used:
-     * - ID: The tags with IDs not on the field are discarded.
-     * - Distance: Distant tags are discarded due to the degrading quality of the tag.
-     * - <EXPERIMENTAL> Angular: The robot angle from and tag and gyro are compared.
-     *   If the vision angle is out of tolerance it is discarded.
-     * - <EXPERIMENTAL> Perpendicularity: If the angle between the the camera plane and
-     *   the tag plane is too small to filter out with the angular filter.
-     */
-    public void filter1() {
-
-        for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-
-            SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
-            SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
-            if (!isDataNew(i))
+    // Returns robot pose [Pose3d] from the best targets for all cameras
+    private Pose3d combinedBestTargetToRobotPose(PhotonTrackedTarget[] bestTargets) {
+        double totalWeight = 0;
+        Translation3d weightedTranslationSum = new Translation3d(0, 0, 0);
+        double weightedRotXSum = 0;
+        double weightedRotYSum = 0;
+        double weightedRotZSum = 0;
+        for (int i = 0; i < bestTargets.length; i++) {
+            PhotonTrackedTarget target = bestTargets[i];
+            // Check if target is available
+            if (target == null) {
                 continue;
-
-            for (PhotonTrackedTarget target : lastResults[i].targets) {
-
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
-                    continue;
-                
-                // Double check this math and method later
-                /* According to my current theory on tag flipping being kind of like a mirror over the line y=x 
-                 * either both or neither of the tags will be withing our angle margin so we don't have to test the actual poses.
-                 */
-                if (Math.abs(field.getTagPose(target.getFiducialId()).get().getRotation().getZ() - (swerve.getRotation3d().getZ() + VisionConstants.kCameraTransforms[i].getZ())) < VisionConstants.kAngularPerpendicularityCutoff)
-                    continue;
-                
-                tempPose = bestTargetToRobotPose(target, i);
-
-                if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        // Rohan wouldn't let me use for loop :(
-                        continueLoop = false;
-                        try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true;
-                        }
-                    } while (continueLoop == true);
-                    
-                    continue;
-                }
-                
-                tempPose = alternateTargetToRobotPose(target, i);
-                
-                if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        continueLoop = false;
-                        try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true; // This could all be fixed with a goto...
-                        }
-                    } while (continueLoop == true);
-                }
             }
-        }
-    }
-
-    /**
-     * Filter methods used:
-     * - ID: If the Fiducial ID isn't used on the field the target is discarded.
-     * - Distance: Distant tags are discarded due to degradation of the tag resolution.
-     * - <EXPERIMENTAL> Elevation: The tag transform closest to the ground is chosen.
-     *   Pros: Works regardless of angle relative to the tag.
-     *   Cons: Ineffective if the tag and the camera have similar elevations.
-     * - <EXPERIMENTAL> Angular: The robot angle from and tag and gyro are compared.
-     *   If the vision angle is out of tolerance it is discarded.
-     */
-    private void filter2() {
-        for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-
-            SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
-            SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
-            if (!isDataNew(i))
+            double distance = target.getBestCameraToTarget().getTranslation().getNorm();
+            double error = getErrorFromDistance(distance);
+            double weight = 1.0 / error;
+            Pose3d robotPose = bestTargetToRobotPose(target, i);
+            if (robotPose == null) {
                 continue;
-
-            for (PhotonTrackedTarget target : lastResults[i].targets) {
-
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1)
-                    continue;
-                
-                // Transforms to the pose of the camera, not the robot.
-                tempPose = field.getTagPose(target.getFiducialId()).get()
-                    .transformBy(target.getBestCameraToTarget().inverse());
-                
-                /*
-                 * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
-                 * Assuming I have written this correctly, the Z component of the best pose from the camera perspectective should be
-                 * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
-                 * depending on which is smaller the best or alternate tag transform is chosen.
-                 */
-                if (Math.abs(tempPose.getZ()) < Math.abs(-(tempPose.getZ() - field.getTagPose(target.getFiducialId()).get().getZ()) + field.getTagPose(target.getFiducialId()).get().getZ())
-                    && Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-
-                    // Transforms from camera to robot pose.
-                    tempPose = tempPose.transformBy(VisionConstants.kCameraTransforms[i].inverse());
-
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        // Rohan wouldn't let me use for loop :(
-                        continueLoop = false;
-                        try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true;
-                        }
-                    } while (continueLoop == true);
-                    
-                    continue;
-                }
-                
-                tempPose = alternateTargetToRobotPose(target, i);
-
-                // I should check if the normal is the same on both flipped and unflipped tags.
-                // Could decrease the verbosity of the function quite a bit.
-                if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        continueLoop = false;
-                        try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true; // This could all be fixed with a goto...
-                        }
-                    } while (continueLoop == true);
-                }
             }
+            weightedTranslationSum = weightedTranslationSum.plus(robotPose.getTranslation().times(weight));
+            Rotation3d rotation = robotPose.getRotation();
+            weightedRotXSum += rotation.getX() * weight;
+            weightedRotYSum += rotation.getY() * weight;
+            weightedRotZSum += rotation.getZ() * weight;
+            totalWeight += weight;
         }
+        // Check if no targets are available for all cameras
+        if (totalWeight == 0) {
+            return null;
+        }
+        Translation3d avgTranslation = weightedTranslationSum.div(totalWeight);
+        Rotation3d avgRotation = new Rotation3d(weightedRotXSum / totalWeight, weightedRotYSum / totalWeight, weightedRotZSum / totalWeight);
+        return new Pose3d(avgTranslation, avgRotation);
     }
+    
+    // Returns expected error [double] as a function of distance
+    private double getErrorFromDistance(double distance) {
+        double error;
+        // Experimentally measured error function of distance
+        error = 0.03439 * distance + 0.5518; // Linear punishes farther distances less
+        error = 0.00005093 * distance * distance + 0.02239 * distance + 1.068; // Quadratic punishes farther distances more
+        return error;
+    }    
 
-    /**
-     * Filter methods used:
-     * - ID: If the Fiducial ID isn't used on the field the target is discarded.
-     * - Distance: Distant tags are discarded due to degradation of the tag resolution.
-     * - <EXPERIMENTAL> Elevation: The tag transform closest to the ground is chosen.
-     *   Pros: Works regardless of angle relative to the tag.
-     *   Cons: Ineffective if the tag and the camera have similar elevations.
-     */
-    private void filter3() {
+    // Returns estimated robot pose [Pose3d[]] 
+    public Pose3d[] outputRobotPoseVision() {
+        getResult();
+        Pose3d[] outputPoses = new Pose3d[2 * VisionConstants.kCameraCount + 1];
+        PhotonTrackedTarget[] bestTargets = new PhotonTrackedTarget[VisionConstants.kCameraCount];
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-
-            SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
-            
-            SmartDashboard.putNumber("FPGA Timestamp - getTimestamp" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
-
-            if (!isDataNew(i))
-                continue;
-
-            for (PhotonTrackedTarget target : lastResults[i].targets) {
-
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getFiducialId() == 13 || target.getFiducialId() == 14 || target.getFiducialId() == 3)
-                    continue;
-                tags = tags.concat(Integer.toString(target.getFiducialId())).concat(", ");
-                if (tags.length() > 30) {
-                    tags = tags.substring(tags.length() - 31,tags.length() - 1);
-                }
-                SmartDashboard.putString("Tags", tags);
-                
-                // Transforms to the pose of the camera, not the robot.
-                tempPose = field.getTagPose(target.getFiducialId()).get()
-                    .transformBy(target.getBestCameraToTarget().inverse());
-                
-                /*
-                 * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
-                 * Assuming I have written this correctly, the Z component of the best pose from the camera perspectective should be
-                 * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
-                 * depending on which is smaller the best or alternate tag transform is chosen.
-                 */
-                if (Math.abs(tempPose.getZ()) < Math.abs(-(tempPose.getZ() - field.getTagPose(target.getFiducialId()).get().getZ()) + field.getTagPose(target.getFiducialId()).get().getZ())
-                    && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    // Transforms from camera to robot pose.
-                    tempPose = tempPose.transformBy(VisionConstants.kCameraTransforms[i].inverse());
-                    
-                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
-                        cameraPoses[i] = tempPose;
-                        
-                        SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-                    }
-                    
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        // Rohan wouldn't let me use for loop :(
-                        continueLoop = false;
-                        try {
-                            
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true;
-                        }
-                    } while (continueLoop == true);
-                    
-                    continue;
-                }
-                
-                tempPose = alternateTargetToRobotPose(target, i);
-
-                // I should check if the normal is the same on both flipped and unflipped tags.
-                // Could decrease the verbosity of the function quite a bit.
-                if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-                    
-                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
-                        cameraPoses[i] = tempPose;
-                    }
-                    
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        continueLoop = false;
-                        try {
-                            //cameraPoses[i] = tempPose;
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true; // This could all be fixed with a goto...
-                        }
-                    } while (continueLoop == true);
-                }
+            PhotonPipelineResult result = results[i];
+            if (result.hasTargets()) {
+                PhotonTrackedTarget bestTarget = result.getBestTarget();
+                bestTargets[i] = bestTarget;
+                Pose3d individualPose = bestTargetToRobotPose(bestTarget, i);
+                outputPoses[i] = individualPose;
+                MultiTargetPNPResult multiTarget = result.getMultiTagResult();
+                Pose3d multiTargetPose = multiTargetToRobotPose(multiTarget, i);
+                outputPoses[i + VisionConstants.kCameraCount] = multiTargetPose;
+            } else {
+                outputPoses[i] = null;
+                outputPoses[i + VisionConstants.kCameraCount] = null;
             }
         }
-    }
-
-    /**
-     * Was it really worth all that effort?
-     * Filter methods used:
-     * - ID: If the Fiducial ID isn't used on the field the target is discarded.
-     * - Distance: Distant tags are discarded due to degradation of the tag resolution.
-     * - Ambiguity: Tags with greater that 0.2 pose ambiguity are rejected.
-     *   The best pose transform is always used. No alternates are considered.
-     */
-    private void filter4() {
-        for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-
-            SmartDashboard.putNumber("getTimestampSeconds", lastResults[i].getTimestampSeconds());
-            SmartDashboard.putNumber("FPGA Timestamp - latency", Timer.getFPGATimestamp() - lastResults[i].getLatencyMillis() / 1000.0);
-
-            if (!isDataNew(i))
-                continue;
-
-            for (PhotonTrackedTarget target : lastResults[i].targets) {
-
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getPoseAmbiguity() > VisionConstants.kAmbiguityCutoff)
-                    continue;
-                
-                // Transforms to the pose of the camera, not the robot.
-                tempPose = bestTargetToRobotPose(target, i);
-                
-                /*
-                 * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
-                 * Assuming I have written this correctly, the Z component of the best pose from the camera perspectective should be
-                 * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
-                 * depending on which is smaller the best or alternate tag transform is chosen.
-                 */
-                if (tempPose.getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        // Rohan wouldn't let me use for loop :(
-                        continueLoop = false;
-                        try {
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true;
-                        }
-                    } while (continueLoop == true);
-                }
-            }
-        }
-    }
-
-    private void filter5() {
-        for (int i = 0; i < VisionConstants.kCameraCount; i++) {
-
-            SmartDashboard.putNumber("getTimestampSeconds" + " " + Integer.toString(i), lastResults[i].getTimestampSeconds());
-            
-            SmartDashboard.putNumber("FPGA Timestamp - latency" + " " + Integer.toString(i), Timer.getFPGATimestamp() - lastResults[i].getTimestampSeconds());
-
-            if (!isDataNew(i))
-                continue;
-
-            for (PhotonTrackedTarget target : lastResults[i].targets) {
-
-                if (target.getFiducialId() > 16 || target.getFiducialId() < 1 || target.getFiducialId() == 13 || target.getFiducialId() == 14 || target.getFiducialId() == 3)
-                    continue;
-                
-                // Transforms to the pose of the camera, not the robot.
-                tempPose = bestTargetToRobotPose(target, i);
-                
-                /*
-                 * The Math.abs on the raw z position is only necessary if we don't know whether we are above or below the AprilTag.
-                 * Assuming I have written this correctly, the Z component of the best pose from the camera perspectective should be
-                 * reflected accross the plane where the Z is equal to the tag height. Then the distance from 0 is compared and
-                 * depending on which is smaller the best or alternate tag transform is chosen.
-                 */
-                SmartDashboard.putBoolean("tag present", field.getTagPose(i).isPresent());
-                if (Math.abs(tempPose.getZ()) <= Math.abs(alternateTargetToRobotPose(target, i).getZ())
-                    && target.getBestCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    // Transforms from camera to robot pose.
-                    tempPose = tempPose.transformBy(VisionConstants.kCameraTransforms[i].inverse());
-
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-                    
-                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
-                        cameraPoses[i] = tempPose;
-                    }
-                    
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        // Rohan wouldn't let me use for loop :(
-                        continueLoop = false;
-                        try {
-                            
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true;
-                        }
-                    } while (continueLoop == true);
-                    
-                    continue;
-                }
-                
-                tempPose = alternateTargetToRobotPose(target, i);
-
-                // I should check if the normal is the same on both flipped and unflipped tags.
-                // Could decrease the verbosity of the function quite a bit.
-                if (Math.abs(tempPose.getRotation().getZ() - swerve.getRotation3d().getZ()) < VisionConstants.kAngleMargin
-                    && target.getAlternateCameraToTarget().getTranslation().getNorm() < VisionConstants.kDistanceCutoff) {
-                    
-                    SmartDashboard.putString(VisionConstants.kCameraNames[i] + " pose", tempPose.toString());
-                    
-                    if (target.getFiducialId() == VisionConstants.kSpeakerId) {
-                        cameraPoses[i] = tempPose;
-                    }
-                    
-                    // This must be here in order to try until the swerve drive unlocks the pose estimator.
-                    do {
-                        continueLoop = false;
-                        try {
-                            //cameraPoses[i] = tempPose;
-                            swerve.addVisionMeasurement(tempPose.toPose2d(), lastResults[i].getTimestampSeconds());
-                        } catch (Exception e) {
-                            continueLoop = true; // This could all be fixed with a goto...
-                        }
-                    } while (continueLoop == true);
-                }
-            }
-        }
-    }
+        Pose3d combinedPose = combinedBestTargetToRobotPose(bestTargets);
+            outputPoses[2 * VisionConstants.kCameraCount] = combinedPose;
+        return outputPoses;
+    } 
 }
