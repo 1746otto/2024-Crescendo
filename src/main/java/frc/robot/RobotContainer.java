@@ -62,6 +62,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterPivotSubsystem;
+import frc.robot.commands.ShootAnywhereOrientationCommand;
 
 public class RobotContainer {
   // SUBSYSTEMS
@@ -77,7 +78,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandXboxController joystick2 = new CommandXboxController(1);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
-  //public final Vision vision = new Vision(drivetrain);
+  public final Vision vision = new Vision();
   private final LEDSubsystem led = new LEDSubsystem();
   private final ShooterPivotSubsystem pivot = new ShooterPivotSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
@@ -364,15 +365,19 @@ public class RobotContainer {
     // {primer.setSpeed(0);})).andThen(primer.backupCommand()));
 
     // Bind to a button
-    joystick.a().whileTrue(drivetrain.applyRequest(() ->
-      headingLockRequest.withVelocityX(
-        temp * joystick.getLeftY() *
-        Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withVelocityY(
-        temp * joystick.getLeftX() *
-        Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
-      .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
-    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
+    // joystick.a().whileTrue(drivetrain.applyRequest(() ->
+    //   headingLockRequest.withVelocityX(
+    //     temp * joystick.getLeftY() *
+    //     Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+    //   .withVelocityY(
+    //     temp * joystick.getLeftX() *
+    //     Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
+    //   .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
+    // )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
+
+    joystick.a().onTrue(
+      new ShootAnywhereOrientationCommand(vision, drivetrain, drive)
+    );
 
     joystick.b().onTrue(
       new SequentialCommandGroup(
