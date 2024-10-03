@@ -20,19 +20,22 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.ShootAnywhereOrientationCommand;
 import frc.robot.constants.DynamicShootingConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.commands.ShootAnywhereOrientationCommand;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private ShootAnywhereOrientationCommand m_shootOrientation;
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-
+    m_shootOrientation = new ShootAnywhereOrientationCommand(m_robotContainer.vision, m_robotContainer.drivetrain, m_robotContainer.drive);
     //m_robotContainer.vision.startThread();
 
     SmartDashboard.putData(m_robotContainer.autoChooser);
@@ -42,6 +45,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+    m_shootOrientation.schedule();
   }
 
   @Override

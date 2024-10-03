@@ -8,12 +8,11 @@ import edu.wpi.first.math.numbers.N3;
 
 public class VisionConstants {
     public static final String[] kCameraNames = {
-        "camera1", "camera2"
+        "Camera1"
     };
     public static final int kCameraCount = kCameraNames.length;
     // Update with camera transforms
     public static final Transform3d[] kCameraTransforms = {
-        new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0)),
         new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0))
     };
     public static final int kMaxDistance = 8;

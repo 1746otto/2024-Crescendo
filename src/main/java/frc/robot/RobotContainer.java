@@ -88,7 +88,7 @@ public class RobotContainer {
   private final BackpackWristSubsystem backpackWrist = new BackpackWristSubsystem();
   private final BackpackRollerSubsystem backpackRoller = new BackpackRollerSubsystem();
 
-  private final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
+  public final SwerveRequest.FieldCentric drive = TeleopSwerveConstants.TeleopDriveRequest;
   private final SwerveRequest.FieldCentricFacingAngle headingLockRequest = new FieldCentricFacingAngle()
         .withDeadband(TeleopSwerveConstants.MaxSpeedMetersPerSec * Math.pow(.1, 4))
         .withRotationalDeadband(TeleopSwerveConstants.MaxAngularRateRotPerSec * Math.pow(.1, 4)) // Add a 10% deadband.

@@ -50,5 +50,11 @@ public class ShootAnywhereOrientationCommand extends Command {
         );
     }
 
+    @Override
+    public boolean isFinished()
+    {
+        return (Math.abs(getCurrentYaw() - targetYaw) <= 10);
+    }
+
 
 }
