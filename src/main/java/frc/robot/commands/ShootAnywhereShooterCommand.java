@@ -1,13 +1,10 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.subsystems.Vision;
 
 import java.util.Optional;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,16 +19,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class ShootAnywhereCommand extends Command {
+public class ShootAnywhereShooterCommand extends Command {
     Vision robotVision;
-    CommandSwerveDrivetrain drivetrain;
-    SwerveRequest.FieldCentric drive;
     Pose2d redSpeaker;
+    double targetAngle;
+    double targetRPM;
+    double distance;
 
-    public ShootAnywhereCommand(Vision vision, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric drive) {
+    public ShootAnywhereShooterCommand(Vision vision) {
         robotVision = vision;
-        drivetrain = swerve;
-        this.drive = drive;
         redSpeaker = new Pose2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY, new Rotation2d(Units.degreesToRadians(180)));
     }
 
@@ -76,11 +72,7 @@ public class ShootAnywhereCommand extends Command {
         double deltaX = speakerPose.getX() - robotPose.getX();
         double deltaY = speakerPose.getY() - robotPose.getY();
 
-        double targetAngle = Math.atan2(deltaY, deltaX);
-        double currentAngle = robotPose.getRotation().getRadians();
-        double angleToTurn = Math.atan2(Math.sin(targetAngle - currentAngle), Math.cos(targetAngle - currentAngle));
-        double turn = angleToTurn * 0.5 * Constants.TeleopSwerveConstants.MaxAngularRateRotPerSec;
+        double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
-        drivetrain.applyRequest(() -> drive.withRotationalRate(turn));
     }
 }
