@@ -69,6 +69,8 @@ public class ShootAnywhereOrientationCommand extends Command {
         angleToTurn = Math.atan2(Math.sin(targetAngle - currentAngle), Math.cos(targetAngle - currentAngle));
         double turn = angleToTurn * 0.5 * Constants.TeleopSwerveConstants.MaxAngularRateRotPerSec;
 
+        SmartDashboard.putNumber("turn effort", turn);
+
         drivetrain.applyRequest(() -> drive.withRotationalRate(turn));
     }
 

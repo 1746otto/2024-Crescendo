@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
     public PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
@@ -201,17 +202,23 @@ public class Vision {
         double deltaY = speakerPose.getY() - robotPose.getY();
 
         double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+        SmartDashboard.putNumber("Speaker Distance", distance);
         return distance;
     }
 
     // Returns shooter RPM [double] for speaker shooting
     public double getTargetShooterRPM() {
-        return getShooterRPMFromDistance(getDistanceFromSpeaker());
+        double targetRPM = getShooterRPMFromDistance(getDistanceFromSpeaker());
+        SmartDashboard.putNumber("target RPM", targetRPM);
+        return targetRPM;
     }
 
     // Returns shooter angle [double] for speaker shooting
     public double getTargetShooterAngle() {
-        return getShooterAngleFromDistance(getDistanceFromSpeaker());
+        double targetAngle = getShooterAngleFromDistance(getDistanceFromSpeaker());
+        SmartDashboard.putNumber("target Angle", targetAngle);
+        return targetAngle;
     }
 
 }
