@@ -99,7 +99,7 @@ public final class Constants {
     public static final double kShoot = 4000;// 0.2 and 1.0
     public static final double kReverse = -kShoot;
     public static final double kSubwooferShot = 0.8;
-    public static final double kSubwooferSpeed = 4500;// 4640;
+    public static final double kSubwooferSpeed = 1250;// 4640;
     public static final double kStop = 0.0;
     public static final double kPodium = 5350;
     public static final double kFerry = 4750;

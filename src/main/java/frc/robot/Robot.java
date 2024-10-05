@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
-    m_shootOrientation.schedule();
+    // m_shootOrientation.schedule();
   }
 
   @Override
