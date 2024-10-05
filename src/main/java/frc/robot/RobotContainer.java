@@ -537,13 +537,13 @@ public class RobotContainer {
     // pivot.goToIntakePos();
     // intakeWrist.setRequest(IntakeWristConstants.kStow);}));
     joystick.leftTrigger()
-        .whileTrue(pivot.runPivot(useVisionForShooting ? vision.getTargetShooterAngle() : ShooterWristConstants.kSubwooferPos)
+        .whileTrue(new InstantCommand(() -> new ShootAnywhereOrientationCommand(vision, drivetrain, drive)).andThen(pivot.runPivot(useVisionForShooting ? vision.getTargetShooterAngle() : ShooterWristConstants.kSubwooferPos)
         .alongWith(shooter.setRequestCommand(useVisionForShooting ? vision.getTargetShooterRPM() : ShooterConstants.kSubwooferSpeed))
             .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
             .finallyDo(() -> {
               shooter.stop();
               pivot.setRequest(ShooterWristConstants.kFlat);
-            }));
+            })));
     // joystick.leftBumper()
     //     .whileTrue(pivot.goToFerryPos().alongWith(shooter.setRequestCommand(ShooterConstants.kFerry))
     //         .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
