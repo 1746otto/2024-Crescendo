@@ -124,6 +124,8 @@ public class RobotContainer {
   // Do not use.
   boolean sawNoteIn = false;
 
+  boolean useVisionForShooting = true;
+
   // pathplanner testing
   public RobotContainer() {
     NamedCommands.registerCommand("slamIntakeCommand", intakeWrist.intakePosCommand());
