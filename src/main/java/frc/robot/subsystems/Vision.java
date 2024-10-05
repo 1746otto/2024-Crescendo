@@ -153,8 +153,9 @@ public class Vision {
 
 
 
-    // Shoot Anywhere
+    // Shoot Anywhere Methods
 
+    // Returns shooter angle [double] for any distance
     private double getShooterAngleFromDistance(double distance) {
         distance = Units.metersToInches(distance);
         double angle;
@@ -162,6 +163,7 @@ public class Vision {
         return angle;
     }
 
+    // Returns shooter RPM [double] for any distance
     private double getShooterRPMFromDistance(double distance) {
         distance = Units.metersToInches(distance);
         double RPM;
@@ -169,12 +171,14 @@ public class Vision {
         return RPM;
     }
 
+    // Returns combinedPose [Pose2d]
     private Pose2d getBestRobotPose() {
         Pose3d[] poses = outputRobotPoseVision();
         Pose3d combinedPose = poses[poses.length - 1];
         return combinedPose.toPose2d();
     }
 
+    // Returns speaker pose [Pose2d] for alliance
     private Pose2d getSpeakerPose() {
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
@@ -188,6 +192,7 @@ public class Vision {
         }
     }
 
+    // Returns distance [double] from speaker
     public double getDistanceFromSpeaker() {
         Pose2d robotPose = getBestRobotPose();
         Pose2d speakerPose = getSpeakerPose();
@@ -199,10 +204,12 @@ public class Vision {
         return distance;
     }
 
+    // Returns shooter RPM [double] for speaker shooting
     public double getTargetShooterRPM() {
         return getShooterRPMFromDistance(getDistanceFromSpeaker());
     }
 
+    // Returns shooter angle [double] for speaker shooting
     public double getTargetShooterAngle() {
         return getShooterAngleFromDistance(getDistanceFromSpeaker());
     }
