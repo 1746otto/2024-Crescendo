@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShootAnywhereOrientationCommand extends Command {
@@ -29,7 +30,7 @@ public class ShootAnywhereOrientationCommand extends Command {
     public Pose3d getBestRobotPose()
     {
         Pose3d[] poses = robotVision.outputRobotPoseVision();
-        Pose3d combinedPose = poses[-1];
+        Pose3d combinedPose = poses[poses.length - 1];
         return combinedPose;
     }
 
@@ -53,7 +54,7 @@ public class ShootAnywhereOrientationCommand extends Command {
     @Override
     public boolean isFinished()
     {
-        return (Math.abs(getCurrentYaw() - targetYaw) <= 10);
+        return (Math.abs(getCurrentYaw() - targetYaw) <= Units.degreesToRadians(10));
     }
 
 
