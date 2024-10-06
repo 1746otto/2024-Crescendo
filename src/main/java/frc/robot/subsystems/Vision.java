@@ -122,7 +122,7 @@ public class Vision {
     private double getErrorFromDistance(double distance) {
         double error;
         // Experimentally measured error function of distance
-        error = 0.03439 * distance + 0.5518; // Linear punishes farther distances less
+        // error = 0.03439 * distance + 0.5518; // Linear punishes farther distances less
         error = 0.00005093 * distance * distance + 0.02239 * distance + 1.068; // Quadratic punishes farther distances more
         return error;
     }    
@@ -156,18 +156,20 @@ public class Vision {
 
     // Shoot Anywhere Methods
 
-    // Returns shooter angle [double] for any distance
+    // Returns shooter angle [double] as a function of distance
     private double getShooterAngleFromDistance(double distance) {
         distance = Units.metersToInches(distance);
         double angle;
+        // Experimentally measured angle function of distance
         angle = -0.1721 * Math.pow(Math.E, -0.01708 * distance) - 0.2843;
         return angle;
     }
 
-    // Returns shooter RPM [double] for any distance
+    // Returns shooter RPM [double] as a function of distance
     private double getShooterRPMFromDistance(double distance) {
         distance = Units.metersToInches(distance);
         double RPM;
+        // Experimentally measured RPM function of distance
         RPM = 0.03923 * Math.pow(distance, 2) - 2.012 * distance + 5157;
         return RPM;
     }
