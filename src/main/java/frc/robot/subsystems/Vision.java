@@ -20,8 +20,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Vision {
+public class Vision extends SubsystemBase{
     public PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     public PhotonPipelineResult[] results = new PhotonPipelineResult[VisionConstants.kCameraCount];
     public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
@@ -43,6 +44,12 @@ public class Vision {
     private void getResult() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             results[i] = cameras[i].getLatestResult();
+            if (results[i].hasTargets()) {
+                SmartDashboard.putNumber("Tag ID", results[i].getBestTarget().getFiducialId());
+            } else {
+                SmartDashboard.putNumber("Tag ID", 0);
+            }
+            
         }
     }
 
@@ -152,8 +159,6 @@ public class Vision {
         return outputPoses;
     } 
 
-
-
     // Shoot Anywhere Methods
 
     // Returns shooter angle [double] as a function of distance
@@ -212,7 +217,7 @@ public class Vision {
     // Returns shooter RPM [double] for speaker shooting
     public double getTargetShooterRPM() {
         double targetRPM = getShooterRPMFromDistance(getDistanceFromSpeaker());
-        SmartDashboard.putNumber("target RPM", targetRPM);
+        //SmartDashboard.putNumber("target RPM", targetRPM);
         return targetRPM;
     }
 
@@ -221,6 +226,12 @@ public class Vision {
         double targetAngle = getShooterAngleFromDistance(getDistanceFromSpeaker());
         SmartDashboard.putNumber("target Angle", targetAngle);
         return targetAngle;
+    }
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Target RPM", getTargetShooterRPM());
+        SmartDashboard.putNumber("Target Angle", getTargetShooterAngle());
+
     }
 
 }
