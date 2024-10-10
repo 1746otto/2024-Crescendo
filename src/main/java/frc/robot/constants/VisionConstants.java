@@ -22,5 +22,5 @@ public class VisionConstants {
     public static final int kMinTagID = 1;
     public static final int kMaxTagID = 16;
     public static final Vector<N3> kVisionStdDeviations = VecBuilder.fill(3.3, 3.3, Double.MAX_VALUE);
-    public static final double orientationTolerance = 0.1;
+    public static final double orientationTolerance = Units.degreesToRadians(3);
 }

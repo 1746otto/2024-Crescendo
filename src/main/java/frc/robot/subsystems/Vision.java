@@ -20,9 +20,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Vision extends SubsystemBase{
+public class Vision {
     public PhotonCamera[] cameras = new PhotonCamera[VisionConstants.kCameraCount];
     public PhotonPipelineResult[] results = new PhotonPipelineResult[VisionConstants.kCameraCount];
     public Pose3d[] cameraPoses = new Pose3d[VisionConstants.kCameraCount];
@@ -44,12 +43,6 @@ public class Vision extends SubsystemBase{
     private void getResult() {
         for (int i = 0; i < VisionConstants.kCameraCount; i++) {
             results[i] = cameras[i].getLatestResult();
-            if (results[i].hasTargets()) {
-                SmartDashboard.putNumber("Tag ID", results[i].getBestTarget().getFiducialId());
-            } else {
-                SmartDashboard.putNumber("Tag ID", 0);
-            }
-            
         }
     }
 
@@ -159,6 +152,8 @@ public class Vision extends SubsystemBase{
         return outputPoses;
     } 
 
+
+
     // Shoot Anywhere Methods
 
     // Returns shooter angle [double] as a function of distance
@@ -180,14 +175,18 @@ public class Vision extends SubsystemBase{
     }
 
     // Returns combinedPose [Pose2d]
-    private Pose2d getBestRobotPose() {
+    public Pose2d getBestRobotPose() {
         Pose3d[] poses = outputRobotPoseVision();
         Pose3d combinedPose = poses[poses.length - 1];
-        return combinedPose.toPose2d();
+        if (combinedPose == null) {
+            return null;
+        } else {
+            return combinedPose.toPose2d();
+        }
     }
 
     // Returns speaker pose [Pose2d] for alliance
-    private Pose2d getSpeakerPose() {
+    public Pose2d getSpeakerPose() {
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             if (ally.get() == Alliance.Red) {
@@ -203,35 +202,42 @@ public class Vision extends SubsystemBase{
     // Returns distance [double] from speaker
     public double getDistanceFromSpeaker() {
         Pose2d robotPose = getBestRobotPose();
-        Pose2d speakerPose = getSpeakerPose();
+        if (robotPose != null) {
+            Pose2d speakerPose = getSpeakerPose();
 
-        double deltaX = speakerPose.getX() - robotPose.getX();
-        double deltaY = speakerPose.getY() - robotPose.getY();
+            double deltaX = speakerPose.getX() - robotPose.getX();
+            double deltaY = speakerPose.getY() - robotPose.getY();
 
-        double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+            double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
-        SmartDashboard.putNumber("Speaker Distance", distance);
-        return distance;
+            SmartDashboard.putNumber("Speaker Distance", distance);
+            return distance;
+        } else {
+            return -1.0;
+        }
     }
 
     // Returns shooter RPM [double] for speaker shooting
     public double getTargetShooterRPM() {
-        double targetRPM = getShooterRPMFromDistance(getDistanceFromSpeaker());
-        //SmartDashboard.putNumber("target RPM", targetRPM);
-        return targetRPM;
+        double distance = getDistanceFromSpeaker();
+        if (distance != -1.0) {
+            double targetRPM = getShooterRPMFromDistance(distance);
+            SmartDashboard.putNumber("target RPM", targetRPM);
+            return targetRPM;
+        } else {
+            return 0.0;
+        }
     }
 
     // Returns shooter angle [double] for speaker shooting
     public double getTargetShooterAngle() {
-        double targetAngle = getShooterAngleFromDistance(getDistanceFromSpeaker());
-        SmartDashboard.putNumber("target Angle", targetAngle);
-        return targetAngle;
+        double distance = getDistanceFromSpeaker();
+        if (distance != -1.0) {
+            double targetAngle = getShooterAngleFromDistance(distance);
+            SmartDashboard.putNumber("target Angle", targetAngle);
+            return targetAngle;
+        } else {
+            return 0.0;
+        }
     }
-    @Override
-    public void periodic(){
-        SmartDashboard.putNumber("Target RPM", getTargetShooterRPM());
-        SmartDashboard.putNumber("Target Angle", getTargetShooterAngle());
-
-    }
-
 }

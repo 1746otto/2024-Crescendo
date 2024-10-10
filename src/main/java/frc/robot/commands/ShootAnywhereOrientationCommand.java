@@ -37,41 +37,24 @@ public class ShootAnywhereOrientationCommand extends Command {
         redSpeaker = new Pose2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY, new Rotation2d(Units.degreesToRadians(180)));
     }
 
-    private Pose2d getSpeakerPose() {
-        Optional<Alliance> ally = DriverStation.getAlliance();
-        if (ally.isPresent()) {
-            if (ally.get() == Alliance.Red) {
-                return new Pose2d(FieldConstants.redSpeakerX, FieldConstants.redSpeakerY, new Rotation2d(Units.degreesToRadians(180)));
-            } else {
-                return new Pose2d(FieldConstants.blueSpeakerX, FieldConstants.blueSpeakerY, new Rotation2d(Units.degreesToRadians(0)));
-            }
-        } else {
-            return redSpeaker;
-        }
-    }
-
-    private Pose2d getBestRobotPose() {
-        Pose3d[] poses = robotVision.outputRobotPoseVision();
-        Pose3d combinedPose = poses[poses.length - 1];
-        return combinedPose.toPose2d();
-    }
-
     @Override
     public void execute() {
-        Pose2d robotPose = getBestRobotPose();
-        Pose2d speakerPose = getSpeakerPose();
+        Pose2d robotPose = robotVision.getBestRobotPose();
+        if (robotPose != null) {
+            Pose2d speakerPose = robotVision.getSpeakerPose();
 
-        double deltaX = speakerPose.getX() - robotPose.getX();
-        double deltaY = speakerPose.getY() - robotPose.getY();
+            double deltaX = speakerPose.getX() - robotPose.getX();
+            double deltaY = speakerPose.getY() - robotPose.getY();
 
-        double targetAngle = Math.atan2(deltaY, deltaX);
-        double currentAngle = robotPose.getRotation().getRadians();
-        angleToTurn = Math.atan2(Math.sin(targetAngle - currentAngle), Math.cos(targetAngle - currentAngle));
-        double turn = angleToTurn * 0.5 * Constants.TeleopSwerveConstants.MaxAngularRateRotPerSec;
+            double targetAngle = Math.atan2(deltaY, deltaX);
+            double currentAngle = robotPose.getRotation().getRadians();
+            angleToTurn = Math.atan2(Math.sin(targetAngle - currentAngle), Math.cos(targetAngle - currentAngle));
+            double turn = angleToTurn * 0.5 * Constants.TeleopSwerveConstants.MaxAngularRateRotPerSec;
 
-        SmartDashboard.putNumber("turn effort", turn);
+            SmartDashboard.putNumber("turn effort", turn);
 
-        drivetrain.applyRequest(() -> drive.withRotationalRate(turn));
+            drivetrain.applyRequest(() -> drive.withRotationalRate(turn));
+        }
     }
 
     @Override
