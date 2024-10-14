@@ -389,7 +389,7 @@ public class RobotContainer {
             intakeRollers.intakeSpeedCommand(),
             bar.ampPosCommand()
          ),
-        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
+       new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
         new SequentialCommandGroup(
           primer.stopCommand(),
           intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
@@ -401,6 +401,13 @@ public class RobotContainer {
         )
         )
       );
+  //  joystick.b().onTrue(
+  //   new SequentialCommandGroup(
+  //       new ParallelCommandGroup(
+  //            pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
+  //         intakeRollers.intakeSpeedCommand(),
+  //            bar.movebarCommand()
+  //        )));
     /*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/
 
     /*joystick.b().onTrue(

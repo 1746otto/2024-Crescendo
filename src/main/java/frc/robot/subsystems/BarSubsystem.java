@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.BarConstants;
 import frc.robot.Constants.IntakeWristConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class BarSubsystem extends SubsystemBase {
        /** Motor controller for turning the intake mechanism. */
@@ -92,6 +93,9 @@ public class BarSubsystem extends SubsystemBase {
     public void stop() {
         turningMotor.setControl(new NeutralOut());
     }
+    public Command setSpeedCommand(double speed) {
+        return runOnce(() -> setRequest(speed));
+      }
 
     /**
      * Checks if the turning motor is at the required position within a specified
@@ -116,6 +120,9 @@ public class BarSubsystem extends SubsystemBase {
     public Command ampPosCommand() {
         return runOnce(() -> BarToReq(BarConstants.kAmpPositon)).andThen(new WaitUntilCommand(() ->  isAtReqPosition(BarConstants.kAmpPositon))).finallyDo(() -> stop());
     }
+   public Command movebarCommand(){
+    return setSpeedCommand(.1);
+  }
     public Command stopMotorCommand(){
         return runOnce(this::stop);
     }
@@ -126,7 +133,7 @@ public class BarSubsystem extends SubsystemBase {
         // This method will be called once per scheduler run
         //System.out.println(getPosition());
         SmartDashboard.putNumber("BarPos", getPosition());
-        SmartDashboard.putNumber("Current", current);
+        SmartDashboard.putNumber("CurrentB", current);
         
     }
 }
