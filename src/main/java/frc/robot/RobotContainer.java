@@ -387,7 +387,7 @@ public class RobotContainer {
          new ParallelCommandGroup(
             pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
             intakeRollers.intakeSpeedCommand(),
-            bar.ampPosCommand()
+            bar.ampPosCommand().withTimeout(3)
          ),
        new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
         new SequentialCommandGroup(

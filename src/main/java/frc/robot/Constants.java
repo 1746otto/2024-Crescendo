@@ -248,15 +248,15 @@ public final class Constants {
 
   public static class BarConstants{
     public static final int kBarId = 33;
-    public static final double kP = 5;
+    public static final double kP = 0.035;
     public static final double kI = 0;
-    public static final double kD = 0;
+    public static final double kD = 0.01;
     public static final double kFF = 0.01;
     public static final double kStatorLimit = 10; //60 before
     public static final double kSupplyLimit = 10;
     public static final double kStow = 0;
-    public static final double kAmpPositon = 17.857422;
-    public static final double kTolerance = 0.5;
+    public static final double kAmpPositon = 16.607910;
+    public static final double kTolerance = 0.2;
   }
 
   public static class TeleopSwerveConstants {
