@@ -382,25 +382,47 @@ public class RobotContainer {
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
     )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
 
-    joystick.b().onTrue(
+    // joystick.b().onTrue(
+    //   new SequentialCommandGroup(
+    //      new ParallelCommandGroup(
+    //         pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
+    //         intakeRollers.intakeSpeedCommand(),
+    //         bar.ampPosCommand().withTimeout(3)
+    //      ),
+    //    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
+    //     new SequentialCommandGroup(
+    //       primer.stopCommand(),
+    //       intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
+    //       new WaitCommand(1.25),
+    //       bar.stowPositionCommand(),
+    //       intakeRollers.stopCommand(),
+    //       pivot.gotToStowCommand(),
+    //       intakeWrist.indexPosCommand()
+    //     )
+    //     )
+    //   );
+  joystick.b().onTrue(
       new SequentialCommandGroup(
-         new ParallelCommandGroup(
-            pivot.goToIntakePos().andThen(primer.setOuttakeSpeed()),
-            intakeRollers.intakeSpeedCommand(),
-            bar.ampPosCommand().withTimeout(3)
-         ),
-       new WaitUntilCommand(() -> intakeRollers.intakeHasPiece()),
-        new SequentialCommandGroup(
+        pivot.goToIntakePos(),
+        new ParallelCommandGroup((primer.setOuttakeSpeed()),(bar.ampPosCommand().withTimeout(2)),
+            intakeRollers.intakeSpeedCommand()),
+         
+            
+            intakeWrist.ampPosCommand(),
+        
           primer.stopCommand(),
-          intakeWrist.ampPosCommand().andThen(intakeRollers.ampCommand()),
+          intakeRollers.ampCommand(),
           new WaitCommand(1.25),
-          bar.stowPositionCommand(),
           intakeRollers.stopCommand(),
-          pivot.gotToStowCommand(),
-          intakeWrist.indexPosCommand()
+           pivot.gotToStowCommand(),
+          intakeWrist.indexPosCommand(),
+          bar.stowPositionCommand().withTimeout(2)
+         
+          
         )
-        )
-      );
+)
+        
+      ;
   //  joystick.b().onTrue(
   //   new SequentialCommandGroup(
   //       new ParallelCommandGroup(
