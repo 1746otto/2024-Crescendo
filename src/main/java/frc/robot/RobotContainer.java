@@ -539,7 +539,7 @@ public class RobotContainer {
     joystick.leftTrigger()
         .whileTrue(new InstantCommand(() -> new ShootAnywhereOrientationCommand(vision, drivetrain, drive)).andThen(pivot.runPivot(useVisionForShooting ? vision.getTargetShooterAngle() : ShooterWristConstants.kSubwooferPos)
         .alongWith(shooter.setRequestCommand(useVisionForShooting ? vision.getTargetShooterRPM() : ShooterConstants.kSubwooferSpeed))
-            .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(100))
+            .alongWith(new InstantCommand(() -> ampPosition = AmpPositionState.Normal)).alongWith(new WaitCommand(10))
             .finallyDo(() -> {
               shooter.stop();
               pivot.setRequest(ShooterWristConstants.kFlat);

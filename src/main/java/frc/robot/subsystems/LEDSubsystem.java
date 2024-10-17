@@ -50,7 +50,24 @@ public class LEDSubsystem extends SubsystemBase {
     mode = LEDMode.Solid;
     led.setData(ledBuffer);
   }
-
+  public void green() {
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, 120, 100,
+          100);
+    }
+  
+    mode = LEDMode.Solid;
+    led.setData(ledBuffer);
+  }
+    public void red() {
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, 0, 100,
+          100);
+    }
+  
+    mode = LEDMode.Solid;
+    led.setData(ledBuffer);
+  }
   public void setLedOff() {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, 0, 0, 0);
@@ -69,6 +86,12 @@ public class LEDSubsystem extends SubsystemBase {
 
   public Command setLedIntakeCommand(){
     return run(() -> setLedtoIntake()).finallyDo(() -> setLedOff());
+  }
+    public Command greenCommand(){
+    return run(() -> green()).finallyDo(() -> setLedOff());
+  }
+      public Command redCommand(){
+    return run(() -> red()).finallyDo(() -> setLedOff());
   }
   public Command setLedShooter() {
     return run(() -> setLEDToShooter()).finallyDo(() -> setLedOff());

@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.LEDSubsystem;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
@@ -19,6 +20,7 @@ public class ShootAnywhereOrientationCommand extends Command {
     SwerveRequest.FieldCentric drive;
     Pose2d redSpeaker;
     double angleToTurn;
+    LEDSubsystem leds;
 
     public ShootAnywhereOrientationCommand(Vision vision, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric drive) {
         robotVision = vision;
@@ -31,6 +33,7 @@ public class ShootAnywhereOrientationCommand extends Command {
     public void execute() {
         Pose2d robotPose = robotVision.getBestRobotPose();
         if (robotPose != null) {
+            leds.greenCommand();
             Pose2d speakerPose = robotVision.getSpeakerPose();
 
             double deltaX = speakerPose.getX() - robotPose.getX();
@@ -44,6 +47,9 @@ public class ShootAnywhereOrientationCommand extends Command {
             SmartDashboard.putNumber("turn effort", turn);
 
             drivetrain.applyRequest(() -> drive.withRotationalRate(turn));
+        }
+        else {
+            leds.redCommand();
         }
     }
 
