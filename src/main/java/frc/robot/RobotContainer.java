@@ -404,7 +404,7 @@ public class RobotContainer {
   joystick.b().onTrue(
       new SequentialCommandGroup(
         pivot.goToIntakePos(),
-        new ParallelCommandGroup((primer.setOuttakeSpeed()),(bar.ampPosCommand().withTimeout(2)),
+        new ParallelCommandGroup((primer.setOuttakeSpeed()),(bar.ampPosCommand().withTimeout(1)),
             intakeRollers.intakeSpeedCommand()),
          
             
