@@ -75,6 +75,9 @@ public class BackpackWristSubsystem extends SubsystemBase{
     public Command goToBackPackPos() {
         return setRequestCommand(BackpackWristConstants.kIntake);
     }
+    public Command homwCommand() {
+        return setRequestCommand(0);
+    }
 
     @Override
     public void periodic() {

@@ -345,7 +345,28 @@ public class RobotContainer {
         }
       )
     );
+joystick.y().onTrue( new SequentialCommandGroup(
+    new InstantCommand(() -> {primer.primerStow = false;}), // Currently  unnecessary may be used if we need to fix stow idk man
+    new ParallelDeadlineGroup(
+    intakeWrist.intakePosCommand(),
+    intakeRollers.intakeSpeedCommand(),
 
+    new WaitUntilCommand(() -> intakeRollers.intakeHasPiece())
+    .withTimeout(5),
+    intakeRollers.stopCommand(),
+    
+    new ParallelDeadlineGroup(
+    intakeWrist.indexPosCommand() // Stops primer by itself
+    )
+   
+    )
+     .finallyDo(
+    () -> {
+    intakeRollers.holdSpeedCommand();
+    intakeWrist.setRequest(IntakeWristConstants.kStow);
+        }
+      
+ )) );
     // Temporary test button for autonomous
     // joystick.leftTrigger().and(() -> primer.isPrimerBeamBreakBroken()).whileTrue(
     //     shootAnywhereCommand);
@@ -372,7 +393,7 @@ public class RobotContainer {
     // {primer.setSpeed(0);})).andThen(primer.backupCommand()));
 
     // Bind to a button
-    joystick.a().whileTrue(drivetrain.applyRequest(() ->
+    joystick2.a().whileTrue(drivetrain.applyRequest(() ->
       headingLockRequest.withVelocityX(
         temp * joystick.getLeftY() *
         Math.pow(Math.abs(joystick.getLeftY()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
@@ -380,7 +401,7 @@ public class RobotContainer {
         temp * joystick.getLeftX() *
         Math.pow(Math.abs(joystick.getLeftX()), TeleopSwerveConstants.SwerveMagnitudeExponent - 1) * TeleopSwerveConstants.MaxSpeedMetersPerSec)
       .withTargetDirection(temp == -1 ? TeleopSwerveConstants.kBackpackAlignAngle : Rotation2d.fromDegrees(180).minus(TeleopSwerveConstants.kBackpackAlignAngle))
-    )/*.until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance)*/);
+    ).until(() -> Math.abs(drivetrain.getRotation3d().getZ() - headingLockRequest.TargetDirection.getRadians()) <= TeleopSwerveConstants.kHeadingTolerance));
 
     // joystick.b().onTrue(
     //   new SequentialCommandGroup(
@@ -401,28 +422,29 @@ public class RobotContainer {
     //     )
     //     )
     //   );
-  joystick.b().onTrue(
-      new SequentialCommandGroup(
-        pivot.goToIntakePos(),
-        new ParallelCommandGroup((primer.setOuttakeSpeed()),(bar.ampPosCommand().withTimeout(1)),
-            intakeRollers.intakeSpeedCommand()),
+
+//   joystick.b().onTrue(
+//       new SequentialCommandGroup(
+//         pivot.goToIntakePos(),
+//         new ParallelCommandGroup((primer.setOuttakeSpeed()),(bar.ampPosCommand().withTimeout(1)),
+//             intakeRollers.intakeSpeedCommand()),
          
             
-            intakeWrist.ampPosCommand(),
+//             intakeWrist.ampPosCommand(),
         
-          primer.stopCommand(),
-          intakeRollers.ampCommand(),
-          new WaitCommand(1.25),
-          intakeRollers.stopCommand(),
-           pivot.gotToStowCommand(),
-          intakeWrist.indexPosCommand(),
-          bar.stowPositionCommand().withTimeout(2)
+//           primer.stopCommand(),
+//           intakeRollers.ampCommand(),
+//           new WaitCommand(1.25),
+//           intakeRollers.stopCommand(),
+//            pivot.gotToStowCommand(),
+//           intakeWrist.indexPosCommand(),
+//           bar.stowPositionCommand().withTimeout(2)
          
           
-        )
-)
+//         )
+// )
         
-      ;
+//       ;
   //  joystick.b().onTrue(
   //   new SequentialCommandGroup(
   //       new ParallelCommandGroup(
@@ -457,7 +479,7 @@ public class RobotContainer {
                 }),
             intakeWrist.indexPosCommand()));*/
 
-    joystick2.a().whileTrue(
+    joystick.a().whileTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           intakeWrist.intakePosCommand(),
@@ -732,7 +754,7 @@ public class RobotContainer {
   // Command baseAuton1 = drivetrain.getAutoPath("Base Auton1");
   // Command middle2P = drivetrain.getAutoPath("Middle2P");
   // Command bottom2P = drivetrain.getAutoPath("Bottom2P");
-  // Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
+   Command baseAuton3 = drivetrain.getAutoPath("Base Auton3");
   // Command theory = drivetrain.getAutoPath("Bottom4P");
   // Command top2Piece = drivetrain.getAutoPath("Top2P");
   // return theory;
